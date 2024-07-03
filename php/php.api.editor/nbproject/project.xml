@@ -89,6 +89,8 @@
                 <friend>org.netbeans.modules.php.wordpress</friend>
                 <friend>org.netbeans.modules.php.zend</friend>
                 <friend>org.netbeans.modules.php.zend2</friend>
+                <friend>org.netbeans.modules.php.blade</friend>
+				<friend>org.netbeans.modules.php.laravel</friend>
                 <package>org.netbeans.modules.php.api.editor</package>
                 <package>org.netbeans.modules.php.spi.editor</package>
             </friend-packages>
