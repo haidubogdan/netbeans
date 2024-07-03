@@ -1,8 +1,28 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.netbeans.modules.php.blade.editor;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import org.antlr.v4.runtime.CharStreams;
@@ -48,28 +68,24 @@ public class BladeDeclarationFinder implements DeclarationFinder {
 
     private int currentTokenId;
     private String tokenText;
-
+    private static final Logger LOGGER = Logger.getLogger(BladeDeclarationFinder.class.getName());
+    
     @Override
     public OffsetRange getReferenceSpan(Document document, int caretOffset) {
         BaseDocument baseDoc = (BaseDocument) document;
 
-        //baseDoc.readLock();
         AntlrTokenSequence tokens = null;
         OffsetRange offsetRange = OffsetRange.NONE;
         tokenText = null;
         int lineOffset = caretOffset;
+
         try {
-            try {
-                String text = baseDoc.getText(0, baseDoc.getLength());
-                tokens = new AntlrTokenSequence(new BladeAntlrLexer(CharStreams.fromString(text)));
-            } catch (BadLocationException ex) {
-                //Exceptions.printStackTrace(ex);
-            }
-        } finally {
-            //baseDoc.readUnlock();
+            String text = baseDoc.getText(0, baseDoc.getLength());
+            tokens = new AntlrTokenSequence(new BladeAntlrLexer(CharStreams.fromString(text)));
+        } catch (BadLocationException ex) {
+            LOGGER.log(Level.WARNING, "Exception has been thrown during lexer scan for reference span offset range.", ex);
         }
 
-        //inside php expression context ??
         if (tokens == null || tokens.isEmpty()) {
             return offsetRange;
         }
@@ -149,6 +165,7 @@ public class BladeDeclarationFinder implements DeclarationFinder {
         FieldAccessReference fieldAccessReference = parserResult.findFieldAccessRefrence(caretOffset);
 
         if (fieldAccessReference != null) {
+            //TODO move in a method
             switch (fieldAccessReference.type) {
                 case STATIC_FIELD_ACCESS:
                     switch (fieldAccessReference.fieldType) {

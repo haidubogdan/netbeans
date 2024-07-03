@@ -35,7 +35,7 @@ import org.openide.windows.TopComponent;
 @ActionRegistration(displayName = "AntlrFormatter Tokens")
 public class ViewAntlrFormatterTokensAction extends AbstractAction implements ActionListener {
 
-    Node node;
+    private final Node node;
     private transient JEditorPane viewer;
 
     public ViewAntlrFormatterTokensAction(Node node) {
