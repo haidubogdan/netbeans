@@ -52,7 +52,7 @@ D_GENERIC_INLINE_DIRECTIVES : ('@elseif' |  Include | '@extends' | '@each' | '@y
 
 D_GENERIC_INLINE_MIXED_DIRECTIVES : ('@break' | '@continue')->type(DIRECTIVE);
 
-D_GENERIC_END_TAGS : ('@stop' | '@show' | '@overwrite' | '@end' DirectivesWithEndTag)->type(DIRECTIVE);
+D_GENERIC_END_TAGS : ('@stop' | '@show' | '@overwrite' | '@viteReactRefresh' | '@end' DirectivesWithEndTag)->type(DIRECTIVE);
 
 //verbatim has special blade escape logic
 D_VERBATIM : '@verbatim' ->pushMode(VERBATIM_MODE), type(DIRECTIVE);
@@ -79,7 +79,9 @@ D_CUSTOM : ('@' NameString {this._input.LA(1) == '(' ||
 
 D_UNKNOWN : '@' NameString;
 
+//TODO move all known directives to fragment?
 //hack to allow completion for directives
+//it doesn't trigger completion
 D_AT : '@' (' ' | '>' | [\n\r])?;
 
 //display
@@ -92,10 +94,10 @@ HTML_X : ('<x-' ComponentTagIdentifier | '<' ComponentTagIdentifier ('::' Compon
 
 CLOSE_TAG : ('</' FullIdentifier '>' [\n\r ]*)+->type(HTML);
 
-HTML : ((' ')+ | [\r\n]+ | ComponentTagIdentifier | SpecialChars | '"' | '\\\'' | '_' | '.' 
+HTML : ((' ')+ | [\r\n]+ | ComponentTagIdentifier | SpecialChars | '"' {this._input.LA(1) != '@'}? | '\\\'' {this._input.LA(1) != '@'}? | '_' | '.' 
 | ',' | '=' | [()-;]+ | '[' | ']' )* '<' {this._input.LA(1) != 'x' && this._input.LA(1) != '?' && this._input.LA(2) != 'p'}? ->pushMode(INSIDE_HTML_TAG),more;
 
-HTML_MISC : ((' ')+ | [\r\n]+ | ('#' | '.')? ComponentTagIdentifier | SpecialChars | '"' 
+HTML_MISC : ((' ')+ | [\r\n]+ | ('#' | '.')? ComponentTagIdentifier | SpecialChars | '"' {this._input.LA(1) != '@'}?
 | ',' | '\\\'' | '_' | '.' | '=' | [()-;]+ | '[' | ']'  )+->type(HTML);
 
 HTML_WS : ((' ')+ | [\r\n]+)->type(HTML);
@@ -162,9 +164,11 @@ EXIT_RPAREN : ')' {this.roundParenBalance == 0}?->type(PHP_EXPRESSION),mode(DEFA
 
 DB_STRING_OPEN : '"' ->more,pushMode(DB_STRING_MODE);
 //hack due to a netbeans php embedding issue when adding or deleting ':' chars
-DOUBLE_NEKODU : ('::' | '?:') {this.consumeExprToken();};
-//no string interpolation for the moment
-//freeze issue
+
+SHORT_IF_EXPR_ERR : ('?:') {this.testForFreezeCombination();};
+
+DOUBLE_NEKODU : ('::') {this.consumeExprToken();};
+
 
 EXPR_STRING_LITERAL : (SINGLE_QUOTED_STRING_FRAGMENT (' ')*) {this.consumeExprToken();};
 
@@ -173,6 +177,8 @@ EXPR_STRING_LITERAL : (SINGLE_QUOTED_STRING_FRAGMENT (' ')*) {this.consumeExprTo
 FREEZE_NEKUDO_GREEDY : ':' {this._input.LA(1) != ':'}?->skip;
 
 FREEZE_NEKUDO : ':'->skip;
+
+PHP_EXPRESSION_COMMENT : ('/*' .*? '*/')->skip;
 
 PHP_EXPRESSION_MORE : . {this.consumeExprToken();};
 

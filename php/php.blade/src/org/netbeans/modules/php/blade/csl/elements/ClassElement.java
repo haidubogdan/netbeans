@@ -16,25 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.php.blade.editor.ui.customizer;
+package org.netbeans.modules.php.blade.csl.elements;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
+import org.netbeans.modules.csl.api.ElementKind;
+import org.openide.filesystems.FileObject;
 
 /**
  *
  * @author bhaidu
  */
-public class UiOptionsUtils {
-    
-    public static String encodeToStrings(Enumeration<String> list) {
-        List<String> result = new ArrayList<>();
-        while (list.hasMoreElements()) {
-            result.add(list.nextElement());
-        }
+public class ClassElement extends NamedElement {
 
-        return String.join("|", result);
+    protected final String namespace;
+
+    public ClassElement(String name, FileObject file) {
+        super(name, file, ElementType.PHP_CLASS);
+        this.namespace = null;
+    }
+
+    public ClassElement(String name, String namespace,
+            FileObject file) {
+        super(name, file, ElementType.PHP_CLASS);
+        this.namespace = namespace;
+    }
+
+    @Override
+    public ElementKind getKind() {
+        return ElementKind.CLASS;
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 }

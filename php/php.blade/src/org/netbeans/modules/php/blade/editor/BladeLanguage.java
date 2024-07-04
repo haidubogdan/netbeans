@@ -38,7 +38,6 @@ import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.DeclarationFinder;
 import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.api.HintsProvider;
-import org.netbeans.modules.csl.api.IndexSearcher;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.api.StructureScanner;
 import org.netbeans.modules.csl.spi.CommentHandler;
@@ -203,6 +202,11 @@ public class BladeLanguage extends DefaultLanguageConfig {
                 || (hasQuote && c == '.') || (c == '_');
     }
 
+//    @deprecated    
+//    @Override
+//    public KeystrokeHandler getKeystrokeHandler() {
+//        return new BladeBracketCompleter();
+//    }
     private static final Language<BladeTokenId> language
             = new BladeLanguageHierarchy() {
 

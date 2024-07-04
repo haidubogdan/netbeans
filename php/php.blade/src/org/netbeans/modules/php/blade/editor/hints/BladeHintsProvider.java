@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.netbeans.modules.php.blade.editor.hints;
 
 import java.util.Collections;
@@ -16,9 +34,8 @@ import org.netbeans.modules.csl.api.Rule.ErrorRule;
 import org.netbeans.modules.csl.api.RuleContext;
 import org.netbeans.modules.csl.api.HintsProvider;
 import org.netbeans.modules.php.blade.editor.directives.CustomDirectives;
-import static org.netbeans.modules.php.blade.editor.indexing.BladeIndexer.INCLUDE_PATH;
 import org.netbeans.modules.php.blade.editor.parser.BladeParserResult;
-import org.netbeans.modules.php.blade.editor.path.PathUtils;
+import org.netbeans.modules.php.blade.editor.path.BladePathUtils;
 import org.netbeans.modules.php.blade.project.ProjectUtils;
 import org.openide.filesystems.FileObject;
 
@@ -60,7 +77,7 @@ public class BladeHintsProvider implements HintsProvider {
                             continue;
                         }
 
-                        if (ct.customDirectiveConfigured(entry.getValue().name)) {
+                        if (ct.customDirectiveConfigured(entry.getValue().identifier)) {
                             continue;
                         }
                         hints.add(new Hint(astRule,
@@ -76,7 +93,7 @@ public class BladeHintsProvider implements HintsProvider {
 
         //validate path config
         for (Map.Entry<String, List<OffsetRange>> entry : parserResult.includeBladeOccurences.entrySet()) {
-            FileObject realFile = PathUtils.findFileObjectForBladeViewPath(parserResult.getFileObject(),
+            FileObject realFile = BladePathUtils.findFileObjectForBladeViewPath(parserResult.getFileObject(),
                     entry.getKey());
             if (realFile != null) {
                 continue;

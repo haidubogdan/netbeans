@@ -1,16 +1,29 @@
 /*
-Licensed to the Apache Software Foundation (ASF)
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.netbeans.modules.php.blade.editor.ui.customizer;
 
 import java.awt.EventQueue;
 import java.io.File;
-import java.util.Enumeration;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.parsing.api.indexing.IndexingManager;
 import org.netbeans.modules.php.blade.editor.indexing.BladeIndex;
-import org.netbeans.modules.php.blade.editor.path.PathUtils;
+import org.netbeans.modules.php.blade.editor.indexing.IndexManager;
 import org.netbeans.modules.php.blade.project.BladeProjectProperties;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.filesystems.*;
@@ -42,10 +55,12 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
     
     private void init(){
         viewsPathList.setModel(bladeProperties.getModelViewsPathList());
+        nonLaravelViewDeclFinder.setSelected(bladeProperties.getNonLaravelDeclFinderFlag());
     }
      
     public void storeData(){
         bladeProperties.storeViewsPaths();
+        bladeProperties.storeNonLaravelDeclFinderFlag(nonLaravelViewDeclFinder.isSelected());
     }
       
     public void addChangeListener(ChangeListener listener) {
@@ -74,6 +89,7 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         reindexViewFolderButton = new javax.swing.JButton();
+        nonLaravelViewDeclFinder = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(BladeViewsFoldersPanel.class, "BladeViewsFoldersPanel.jLabel1.text")); // NOI18N
         jLabel1.setToolTipText(org.openide.util.NbBundle.getMessage(BladeViewsFoldersPanel.class, "BladeViewsFoldersPanel.jLabel1.toolTipText")); // NOI18N
@@ -113,6 +129,8 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
             }
         });
 
+        org.openide.awt.Mnemonics.setLocalizedText(nonLaravelViewDeclFinder, org.openide.util.NbBundle.getMessage(BladeViewsFoldersPanel.class, "BladeViewsFoldersPanel.nonLaravelViewDeclFinder.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -132,7 +150,8 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(reindexViewsButton)
-                            .addComponent(jLabel4))
+                            .addComponent(jLabel4)
+                            .addComponent(nonLaravelViewDeclFinder))
                         .addGap(0, 83, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -156,7 +175,9 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(reindexViewsButton)
-                .addContainerGap(182, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(nonLaravelViewDeclFinder)
+                .addContainerGap(144, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -182,7 +203,7 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_removeViewFolderButtonActionPerformed
 
     private void reindexViewsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reindexViewsButtonActionPerformed
-        BladeIndex.reindexProjectViews(project);
+        IndexManager.reindexProjectViews(project);
     }//GEN-LAST:event_reindexViewsButtonActionPerformed
 
     private void reindexViewFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reindexViewFolderButtonActionPerformed
@@ -190,7 +211,7 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
         if (path != null && path.length() > 0) {
             File viewPath = new File(path);
             if (viewPath.exists()) {
-                BladeIndex.reindexFolder(viewPath, project);
+                IndexManager.reindexFolder(viewPath);
             }
         }
     }//GEN-LAST:event_reindexViewFolderButtonActionPerformed
@@ -201,6 +222,7 @@ public final class BladeViewsFoldersPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JCheckBox nonLaravelViewDeclFinder;
     private javax.swing.JButton reindexViewFolderButton;
     private javax.swing.JButton reindexViewsButton;
     private javax.swing.JButton removeViewFolderButton;

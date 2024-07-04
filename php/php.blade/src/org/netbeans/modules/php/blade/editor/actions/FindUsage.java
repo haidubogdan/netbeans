@@ -21,7 +21,8 @@ package org.netbeans.modules.php.blade.editor.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
-import org.netbeans.modules.php.blade.editor.path.PathUtils;
+import javax.swing.text.JTextComponent;
+import org.netbeans.modules.php.blade.editor.path.BladePathUtils;
 import org.netbeans.modules.php.blade.editor.refactoring.BladePathInfo;
 import org.netbeans.modules.php.blade.editor.refactoring.WhereBladePathUsedRefactoringUIImpl;
 import org.netbeans.modules.refactoring.spi.ui.UI;
@@ -39,7 +40,7 @@ import org.openide.windows.TopComponent;
 @ActionRegistration(displayName = "Template Usages")
 public class FindUsage extends AbstractAction implements ActionListener {
 
-    private final Node node;
+    Node node;
 
     public FindUsage(Node node) {
         this.node = node;
@@ -48,7 +49,7 @@ public class FindUsage extends AbstractAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         FileObject fo = node.getLookup().lookup(FileObject.class);
-        String bladePath = PathUtils.toBladeViewPath(fo);
+        String bladePath = BladePathUtils.toBladeViewPath(fo);
         if (bladePath == null) {
             return;
         }

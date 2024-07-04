@@ -16,25 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.php.blade.editor.ui.customizer;
+package org.netbeans.modules.php.blade.editor.declaration;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
+import org.openide.filesystems.FileObject;
 
 /**
  *
- * @author bhaidu
+ * @author bogdan
  */
-public class UiOptionsUtils {
-    
-    public static String encodeToStrings(Enumeration<String> list) {
-        List<String> result = new ArrayList<>();
-        while (list.hasMoreElements()) {
-            result.add(list.nextElement());
-        }
+public class VitePathDeclarationService {
 
-        return String.join("|", result);
+    private final FileObject sourceFolder;
+
+    public VitePathDeclarationService(FileObject sourceFolder) {
+        this.sourceFolder = sourceFolder;
+    }
+
+    public FileObject findFileObject(String path) {
+        return sourceFolder.getFileObject(path);
     }
 }

@@ -34,5 +34,6 @@ public enum ElementType {
     PHP_CONSTANT,
     LARAVEL_COMPONENT,
     STACK_ID,
-    YIELD_ID
+    YIELD_ID,
+    ASSET_FILE
 }

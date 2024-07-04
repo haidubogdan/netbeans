@@ -36,7 +36,6 @@ import org.openide.filesystems.FileObject;
 
 /**
  * coloring configured in fonts and colors
- * TODO include php parser errors
  *
  * @author bhaidu
  */
@@ -45,7 +44,7 @@ public class BladeSemanticAnalyzer extends SemanticAnalyzer<BladeParserResult> {
     private boolean cancelled;
     public static final EnumSet<ColoringAttributes> UNDEFINED_FIELD_SET = EnumSet.of(ColoringAttributes.UNDEFINED);
     public static final EnumSet<ColoringAttributes> CUSTOM_DIRECTIVE_SET = EnumSet.of(ColoringAttributes.DECLARATION);
-    private Map<OffsetRange, Set<ColoringAttributes>> semanticHighlights = new HashMap();
+    private Map<OffsetRange, Set<ColoringAttributes>> semanticHighlights;
 
     @Override
     public Map<OffsetRange, Set<ColoringAttributes>> getHighlights() {
@@ -89,13 +88,18 @@ public class BladeSemanticAnalyzer extends SemanticAnalyzer<BladeParserResult> {
         Project project = ProjectUtils.getMainOwner(fo);
         CustomDirectives ct = CustomDirectives.getInstance(project);
         for (Map.Entry<OffsetRange, Reference> entry : parserResult.customDirectivesReferences.entrySet()) {
-            if (entry.getValue().type == BladeParserResult.ReferenceType.POSSIBLE_DIRECTIVE && ct.customDirectiveConfigured(entry.getValue().name) ) {
+            if (entry.getValue().type == BladeParserResult.ReferenceType.POSSIBLE_DIRECTIVE && ct.customDirectiveConfigured(entry.getValue().identifier) ) {
                 highlights.put(entry.getKey(), CUSTOM_DIRECTIVE_SET);
                 continue;
             }
             highlights.put(entry.getKey(), UNDEFINED_FIELD_SET);
         }
 
+//        List<? extends org.netbeans.modules.csl.api.Error> errorList = parserResult.getDiagnostics();
+//        for (org.netbeans.modules.csl.api.Error error : errorList) {
+//            OffsetRange range = new OffsetRange(error.getStartPosition(), error.getEndPosition());
+//            highlights.put(range, UNDEFINED_FIELD_SET);
+//        }
         this.semanticHighlights = highlights;
     }
 

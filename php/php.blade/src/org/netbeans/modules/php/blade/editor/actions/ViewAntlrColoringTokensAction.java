@@ -53,7 +53,7 @@ import org.openide.windows.TopComponent;
 @ActionRegistration(displayName = "AntlrColoring Tokens")
 public class ViewAntlrColoringTokensAction extends AbstractAction implements ActionListener {
 
-    private final Node node;
+    Node node;
     private transient JEditorPane viewer;
 
     public ViewAntlrColoringTokensAction(Node node) {

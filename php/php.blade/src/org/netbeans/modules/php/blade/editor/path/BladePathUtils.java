@@ -1,5 +1,20 @@
 /*
-Licensed to the Apache Software Foundation (ASF)
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.netbeans.modules.php.blade.editor.path;
 
@@ -21,10 +36,10 @@ import org.openide.filesystems.FileUtil;
  *
  * @author bogdan
  */
-public class PathUtils {
+public class BladePathUtils {
 
-    private static final String LARAVEL_VIEW_PATH = "resources/views"; //NOI18N
-    private static final String BLADE_EXT = ".blade.php"; //NOI18N
+    public static final String LARAVEL_VIEW_PATH = "resources/views"; //NOI18N
+    public static final String BLADE_EXT = ".blade.php"; //NOI18N
 
     /**
      * first we need to extract the root folder of view after we apply a generic
@@ -225,7 +240,7 @@ public class PathUtils {
             //belongs to the default folder
             String viewFolderPath = defaultLaravelPath.getPath();
             if (filePath.startsWith(viewFolderPath)) {
-                String bladePath = PathUtils.toBladeViewPath(filePath.replace(viewFolderPath, ""));
+                String bladePath = BladePathUtils.toBladeViewPath(filePath.replace(viewFolderPath, ""));
                 //starting slash
                 if (bladePath.startsWith(".")) {
                     bladePath = bladePath.substring(1, bladePath.length());
@@ -254,7 +269,7 @@ public class PathUtils {
                     //it doesn't belong to the folder
                     continue;
                 }
-                return PathUtils.toBladeViewPath(relativePath.substring(1));
+                return BladePathUtils.toBladeViewPath(relativePath.substring(1));
             }
         }
 
@@ -295,5 +310,9 @@ public class PathUtils {
         }
         
         return defaultList;
+    }
+    
+    public static String toBladeToProjectFilePath(String path){
+        return LARAVEL_VIEW_PATH + "/" + viewPathToFilePath(path);
     }
 }

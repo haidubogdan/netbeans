@@ -166,20 +166,24 @@ D_LANG : '@lang'->pushMode(LOOK_FOR_BLADE_PARAMETERS);
 D_USE : '@use'->pushMode(LOOK_FOR_BLADE_PARAMETERS);
 D_INJECT : '@inject'->pushMode(LOOK_FOR_BLADE_PARAMETERS);
 D_PHP_SHORT : '@php' (' ')? {this._input.LA(1) == '('}? ->type(D_PHP),pushMode(LOOK_FOR_PHP_COMPOSED_EXPRESSION);
-D_PHP : '@php' {this._input.LA(1) == ' ' || this._input.LA(1) == '\n'}?->pushMode(BLADE_INLINE_PHP);
+D_PHP : '@php' {this._input.LA(1) == ' ' || this._input.LA(1) == '\r' || this._input.LA(1) == '\n'}?->pushMode(BLADE_INLINE_PHP);
 
 D_VERBATIM : '@verbatim' ->pushMode(VERBATIM_MODE);
 D_ENDVERBATIM : '@endverbatim';
 
 //known plugins
 D_LIVEWIRE : '@livewireStyles' | '@bukStyles' | '@livewireScripts' | '@bukScripts' | '@livewire';
-D_ASSET_BUNDLER : '@vite'->pushMode(LOOK_FOR_PHP_EXPRESSION);
+D_ASSET_BUNDLER : '@vite'->pushMode(LOOK_FOR_PHP_COMPOSED_EXPRESSION);
+
+D_MISC : '@viteReactRefresh';
 
 //we will decide that a custom directive has expression to avoid email matching
 D_CUSTOM : ('@' NameString {this._input.LA(1) == '(' || 
         (this._input.LA(1) == ' ' && this._input.LA(2) == '(')}? ) ->pushMode(LOOK_FOR_BLADE_PARAMETERS);
 
-D_UNKNOWN : '@' NameString;
+D_UNKNOWN_ATTR_ENC : '@' NameString {this._input.LA(1) == '"'}?;
+D_UNKNOWN : '@' NameString {this._input.LA(1) != '"'}?;
+
 //display
 CONTENT_TAG_OPEN : '{{' ->pushMode(INSIDE_REGULAR_ECHO);
 RAW_TAG_OPEN : '{!!' ->pushMode(INSIDE_RAW_ECHO);
@@ -189,6 +193,7 @@ AT : '@'->type(HTML);
 RAW_TAG_START : '{!'->type(HTML);
 
 PHP_INLINE_START : ('<?php' | '<?=')->pushMode(INSIDE_PHP_INLINE);
+
 
 
 HTML_COMPONENT_PREFIX : '<x-' (CompomentIdentifier |  CompomentIdentifier ('::' CompomentIdentifier)+)? {this.compomentTagOpen = true;};
@@ -286,8 +291,8 @@ L_COMPOSED_EXPR_OTHER : . ->type(HTML), popMode;
 //{{}}, @if, @foreach
 mode INSIDE_PHP_COMPOSED_EXPRESSION;
 
-EXPR_SQ_LPAREN : '[' {this.squareParenBalance++;}->type(PHP_EXPRESSION);
-EXPR_SQ_RPAREN : ']' {this.squareParenBalance--;}->type(PHP_EXPRESSION);
+EXPR_SQ_LPAREN : '[' {this.squareParenBalance++;}->type(BL_SQ_LPAREN);
+EXPR_SQ_RPAREN : ']' {this.squareParenBalance--;}->type(BL_SQ_RPAREN);
 
 EXPR_CURLY_LPAREN : '{' {this.curlyParenBalance++;}->type(PHP_EXPRESSION);
 EXPR_CURLY_RPAREN : '}' {this.curlyParenBalance--;}->type(PHP_EXPRESSION);
@@ -298,6 +303,7 @@ EXPR_STRING : DOUBLE_QUOTED_STRING_FRAGMENT | SINGLE_QUOTED_STRING_FRAGMENT;
 
 COMPOSED_EXPR_PHP_VAR : PhpVariable->type(PHP_VARIABLE);
 COMPOSED_PHP_KEYWORD : PhpKeyword->type(PHP_KEYWORD);
+COMPOSED_PHP_NAMESPACE_PATH : ('\\'? (NameString '\\')+)->type(PHP_NAMESPACE_PATH);
 COMPOSED_EXPR_PHP_IDENTIFIER : NameString->type(PHP_IDENTIFIER);
 COMPOSED_EXPR_STATIC_ACCESS : '::'->type(PHP_STATIC_ACCESS);
 

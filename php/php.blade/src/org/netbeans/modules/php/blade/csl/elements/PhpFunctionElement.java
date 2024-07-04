@@ -29,11 +29,22 @@ import org.openide.filesystems.FileObject;
 public class PhpFunctionElement extends NamedElement {
 
     public final List<String> params;
+    public final String namespace;
 
+    public PhpFunctionElement(String name, FileObject file,
+            ElementType type,
+            String namespace,
+            List<String> params) {
+        super(name, file, type);
+        this.namespace = namespace;
+        this.params = params;
+    }
+    
     public PhpFunctionElement(String name, FileObject file,
             ElementType type,
             List<String> params) {
         super(name, file, type);
+        this.namespace = null;
         this.params = params;
     }
 
@@ -52,5 +63,7 @@ public class PhpFunctionElement extends NamedElement {
     public List<String> getParams() {
         return params;
     }
+    
+    
 
 }

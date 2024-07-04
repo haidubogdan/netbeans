@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.netbeans.modules.php.blade.editor.ui.customizer;
 
 import org.netbeans.api.project.Project;
@@ -11,6 +29,7 @@ public class BladeGeneralSettings extends javax.swing.JPanel {
 
     /**
      * Creates new form BladeGeneral
+     * @param project
      */
     public BladeGeneralSettings(Project project) {
         initComponents();
@@ -20,6 +39,7 @@ public class BladeGeneralSettings extends javax.swing.JPanel {
     private void init() {
         this.formatting_enabled.setSelected(GeneralPreferencesUtils.isFormattingEnabled());
         this.indentation_enabled.setSelected(GeneralPreferencesUtils.isIndentationEnabled());
+        this.auto_tag_completion.setSelected(GeneralPreferencesUtils.isAutoTagCompletionEnabled());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -33,12 +53,18 @@ public class BladeGeneralSettings extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         formatting_enabled = new javax.swing.JCheckBox();
         indentation_enabled = new javax.swing.JCheckBox();
+        auto_tag_completion = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(BladeGeneralSettings.class, "BladeGeneralSettings.jLabel1.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(formatting_enabled, org.openide.util.NbBundle.getMessage(BladeGeneralSettings.class, "BladeGeneralSettings.formatting_enabled.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(indentation_enabled, org.openide.util.NbBundle.getMessage(BladeGeneralSettings.class, "BladeGeneralSettings.indentation_enabled.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(auto_tag_completion, org.openide.util.NbBundle.getMessage(BladeGeneralSettings.class, "BladeGeneralSettings.auto_tag_completion.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(BladeGeneralSettings.class, "BladeGeneralSettings.jLabel2.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -47,10 +73,14 @@ public class BladeGeneralSettings extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel2))
+                    .addComponent(auto_tag_completion)
                     .addComponent(formatting_enabled)
                     .addComponent(jLabel1)
                     .addComponent(indentation_enabled))
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addContainerGap(119, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -60,20 +90,27 @@ public class BladeGeneralSettings extends javax.swing.JPanel {
                 .addComponent(formatting_enabled)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(indentation_enabled)
-                .addGap(0, 229, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(auto_tag_completion)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addGap(0, 175, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox auto_tag_completion;
     private javax.swing.JCheckBox formatting_enabled;
     private javax.swing.JCheckBox indentation_enabled;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 
     public void storeData() {
         ModulePreferences.setPrefBoolean(GeneralPreferencesUtils.ENABLE_FORMATTING, this.formatting_enabled.isSelected());
         ModulePreferences.setPrefBoolean(GeneralPreferencesUtils.ENABLE_INDENTATION, this.indentation_enabled.isSelected());
+        ModulePreferences.setPrefBoolean(GeneralPreferencesUtils.ENABLE_AUTO_TAG_COMPLETION, this.auto_tag_completion.isSelected());
     }
 
 }

@@ -41,15 +41,14 @@ import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
 /**
- * Debugging lexer token action
- * 
+ *
  * @author bhaidu
  */
 @ActionID(id = "org.netbeans.modules.php.blade.editor.actions.AntlrDebug", category = "System")
 @ActionRegistration(displayName = "Antlr Debug", lazy=false)
 public class AntlrDebugAction extends AbstractAction implements ContextAwareAction, Presenter.Popup {
 
-    private Node node;
+    Node node;
 
     public void setNode(Node node){
         this.node = node;
@@ -113,7 +112,9 @@ public class AntlrDebugAction extends AbstractAction implements ContextAwareActi
             arr.add(new ViewAntlrColoringTokensAction(node));
             arr.add(new ViewAntlrFormatterTokensAction(node));
         }
-
+//        List<? extends Action> actions = Utilities.actionsForPath("Actions/AntlrDebugActions");
+//        arr.addAll(actions);
+        //add the actions 
         return arr;
     }
 

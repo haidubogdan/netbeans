@@ -318,6 +318,16 @@ public interface BladeAntlrParserListener extends ParseTreeListener {
 	 */
 	void exitStack(BladeAntlrParser.StackContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link BladeAntlrParser#asset_bundler}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsset_bundler(BladeAntlrParser.Asset_bundlerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BladeAntlrParser#asset_bundler}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsset_bundler(BladeAntlrParser.Asset_bundlerContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link BladeAntlrParser#inject}.
 	 * @param ctx the parse tree
 	 */
@@ -508,16 +518,6 @@ public interface BladeAntlrParserListener extends ParseTreeListener {
 	 */
 	void exitClass_name_reference(BladeAntlrParser.Class_name_referenceContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BladeAntlrParser#class_identifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterClass_identifier(BladeAntlrParser.Class_identifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BladeAntlrParser#class_identifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitClass_identifier(BladeAntlrParser.Class_identifierContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link BladeAntlrParser#namespacePath}.
 	 * @param ctx the parse tree
 	 */
@@ -527,16 +527,6 @@ public interface BladeAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNamespacePath(BladeAntlrParser.NamespacePathContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link BladeAntlrParser#method_call}.
-	 * @param ctx the parse tree
-	 */
-	void enterMethod_call(BladeAntlrParser.Method_callContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BladeAntlrParser#method_call}.
-	 * @param ctx the parse tree
-	 */
-	void exitMethod_call(BladeAntlrParser.Method_callContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link BladeAntlrParser#function_call}.
 	 * @param ctx the parse tree

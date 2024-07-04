@@ -53,7 +53,7 @@ import org.openide.windows.TopComponent;
 @ActionRegistration(displayName = "AntlrLexer Tokens")
 public class ViewAntlrLexerTokensAction extends AbstractAction implements ActionListener {
 
-    private Node node;
+    Node node;
     private transient JEditorPane viewer;
 
     public ViewAntlrLexerTokensAction(Node node) {

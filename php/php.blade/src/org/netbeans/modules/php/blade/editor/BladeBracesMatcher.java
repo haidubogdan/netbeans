@@ -44,8 +44,7 @@ import org.netbeans.spi.editor.bracesmatching.MatcherContext;
 public class BladeBracesMatcher implements BracesMatcher {
 
     public enum BraceDirectionType {
-        END_TO_START, START_TO_END, CUSTOM_START_TO_END, CURLY_END_TO_START, 
-        CURLY_START_TO_END, STOP
+        END_TO_START, START_TO_END, CUSTOM_START_TO_END, CURLY_END_TO_START, CURLY_START_TO_END, STOP
     }
     private final MatcherContext context;
     private Token originToken;
