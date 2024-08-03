@@ -16,23 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.php.blade.syntax.antlr4;
+package org.netbeans.modules.php.blade.syntax.antlr4.v10;
 
-import org.junit.Test;
+import org.netbeans.modules.php.blade.editor.BladeGoldenFileTestBase;
 
 /**
  *
- * @author bhaidu
+ * @author bogdan
  */
-public class BladeAntrlColoringLexerTest extends BladeAntlrColoringLexerTestBase {
+public abstract class AntlrLexerTestBase extends BladeGoldenFileTestBase {
 
-    public BladeAntrlColoringLexerTest(String testName) {
+    public AntlrLexerTestBase(String testName) {
         super(testName);
     }
 
-    @Test
-    public void test_smoke_content_tag() throws Exception {
-        performTest("coloring_lexer/smoke/content_tag.blade.php");
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        clearWorkDir();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
     }
 
 }

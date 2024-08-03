@@ -16,19 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.php.blade.syntax.antlr4;
+package org.netbeans.modules.php.blade.editor.parser;
 
-import org.junit.Test;
+import org.netbeans.modules.php.blade.editor.BladeTestBase;
 
 /**
  *
- * @author bhaidu
+ * @author bogdan
  */
-public class BladeAntrlLexerTest extends BladeAntlrLexerTestBase {
+public class BladeParserErrorTest extends BladeTestBase {
 
-    public BladeAntrlLexerTest(String testName) {
+    public BladeParserErrorTest(String testName) {
         super(testName);
     }
 
-    
+    public void testUnopendSetError_01() throws Exception {
+        checkErrors("testfiles/parser/unopend/unopend_set_error_01.blade.php");
+    }
 }

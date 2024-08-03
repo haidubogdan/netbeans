@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.php.blade.syntax.antlr4;
+package org.netbeans.modules.php.blade.editor;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,11 +31,15 @@ import org.netbeans.modules.php.blade.syntax.antlr4.v10.BladeAntlrLexer;
  *
  * @author bhaidu
  */
-public class BladeUtils {
+public final class BladeUtils {
+
+    private BladeUtils() {
+
+    }
 
     public static String getFileContent(File file) throws Exception {
         StringBuffer sb = new StringBuffer();
-        String lineSep = "\n";//NOI18N
+        String lineSep = "\n";
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
         String line = br.readLine();
         while (line != null) {
@@ -69,5 +73,13 @@ public class BladeUtils {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         tokens.fill();
         return tokens;
+    }
+
+    public static String replaceLinesAndTabs(String input) {
+        String escapedString = input;
+        escapedString = escapedString.replaceAll("\n", "\\\\n"); //NOI18N
+        escapedString = escapedString.replaceAll("\r", "\\\\r"); //NOI18N
+        escapedString = escapedString.replaceAll("\t", "\\\\t"); //NOI18N
+        return escapedString;
     }
 }

@@ -16,18 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.php.blade.syntax.antlr4;
+package org.netbeans.modules.php.blade.editor.completion;
 
-import org.junit.Test;
+import org.netbeans.modules.php.blade.editor.BladeTestBase;
 
 /**
  *
- * @author bhaidu
+ * @author bogdan
  */
-public class BladeAntrlParserTest extends BladeAntlrParserTestBase {
+public class BladeCompletionTest extends BladeTestBase {
 
-    public BladeAntrlParserTest(String testName) {
+    public BladeCompletionTest(String testName) {
         super(testName);
     }
-
+    
+    public void testCompletion_01() throws Exception {
+        checkCompletion("testfiles/completion/testCompletion_01.blade.php", "@^", false);
+    }
 }
