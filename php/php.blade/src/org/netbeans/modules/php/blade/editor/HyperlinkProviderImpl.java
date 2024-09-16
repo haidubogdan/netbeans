@@ -49,7 +49,7 @@ import org.openide.util.Exceptions;
  *
  * @author bhaidu
  */
-@MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = HyperlinkProviderExt.class)
+//@MimeRegistration(mimeType = FileUtils.PHP_MIME_TYPE, service = HyperlinkProviderExt.class)
 public class HyperlinkProviderImpl implements HyperlinkProviderExt {
 
     private String methodName = ""; // NOI18N

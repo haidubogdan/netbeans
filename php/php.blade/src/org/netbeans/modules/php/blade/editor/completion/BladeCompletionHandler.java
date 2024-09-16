@@ -18,16 +18,20 @@
  */
 package org.netbeans.modules.php.blade.editor.completion;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
 import org.netbeans.editor.BaseDocument;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.csl.api.CodeCompletionContext;
@@ -46,19 +50,28 @@ import org.netbeans.modules.php.blade.csl.elements.ElementType;
 import org.netbeans.modules.php.blade.csl.elements.NamedElement;
 import org.netbeans.modules.php.blade.csl.elements.PhpFunctionElement;
 import org.netbeans.modules.php.blade.csl.elements.TagElement;
+import org.netbeans.modules.php.blade.editor.EditorStringUtils;
 import org.netbeans.modules.php.blade.editor.completion.BladeCompletionProposal.CompletionRequest;
 import org.netbeans.modules.php.blade.editor.directives.CustomDirectives;
+import org.netbeans.modules.php.blade.editor.lexer.BladeLexerUtils;
 import org.netbeans.modules.php.blade.editor.parser.BladeParserResult;
+import org.netbeans.modules.php.blade.editor.path.BladePathUtils;
 import org.netbeans.modules.php.blade.editor.preferences.ModulePreferences;
 import org.netbeans.modules.php.blade.project.ProjectUtils;
 import org.netbeans.modules.php.blade.syntax.BladeTags;
 import org.netbeans.modules.php.blade.syntax.BladeVariables;
 import org.netbeans.modules.php.blade.syntax.annotation.Directive;
 import org.netbeans.modules.php.blade.syntax.annotation.Tag;
+import org.netbeans.modules.php.blade.syntax.antlr4.v10.BladeAntlrLexer;
 import org.netbeans.modules.php.blade.syntax.antlr4.v10.BladeAntlrUtils;
 import static org.netbeans.modules.php.blade.syntax.antlr4.v10.BladeAntlrLexer.*;
 import static org.netbeans.modules.php.blade.syntax.antlr4.v10.BladeAntlrParser.CONTENT_TAG_OPEN;
+import org.netbeans.spi.editor.completion.CompletionItem;
+import org.netbeans.spi.editor.completion.CompletionResultSet;
+import org.netbeans.spi.editor.completion.support.CompletionUtilities;
+import org.netbeans.spi.lexer.antlr4.AntlrTokenSequence;
 import org.openide.filesystems.FileObject;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -113,9 +126,14 @@ public class BladeCompletionHandler implements CodeCompletionHandler2 {
                 return CodeCompletionResult.NONE;
             }
             switch (currentToken.getType()) {
-                case PHP_IDENTIFIER, PHP_NAMESPACE_PATH -> PhpCodeCompletionService.completePhpCode(completionProposals, parserResult, offset, prefix);
-                case PHP_EXPRESSION -> completePhpSnippet(completionProposals, offset, currentToken);
-                case PHP_VARIABLE -> completeScopedVariables(completionProposals, completionContext, parserResult, currentToken);
+                case PHP_IDENTIFIER, PHP_NAMESPACE_PATH ->
+                    PhpCodeCompletionService.completePhpCode(completionProposals, parserResult, offset, prefix);
+                case PHP_EXPRESSION ->
+                    completePhpSnippet(completionProposals, offset, currentToken);
+                case PHP_VARIABLE ->
+                    completeScopedVariables(completionProposals, completionContext, parserResult, currentToken);
+                case BL_PARAM_STRING ->
+                    completeDirectiveIdentifier(completionProposals, completionContext, fo, currentToken);
                 case CONTENT_TAG_OPEN, RAW_TAG_OPEN -> {
                     //{{ | {!!
                     if (!ModulePreferences.isAutoTagCompletionEnabled()) {
@@ -130,12 +148,11 @@ public class BladeCompletionHandler implements CodeCompletionHandler2 {
         }
 
         long time = System.currentTimeMillis() - startTime;
-        if (time > 2000){
+        if (time > 2000) {
             LOGGER.info(String.format("complete() with results took %d ms", time)); // NOI18N
         }
         return new DefaultCompletionResult(completionProposals, false);
     }
-
 
     /**
      * proxy completion using the original php code completion service
@@ -167,7 +184,7 @@ public class BladeCompletionHandler implements CodeCompletionHandler2 {
             request.carretOffset = completionContext.getCaretOffset();
             request.prefix = variablePrefix;
             if (BladeVariables.LOOP_VAR.startsWith(variablePrefix)) {
-                String variableName = BladeVariables.LOOP_VAR; 
+                String variableName = BladeVariables.LOOP_VAR;
                 NamedElement variableElement = new NamedElement(variableName, fo, ElementType.VARIABLE);
                 completionProposals.add(new BladeCompletionProposal.BladeVariableItem(variableElement, request, variableName));
             }
@@ -248,6 +265,109 @@ public class BladeCompletionHandler implements CodeCompletionHandler2 {
         });
     }
 
+    private void completeDirectiveIdentifier(final List<CompletionProposal> completionProposals,
+            CodeCompletionContext completionContext, FileObject fo, Token currentToken) {
+        String pathName = EditorStringUtils.stripSurroundingQuotes(currentToken.getText());
+
+        AntlrTokenSequence tokens;
+        try {
+            String docText = fo.asText();
+            tokens = new AntlrTokenSequence(new BladeAntlrLexer(CharStreams.fromString(docText)));
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return;
+        }
+
+        tokens.seekTo(currentToken.getStopIndex());
+        List<Integer> tokensStop = Arrays.asList(new Integer[]{HTML, BL_COMMA, BL_PARAM_CONCAT_OPERATOR});
+        List<Integer> tokensMatch = BladeLexerUtils.TOKENS_WITH_IDENTIFIABLE_PARAM;
+        Token directiveToken = BladeAntlrUtils.findBackward(tokens, tokensMatch, tokensStop);
+        if (directiveToken == null) {
+            return;
+        }
+
+        int caretOffset = completionContext.getCaretOffset() + 2; //quote  & braket
+        String prefix = currentToken.getText();
+
+        switch (directiveToken.getType()) {
+            case D_EXTENDS, D_INCLUDE, D_INCLUDE_IF, D_INCLUDE_WHEN, D_INCLUDE_UNLESS, D_EACH -> {
+                int lastDotPos;
+
+                if (pathName.endsWith(".")) {
+                    lastDotPos = pathName.length();
+                } else {
+                    lastDotPos = pathName.lastIndexOf(".");
+                }
+                int pathOffset;
+
+                if (lastDotPos > 0) {
+                    int dotFix = pathName.endsWith(".") ? 0 : 1;
+                    pathOffset = caretOffset - pathName.length() + lastDotPos + dotFix;
+                } else {
+                    pathOffset = caretOffset - pathName.length();
+                }
+                CompletionRequest request = completionRequest(prefix, caretOffset);
+                List<FileObject> childrenFiles = BladePathUtils.getParentChildrenFromPrefixPath(fo, pathName);
+                for (FileObject file : childrenFiles) {
+                    String pathFileName = file.getName();
+                    if (!file.isFolder()) {
+                        pathFileName = pathFileName.replace(".blade", "");
+                    }
+                    completeBladePath(completionProposals, request, pathFileName, file);
+                }
+                return;
+            }
+//            case D_SECTION, D_HAS_SECTION ->
+//                completeYieldIdFromIndex(completionProposals, pathName, fo, caretOffset);
+//            case D_PUSH, D_PUSH_IF, D_PREPEND ->
+//                completeStackIdFromIndex(completionProposals, pathName, fo, caretOffset);
+        }
+    }
+
+    private void completeBladePath(final List<CompletionProposal> completionProposals,
+            CompletionRequest request, String bladePath, FileObject originFile) {
+
+        String filePath = originFile.getPath();
+        NamedElement directiveEl = new NamedElement(bladePath, originFile);
+        completionProposals.add(
+                new BladeCompletionProposal.BladePath(
+                        directiveEl,
+                        request,
+                        bladePath,
+                        originFile.isFolder()
+                ));
+    }
+//
+//    private void addYieldIdCompletionItem(final List<CompletionProposal> completionProposals,
+//            String identifier, FileObject fo,
+//            int caretOffset) {
+//
+//        String filePath = fo.getPath();
+//        int viewsPos = filePath.indexOf("/views/"); // NOI18N
+//
+//        CompletionItem item = CompletionUtilities.newCompletionItemBuilder(identifier)
+//                .iconResource(getReferenceIcon(BladePhpCompletionProvider.CompletionType.YIELD_ID))
+//                .startOffset(caretOffset)
+//                .leftHtmlText(identifier)
+//                .rightHtmlText(filePath.substring(viewsPos, filePath.length()))
+//                .sortPriority(1)
+//                .build();
+//        resultSet.addItem(item);
+//    }
+//
+//    private void addAssetPathCompletionItem(final List<CompletionProposal> completionProposals,
+//            String preview, String info,
+//            int caretOffset, BladePhpCompletionProvider.CompletionType type) {
+//        CompletionItem item = CompletionUtilities.newCompletionItemBuilder(preview)
+//                .iconResource(getReferenceIcon(type))
+//                .startOffset(caretOffset)
+//                .leftHtmlText(preview)
+//                .rightHtmlText(info)
+//                .sortPriority(1)
+//                .build();
+//        resultSet.addItem(item);
+//    }
+
     @Override
     public String document(ParserResult pr, ElementHandle eh) {
         return null;
@@ -276,8 +396,10 @@ public class BladeCompletionHandler implements CodeCompletionHandler2 {
         char lastChar = typedText.charAt(typedText.length() - 1);
 
         return switch (lastChar) {
-            case '\n' -> CodeCompletionHandler.QueryType.STOP;
-            default -> CodeCompletionHandler.QueryType.ALL_COMPLETION;
+            case '\n' ->
+                CodeCompletionHandler.QueryType.STOP;
+            default ->
+                CodeCompletionHandler.QueryType.ALL_COMPLETION;
         };
     }
 

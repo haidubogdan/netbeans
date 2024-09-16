@@ -37,6 +37,7 @@ import org.netbeans.modules.php.blade.editor.EditorStringUtils;
 import org.netbeans.modules.php.blade.editor.ResourceUtilities;
 import org.netbeans.modules.php.blade.editor.indexing.BladeIndex;
 import org.netbeans.modules.php.blade.editor.indexing.BladeIndex.IndexedReferenceId;
+import org.netbeans.modules.php.blade.editor.lexer.BladeLexerUtils;
 import org.netbeans.modules.php.blade.editor.path.BladePathUtils;
 import org.netbeans.modules.php.blade.project.ProjectUtils;
 import org.netbeans.modules.php.blade.syntax.antlr4.v10.BladeAntlrLexer;
@@ -175,11 +176,7 @@ public class BladePhpCompletionProvider implements CompletionProvider {
         switch (currentToken.getType()) {
             case BL_PARAM_STRING: {
                 String pathName = EditorStringUtils.stripSurroundingQuotes(currentToken.getText());
-                List<Integer> tokensMatch = Arrays.asList(new Integer[]{
-                    D_EXTENDS, D_INCLUDE, D_SECTION, D_HAS_SECTION,
-                    D_INCLUDE_IF, D_INCLUDE_WHEN, D_INCLUDE_UNLESS, D_INCLUDE_FIRST,
-                    D_EACH, D_PUSH, D_PUSH_IF, D_PREPEND
-                });
+                List<Integer> tokensMatch = BladeLexerUtils.TOKENS_WITH_IDENTIFIABLE_PARAM;
 
                 List<Integer> tokensStop = Arrays.asList(new Integer[]{HTML, BL_COMMA, BL_PARAM_CONCAT_OPERATOR});
                 Token directiveToken = BladeAntlrUtils.findBackward(tokens, tokensMatch, tokensStop);

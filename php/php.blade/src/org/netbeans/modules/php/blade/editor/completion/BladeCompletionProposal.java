@@ -43,19 +43,11 @@ public class BladeCompletionProposal implements CompletionProposal {
     final CompletionRequest request;
     protected final ElementHandle element;
     final String previewValue;
-    protected Directive directive;
 
     public BladeCompletionProposal(ElementHandle element, CompletionRequest request, String previewValue) {
         this.element = element;
         this.request = request;
         this.previewValue = previewValue;
-    }
-
-    public BladeCompletionProposal(ElementHandle element, CompletionRequest request, Directive directive) {
-        this.element = element;
-        this.request = request;
-        this.previewValue = directive.name();
-        this.directive = directive;
     }
 
     @Override
@@ -191,7 +183,7 @@ public class BladeCompletionProposal implements CompletionProposal {
     public static class ClassItem extends PhpElementItem {
 
         protected String namespace = null;
-        
+
         public ClassItem(ClassElement element, CompletionRequest request, String previewValue) {
             super(element, request, previewValue);
             this.namespace = element.getNamespace();
@@ -342,12 +334,11 @@ public class BladeCompletionProposal implements CompletionProposal {
 
     public static class DirectiveProposal extends BladeCompletionProposal {
 
-        public DirectiveProposal(ElementHandle element, CompletionRequest request, Directive directive) {
-            super(element, request, directive);
-        }
+        private final Directive directive;
 
-        public DirectiveProposal(ElementHandle element, CompletionRequest request, String previewValue) {
-            super(element, request, previewValue);
+        public DirectiveProposal(ElementHandle element, CompletionRequest request, Directive directive) {
+            super(element, request, directive.name());
+            this.directive = directive;
         }
 
         @Override
@@ -368,9 +359,13 @@ public class BladeCompletionProposal implements CompletionProposal {
             return this.directive.description();
         }
 
+        public Directive getDirective() {
+            return directive;
+        }
+
     }
 
-    public static class CustomDirective extends DirectiveProposal {
+    public static class CustomDirective extends BladeCompletionProposal {
 
         public CustomDirective(ElementHandle element, CompletionRequest request, String preview) {
             super(element, request, preview);
@@ -384,6 +379,11 @@ public class BladeCompletionProposal implements CompletionProposal {
             return "custom directive";
         }
 
+        @Override
+        public ImageIcon getIcon() {
+            String path = ResourceUtilities.DIRECTIVE_ICON;
+            return ImageUtilities.loadImageIcon(path, false);
+        }
     }
 
     public static class InlineDirective extends DirectiveProposal {
@@ -426,12 +426,12 @@ public class BladeCompletionProposal implements CompletionProposal {
 
         @Override
         public String getLhsHtml(HtmlFormatter formatter) {
-            return getName() + " ... " + directive.endtag();
+            return getName() + " ... " + getDirective().endtag();
         }
 
         @Override
         public String getCustomInsertTemplate() {
-            return getName() + "\n    ${selection} ${cursor}\n" + directive.endtag();
+            return getName() + "\n    ${selection} ${cursor}\n" + getDirective().endtag();
         }
 
     }
@@ -444,25 +444,51 @@ public class BladeCompletionProposal implements CompletionProposal {
 
         @Override
         public String getLhsHtml(HtmlFormatter formatter) {
-            return getName() + "() ... " + directive.endtag();
+            return getName() + "() ... " + getDirective().endtag();
         }
 
         @Override
         public String getCustomInsertTemplate() {
-            String template = getName() + "($$${arg})\n    ${cursor}\n" + directive.endtag();
+            String template = getName() + "($$${arg})\n    ${cursor}\n" + getDirective().endtag();
 
             switch (getName()) {
                 case "@foreach": // NOI18N
-                    template = getName() + "($$${array} as $$${item})\n    ${selection}${cursor}\n" + directive.endtag();
+                    template = getName() + "($$${array} as $$${item})\n    ${selection}${cursor}\n" + getDirective().endtag();
                     break;
                 case "@section": // NOI18N
                 case "@session": // NOI18N
-                    template = getName() + "('${id}')\n    ${cursor}\n" + directive.endtag();
+                    template = getName() + "('${id}')\n    ${cursor}\n" + getDirective().endtag();
                     break;
             }
 
             return template;
         }
 
+    }
+
+    public static class BladePath extends BladeCompletionProposal {
+
+        private final boolean isFolder;
+
+        public BladePath(ElementHandle element, CompletionRequest request,
+                String preview, boolean isFolder) {
+            super(element, request, preview);
+            this.isFolder = isFolder;
+        }
+
+        @Override
+        public ImageIcon getIcon() {
+            String path = ResourceUtilities.BLADE_VIEW;
+            if (isFolder) {
+                path = ResourceUtilities.FOLDER;
+            }
+            return ImageUtilities.loadImageIcon(path, false);
+        }
+
+        @Override
+        public String getRhsHtml(HtmlFormatter formatter) {
+            int viewsPos = previewValue.indexOf("/views/"); // NOI18N
+            return viewsPos > 0 ? previewValue.substring(viewsPos, previewValue.length()) : previewValue;
+        }
     }
 }

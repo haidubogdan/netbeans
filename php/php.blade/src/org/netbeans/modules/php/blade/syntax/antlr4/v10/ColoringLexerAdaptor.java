@@ -29,12 +29,7 @@ import org.antlr.v4.runtime.Token;
 public abstract class ColoringLexerAdaptor extends Lexer {
 
     private int _currentRuleType = Token.INVALID_TYPE;
-    public int roundParenBalance = 0;
-    public int squareParenBalance = 0;
-    public int curlyParenBalance = 0;
-    public int exitIfModePosition = 0;
-    public int phpExpressionOffset = -1;
-    public boolean hasPhpExprContent = false;
+    private int roundParenBalance = 0;
 
     public ColoringLexerAdaptor(CharStream input) {
         super(input);
@@ -81,28 +76,38 @@ public abstract class ColoringLexerAdaptor extends Lexer {
         return true;
     }
 
-    public void increaseRoundParenBalance() {
+    public void lookForDirectiveArg() {
+        this.setType(BladeAntlrColoringLexer.DIRECTIVE);
+        if (this._input.LA(1) == '(') {
+            this.roundParenBalance = 0;
+            this.mode(BladeAntlrColoringLexer.INSIDE_PHP_EXPRESSION);
+        }
+    }
+
+    public void lookForCustomDirectiveArg() {
+        if (this._input.LA(1) == '(') {
+            this.setType(BladeAntlrColoringLexer.D_CUSTOM);
+            this.roundParenBalance = 0;
+            this.mode(BladeAntlrColoringLexer.INSIDE_PHP_EXPRESSION);
+        } else {
+            this.setType(BladeAntlrColoringLexer.D_UNKNOWN);
+        }
+    }
+
+    public void handleOpenRoundParen() {
+        this.setType(BladeAntlrColoringLexer.PHP_TOKEN);
         this.roundParenBalance++;
     }
 
-    public void decreaseRoundParenBalance() {
+    public void handleEndRoundParen() {
+        this.setType(BladeAntlrColoringLexer.PHP_TOKEN);
         this.roundParenBalance--;
-    }
-
-    public boolean endsWith(char ch1, char ch2) {
-        return this._input.LA(1) == ch1 && this._input.LA(2) == ch2;
-    }
-
-    public boolean endsWith(char ch1, char ch2, char ch3) {
-        return this._input.LA(1) == ch1
-                && this._input.LA(2) == ch2
-                && this._input.LA(3) == ch3;
-    }
-
-    public boolean hasNoBladeParamOpenBracket() {
-        return this.roundParenBalance > 0
-                && this.squareParenBalance == 0
-                && this.curlyParenBalance == 0;
+        if (this.roundParenBalance < 0) {
+            this.roundParenBalance = 0;
+        }
+        if (this.roundParenBalance == 0) {
+            this.mode(DEFAULT_MODE);
+        }
     }
 
     //blade coloring lexer
@@ -122,32 +127,14 @@ public abstract class ColoringLexerAdaptor extends Lexer {
             this.more();
         }
     }
-    
-    public void consumeExprToken(){
-        if (this._input.LA(1) == ':' && this._input.LA(2) != ':'){
+
+    public void consumeExprToken() {
+        if (this._input.LA(1) == ':' && this._input.LA(2) != ':') {
             this.setType(BladeAntlrColoringLexer.PHP_EXPRESSION);
         } else {
             this.more();
         }
     }
-    
-    public void testForFreezeCombination(){
-        if (this.roundParenBalance <= 1 && 
-                (this._input.LA(1) == ')' 
-                ||  this._input.LA(1) == ']')){
-            this.setType(BladeAntlrColoringLexer.ERROR);
-        } else {
-            this.consumeExprToken();
-        }
-    }
-   
-//    to continue when the sepparation of PHP_EXPRESSION can be implemented    
-//    public void setPhpExpressionOffset(){
-//        this.phpExpressionOffset = this.getCharIndex();
-//    }
-//    
-//    public boolean isFirstElement() {
-//        return this._tokenStartCharIndex <= this.phpExpressionOffset;
-//    }
+
 }
 

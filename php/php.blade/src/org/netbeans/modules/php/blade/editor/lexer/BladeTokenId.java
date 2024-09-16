@@ -49,6 +49,13 @@ public enum BladeTokenId implements TokenId {
     PHP_BLADE_ECHO_EXPR("blade_php"),
     PHP_BLADE_INLINE_CODE("blade_php"),
     PHP_INLINE("php"),
+    PHP_BLADE_KEYWORD("php_keyword"),
+    PHP_BLADE_TOKEN("ph_operator"),
+    PHP_BLADE_STRING("php_string"),
+    PHP_BLADE_VARIABLE("php_variable"),
+    PHP_BLADE_NUMBER("php_number"),
+    PHP_BLADE_COMMENT("php_comment"),
+    PHP_BLADE_WS("whitespace"),
     OTHER("error");
     private final String category;
 

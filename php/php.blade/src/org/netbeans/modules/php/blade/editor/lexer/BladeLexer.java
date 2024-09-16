@@ -41,10 +41,8 @@ public class BladeLexer extends AbstractAntlrLexerBridge<BladeAntlrColoringLexer
 
     @Override
     protected Token<BladeTokenId> mapToken(org.antlr.v4.runtime.Token antlrToken) {
-        //debug text
-        //String text = antlrToken.getText();
         int type = antlrToken.getType();
-        //System.out.println(text + " " + type);
+
         switch (type) {
             case BladeAntlrColoringLexer.BLADE_COMMENT_START:
                 return token(BLADE_COMMENT_START);
@@ -62,6 +60,20 @@ public class BladeLexer extends AbstractAntlrLexerBridge<BladeAntlrColoringLexer
                 return token(PHP_BLADE_EXPRESSION);
             case BladeAntlrColoringLexer.BLADE_PHP_INLINE:
                 return token(PHP_BLADE_INLINE_CODE);
+            case BladeAntlrColoringLexer.PHP_TOKEN:
+                return token(PHP_BLADE_TOKEN);
+            case BladeAntlrColoringLexer.PHP_KEYWORD:
+                return token(PHP_BLADE_KEYWORD);
+            case BladeAntlrColoringLexer.PHP_STRING:
+                return token(PHP_BLADE_STRING);
+            case BladeAntlrColoringLexer.PHP_VARIABLE:
+                return token(PHP_BLADE_VARIABLE);
+            case BladeAntlrColoringLexer.PHP_NUMBER:
+                return token(PHP_BLADE_NUMBER);
+            case BladeAntlrColoringLexer.PHP_COMMENT:
+                return token(PHP_BLADE_COMMENT);
+            case BladeAntlrColoringLexer.PHP_WS:
+                return token(PHP_BLADE_WS);
             case BladeAntlrColoringLexer.DIRECTIVE:
             case BladeAntlrColoringLexer.D_PHP:
             case BladeAntlrColoringLexer.D_ENDPHP:
@@ -75,9 +87,10 @@ public class BladeLexer extends AbstractAntlrLexerBridge<BladeAntlrColoringLexer
             case BladeAntlrColoringLexer.D_UNKNOWN:
             case BladeAntlrColoringLexer.D_AT:
                 return token(BLADE_DIRECTIVE_UNKNOWN);
+//            case BladeAntlrColoringLexer.WS_EXPR:
+//                return token(WS_D);
             case BladeAntlrColoringLexer.ERROR:
-            case BladeAntlrColoringLexer.WS_EXPR:
-                return token(WS_D);
+                return token(OTHER);
             default:
                 return token(OTHER);
         }

@@ -107,7 +107,7 @@ public class BladeParserResult extends ParserResult {
 
     public BladeParserResult get(String taskClass) {
         long startTime = System.currentTimeMillis();
-        if (debugMode){
+        if (debugMode) {
             LOGGER.log(Level.INFO, "PARSER TRIGGERED BY {0}", taskClass); // NOI18N
         }
         if (!finished) {
@@ -127,14 +127,14 @@ public class BladeParserResult extends ParserResult {
                 parser.addParseListener(createSemanticsListener());
             }
             evaluateParser(parser);
-            if (debugMode){
+            if (debugMode) {
                 LOGGER.info(String.format("Parser evaluated in %d ms " + taskClass + " | " + this.getFileObject().getNameExt(), System.currentTimeMillis() - startTime)); // NOI18N
             }
             finished = true;
         }
         long time = System.currentTimeMillis() - startTime;
-        
-        if (debugMode){
+
+        if (debugMode) {
             LOGGER.info(String.format("finished parser took %d ms " + this.getFileObject().getNameExt(), time)); // NOI18N
         }
         return this;
@@ -245,8 +245,10 @@ public class BladeParserResult extends ParserResult {
 
                 //used for indexing
                 switch (directive.getType()) {
-                    case D_STACK -> addStackReference(ReferenceType.STACK, bladeParamText, range);
-                    case D_YIELD -> addYieldReference(ReferenceType.YIELD, bladeParamText, range);
+                    case D_STACK ->
+                        addStackReference(ReferenceType.STACK, bladeParamText, range);
+                    case D_YIELD ->
+                        addYieldReference(ReferenceType.YIELD, bladeParamText, range);
                 }
 
                 ReferenceType type = getReferenceType(directive.getType());
@@ -280,10 +282,10 @@ public class BladeParserResult extends ParserResult {
                     }
                 }
             }
-            
+
             @Override
             public void exitAsset_bundler(BladeAntlrParser.Asset_bundlerContext ctx) {
-                if (ctx.id_string != null){
+                if (ctx.id_string != null) {
                     Token idToken = ctx.id_string;
                     String path = idToken.getText();
                     path = EditorStringUtils.stripSurroundingQuotes(path);
@@ -294,17 +296,17 @@ public class BladeParserResult extends ParserResult {
                 }
                 Token dirToken = ctx.dir;
                 String dir = "";
-                if (dirToken != null){
+                if (dirToken != null) {
                     dir = dirToken.getText();
                 }
 
-                for (TerminalNode node : ctx.EXPR_STRING()){
+                for (TerminalNode node : ctx.EXPR_STRING()) {
                     Token symbolNode = node.getSymbol();
-                    if (symbolNode == null){
+                    if (symbolNode == null) {
                         continue;
                     }
                     String path = node.getText();
-                    if (path.equals(dir)){
+                    if (path.equals(dir)) {
                         //skipping last parameter
                         continue;
                     }
@@ -518,7 +520,7 @@ public class BladeParserResult extends ParserResult {
                 }
 
                 if (callRange != null) {
-                     Reference classReference = new Reference(
+                    Reference classReference = new Reference(
                             ReferenceType.PHP_CLASS,
                             className, range,
                             null,
@@ -575,7 +577,7 @@ public class BladeParserResult extends ParserResult {
                 String bladeParamText = paramString.getText();
                 identifier = EditorStringUtils.stripSurroundingQuotes(bladeParamText);
             }
-            
+
             @Override
             public void exitInline_directive(BladeAntlrParser.Inline_directiveContext ctx) {
                 Token directiveToken = ctx.getStart();
@@ -641,19 +643,32 @@ public class BladeParserResult extends ParserResult {
 
     private ReferenceType getReferenceType(int type) {
         return switch (type) {
-            case D_INCLUDE -> ReferenceType.INCLUDE;
-            case D_INCLUDE_IF -> ReferenceType.INCLUDE_IF;
-            case D_EXTENDS -> ReferenceType.EXTENDS;
-            case D_USE -> ReferenceType.USE;
-            case D_INJECT -> ReferenceType.INJECT;
-            case D_SECTION -> ReferenceType.SECTION;
-            case D_HAS_SECTION -> ReferenceType.HAS_SECTION;
-            case D_SECTION_MISSING -> ReferenceType.SECTION_MISSING;
-            case D_PUSH -> ReferenceType.PUSH;
-            case D_PUSH_IF -> ReferenceType.PUSH_IF;
-            case D_PREPEND -> ReferenceType.PREPEND;
-            case D_EACH -> ReferenceType.EACH;
-            default -> null;
+            case D_INCLUDE ->
+                ReferenceType.INCLUDE;
+            case D_INCLUDE_IF ->
+                ReferenceType.INCLUDE_IF;
+            case D_EXTENDS ->
+                ReferenceType.EXTENDS;
+            case D_USE ->
+                ReferenceType.USE;
+            case D_INJECT ->
+                ReferenceType.INJECT;
+            case D_SECTION ->
+                ReferenceType.SECTION;
+            case D_HAS_SECTION ->
+                ReferenceType.HAS_SECTION;
+            case D_SECTION_MISSING ->
+                ReferenceType.SECTION_MISSING;
+            case D_PUSH ->
+                ReferenceType.PUSH;
+            case D_PUSH_IF ->
+                ReferenceType.PUSH_IF;
+            case D_PREPEND ->
+                ReferenceType.PREPEND;
+            case D_EACH ->
+                ReferenceType.EACH;
+            default ->
+                null;
         };
     }
 
@@ -857,7 +872,7 @@ public class BladeParserResult extends ParserResult {
 
     @Override
     public List<? extends Error> getDiagnostics() {
-        return errors;
+        return new ArrayList<>(errors);
     }
 
     @Override
@@ -965,6 +980,5 @@ public class BladeParserResult extends ParserResult {
         public boolean showExplorerBadge() {
             return true;
         }
-
     }
 }
