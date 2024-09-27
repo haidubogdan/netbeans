@@ -82,60 +82,15 @@ public enum BladeTokenId implements TokenId {
                         return null;
                     }
 
-                    //php brace matcher freeze issue patch
-                    String tokenText = token.text().toString();
-                    int startOffset = 1;
-                    int endOffset = 1;
-
-                    if (tokenText.startsWith("((") && tokenText.endsWith("))")){ //NOI18N
-                        startOffset = 2;
-                        endOffset = 2;
-                    } else if (tokenText.startsWith("([") && tokenText.endsWith("])")){ //NOI18N
-                        startOffset = 2;
-                        endOffset = 2;
-                    } else if (tokenText.startsWith("([")){ //NOI18N
-                        startOffset = 2;
-                    }
-                    return LanguageEmbedding.create(phpLanguage, startOffset, endOffset, false);
+                    return LanguageEmbedding.create(phpLanguage, 0, 0, false);
                 }
                 case PHP_BLADE_ECHO_EXPR ->  {
                     Language<? extends TokenId> phpLanguage = PHPTokenId.languageInPHP();
                     if (phpLanguage == null || token.text() == null){
                         return null;
                     }
-                    String tokenText = token.text().toString();
-                    int startOffset = 0;
-                    int endOffset = 0;
-                    
-                    if (!tokenText.startsWith("(") && !tokenText.startsWith("[")){
-                        return LanguageEmbedding.create(phpLanguage, startOffset, endOffset, false);
-                    }
                                       
-                    //php brace matcher freeze issue patch
-                    if (tokenText.startsWith("((") && tokenText.endsWith("))")){ //NOI18N
-                        startOffset = 2;
-                        endOffset = 2;
-                    } else if (tokenText.startsWith("[[") && tokenText.endsWith("]]")){ //NOI18N
-                        startOffset = 2;
-                        endOffset = 2;
-                    } else if (tokenText.startsWith("([") && tokenText.endsWith("])")){ //NOI18N
-                        startOffset = 2;
-                        endOffset = 2;
-                    } else if (tokenText.startsWith("[(") && tokenText.endsWith(")]")){ //NOI18N
-                        startOffset = 2;
-                        endOffset = 2;
-                    } else if (tokenText.startsWith("([") || tokenText.startsWith("[(")){ //NOI18N
-                        startOffset = 2;
-                    } else if (tokenText.startsWith("(") && tokenText.endsWith(")")){ //NOI18N
-                        startOffset = 1;
-                        endOffset = 1;
-                    } else if (tokenText.startsWith("[") && tokenText.endsWith("]")){ //NOI18N
-                        startOffset = 1;
-                        endOffset = 1;
-                    }  else if (tokenText.startsWith("(") || tokenText.startsWith("[")){ //NOI18N
-                        startOffset = 1;
-                    }
-                    return LanguageEmbedding.create(phpLanguage, startOffset, endOffset, false);
+                    return LanguageEmbedding.create(phpLanguage, 0, 0, false);
                 }
                 case PHP_INLINE -> {
                     Language<? extends TokenId> phpLanguageCode = PHPTokenId.language();
