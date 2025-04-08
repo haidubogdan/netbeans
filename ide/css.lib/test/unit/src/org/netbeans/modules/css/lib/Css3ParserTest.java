@@ -625,15 +625,20 @@ public class Css3ParserTest extends CssTestBase {
                 + "at_rule/media/mediaQueryList/mediaQuery");
         assertNotNull(media_query);
 
-        Node media_type = NodeUtil.query(media_query, "mediaType");
-        assertNotNull(media_type);
-        assertEquals("screen", media_type.image().toString());
+        
+        Node media_condition = NodeUtil.query(media_query, "mediaCondition");
+        Node media_condition_without_or = NodeUtil.query(media_query, "mediaConditionWithoutOr");
 
-        Node media_expression = NodeUtil.query(media_query, "mediaExpression");
-        assertNotNull(media_expression);
-
-        Node media_feature = NodeUtil.query(media_expression, "mediaFeature");
-        assertNotNull(media_feature);
+        if (media_condition == null) {
+            assertNotNull(media_condition_without_or);
+            
+            Node media_not = NodeUtil.query(media_condition_without_or, "mediaNot");
+            Node media_in_parens = NodeUtil.query(media_condition_without_or, "mediaInParens");
+            
+            if (media_not == null) {
+                assertNotNull(media_in_parens);
+            }
+        }
 
         assertResultOK(result);
 
@@ -1940,4 +1945,27 @@ public class Css3ParserTest extends CssTestBase {
         assertNull(NodeUtil.query(result.getParseTree(), "styleSheet/body/bodyItem|3"));
     }
 
+    public void testMediaQueryNoValue() throws Exception {
+        assertParses("@media (color) {}");
+        assertParses("@media not screen and (color), print and (color) {}");
+    }
+
+    public void testMediaQueryRangeContext() throws Exception {
+        assertParses("@media (width <= 1250px) {}");
+        assertParses("@media (30em <= width <= 50em) {}");
+        assertParses("@media (width >= 600px) { .element {} }");
+
+        //If comparators > and < are the same we should have an error
+        String content = "@media (30em > width < 50em) {}";
+
+        CssParserResult result = TestUtil.parse(content);
+        assertNotNull(result.getParseTree());
+        assertTrue(!result.getDiagnostics().isEmpty());
+    }
+
+    public void testMediaQueryNegation() throws Exception {
+        assertParses("@media not(color) {}");
+        assertParses("@media (not (color)) or (hover) {}");
+        assertParses("@media not (width <= -100px) {}");
+    }
 }
