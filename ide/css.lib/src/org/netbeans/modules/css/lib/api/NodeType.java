@@ -103,18 +103,25 @@ public enum NodeType {
     mediaFeature,
     mediaQueryList,
     mediaQuery,
-    
     /**
      * NOT | ONLY prefix of the media query
      */
     mediaQueryOperator,
-    
+    mediaCondition,
+    mediaFeatureType,
+    mediaFeatureExprValue,
+    mediaFeatureRangeContext,
+    mediaComparisonOperator,
     
     mediaType,
-    
+    mediaNot,
+    mediaAnd,
+    mediaOr,
+    mediaInParens,
+    mediaConditionWithoutOr,
     mediaBody,
     mediaFeatureValue,
-    
+    mediaRangeExplicitValue,
     /**
      * Mozilla specific at rule @-moz-document See
      * https://developer.mozilla.org/en/CSS/@-moz-document
