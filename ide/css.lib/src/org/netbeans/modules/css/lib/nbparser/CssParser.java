@@ -81,11 +81,20 @@ public class CssParser extends Parser {
         if (snapshot == null) {
             return;
         }
-        
+
         this.snapshot = snapshot;
         FileObject fo = snapshot.getSource().getFileObject();
-        String fileName = fo == null ? "no file" : fo.getPath(); //NOI18N
-        String mimeType = topLevelSnapshotMimetype != null ? topLevelSnapshotMimetype : (fo == null ? null : fo.getMIMEType());
+        String fileName;
+        String mimeType;
+        if (fo != null) {
+            fileName= fo.getPath();
+            MimePath mimePath = snapshot.getMimePath();
+            //extract the previous mimepath for embedding contexts
+            mimeType = mimePath != null ? mimePath.getMimeType(mimePath.size() - 1) : fo.getMIMEType();
+        } else {
+            fileName = "no file";
+            mimeType = null;
+        }
         LOG.log(Level.FINE, "Parsing {0} ", fileName); //NOI18N
         long start = System.currentTimeMillis();
         try {
@@ -93,16 +102,6 @@ public class CssParser extends Parser {
             
             //parse just an empty string in case of an oversize snapshot
             CharSequence source = tooLargeSnapshot ? "" : snapshot.getText();
-
-            String mimePath = snapshot.getMimePath() != null ? snapshot.getMimePath().getPath() : null;
-            if (mimePath != null) {
-                //vue plugin embedding
-                if (mimePath.startsWith("text/x-vue/text/scss")) { //NOI18N
-                    mimeType = "text/scss"; //NOI18N
-                } else if (mimePath.startsWith("text/x-vue/text/less")){ //NOI18N
-                    mimeType = "text/less"; //NOI18N
-                }
-            }
 
             ExtCss3Lexer lexer = new ExtCss3Lexer(source, mimeType);
             TokenStream tokenstream = new ProgressingTokenStream(
@@ -119,7 +118,7 @@ public class CssParser extends Parser {
             try {
                 parser.styleSheet();
             } catch (ProgressingFailedException pfe) {
-                LOG.log(Level.INFO, "CSS/SASS/LESS document exceeded maximum reads: " + snapshot.getSource().getFileObject());
+                LOG.log(Level.INFO, "CSS/SASS/LESS document exceeded maximum reads: " + fo);
                 this.tree = null;
                 this.problems = Arrays.asList(new ProblemDescription(
                     0, snapshot.getText().length(), "Failed to parse CSS/SASS/LESS document", ProblemDescription.Keys.PARSING.name(), ProblemDescription.Type.FATAL
