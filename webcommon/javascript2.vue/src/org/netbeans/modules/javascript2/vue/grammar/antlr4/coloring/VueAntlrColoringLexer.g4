@@ -85,7 +85,7 @@ OTHER : . ->type(HTML);
 mode INSIDE_TEMPLATE;
 
 TEMPLATE_TAG_CLOSE : '</template>'->popMode;
-VUE_DIRECTIVE_TEMPLATE : ('v-' Identifier (':' ArgumentExtra)? | '@' ArgumentExtra | ':' (Identifier | ('[' Identifier ']') )) {this._input.LA(1) == '='}? ->type(VUE_DIRECTIVE),pushMode(INSIDE_SCRIPT_ATTR);
+VUE_DIRECTIVE_TEMPLATE : ('v-' Identifier (':' ArgumentExtra)? | '@' ArgumentExtra | ':' (Identifier | ('[' Identifier ']') )) '=' ->type(VUE_DIRECTIVE),pushMode(INSIDE_SCRIPT_ATTR);
 VUE_DIRECTIVE_SIMPLE : 'v-' ( 'once' | 'else' | 'pre' | 'cloak' | 'slot:' Identifier  ) ->type(VUE_DIRECTIVE);
 
 VAR_TAG : '{{' {this.setVarInterpolationOpened(true);} ->pushMode(INSIDE_VAR_INTERPOLATION);

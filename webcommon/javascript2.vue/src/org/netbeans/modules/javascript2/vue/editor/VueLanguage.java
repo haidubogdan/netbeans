@@ -93,6 +93,15 @@ public class VueLanguage extends DefaultLanguageConfig {
         return new VueParser();
     }
 
+    @Override
+    public boolean isIdentifierChar(char c) {
+        return super.isIdentifierChar(c)
+                || c == '@' //NOI18N
+                || c == '-' //NOI18N
+                || c == ':' //NOI18N
+                ;
+    }
+
     private static final Language<VueTokenId> language
             = new VueLanguageHierarchy() {
 

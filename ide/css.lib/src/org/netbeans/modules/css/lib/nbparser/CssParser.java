@@ -89,8 +89,14 @@ public class CssParser extends Parser {
         if (fo != null) {
             fileName= fo.getPath();
             MimePath mimePath = snapshot.getMimePath();
-            //extract the previous mimepath for embedding contexts
-            mimeType = mimePath != null ? mimePath.getMimeType(mimePath.size() - 1) : fo.getMIMEType();
+
+            //scss, less mime embedding is a top layer for text/css
+            //positioned at the penultimate position
+            if (mimePath != null && mimePath.size() > 2) {
+                mimeType = mimePath.getMimeType(mimePath.size() - 2);
+            } else {
+                mimeType = fo.getMIMEType();
+            }
         } else {
             fileName = "no file";
             mimeType = null;

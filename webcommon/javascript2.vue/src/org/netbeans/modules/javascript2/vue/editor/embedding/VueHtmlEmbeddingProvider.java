@@ -65,8 +65,9 @@ public class VueHtmlEmbeddingProvider extends EmbeddingProvider {
                     embeddings.add(snapshot.create(ts.offset(), t.length(), TARGET_MIME_TYPE));
                 } else if (t.text() != null) {
                     //issue with bracematcher
-                    String fake = new String(new char[t.text().toString().length()]).replace("\0", FILLER); //NOI18N
-                    embeddings.add(snapshot.create(fake, TARGET_MIME_TYPE));
+                    //doesn't fix all the bracemacher
+                    //String fake = new String(new char[t.text().length()]).replace("\0", FILLER); //NOI18N
+                    //embeddings.add(snapshot.create(fake, TARGET_MIME_TYPE));
                 }
             }
         } catch (Exception ex) {
