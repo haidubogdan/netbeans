@@ -543,6 +543,7 @@
                 <friend>org.netbeans.modules.javascript2.nodejs</friend>
                 <friend>org.netbeans.modules.javascript2.react</friend>
                 <friend>org.netbeans.modules.javascript2.requirejs</friend>
+                <friend>org.netbeans.modules.javascript2.vue</friend>
                 <friend>org.netbeans.modules.php.latte</friend>
                 <friend>org.netbeans.modules.ruby.rhtml</friend>
                 <friend>org.netbeans.modules.web.clientproject</friend>

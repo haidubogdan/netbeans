@@ -31,6 +31,7 @@ import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId;
 import static org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.CSS;
 import static org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.STYLE_LESS;
 import static org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.STYLE_SCSS;
+import static org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.VUE_DIRECTIVE;
 import org.netbeans.modules.parsing.api.Embedding;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.EmbeddingProvider;
@@ -67,7 +68,7 @@ public class VueHtmlEmbeddingProvider extends EmbeddingProvider {
                 if (token.text() != null && id instanceof VueTokenId) {
                     switch ((VueTokenId) id) {
                         //javascript, css, scss, less require content embedding due to braces matcher issue
-                        case HTML, JAVASCRIPT, CSS -> {
+                        case HTML,VUE_DIRECTIVE, QUOTE_ATTR, JAVASCRIPT, JAVASCRIPT_ATTR, CSS -> {
                             embeddings.add(snapshot.create(ts.offset(), token.length(), TARGET_MIME_TYPE));
                         }
                         case STYLE_SCSS, STYLE_LESS -> {

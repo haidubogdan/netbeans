@@ -75,10 +75,9 @@ public enum VueTokenId implements TokenId {
             return switch (token.id()) {
                 case JAVASCRIPT_INTERP -> 
                     LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
-                case JAVASCRIPT, JAVASCRIPT_ATTR ->
-                    LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
+                case JAVASCRIPT  -> LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
                 case JAVASCRIPT_PUG -> LanguageEmbedding.create(JadeTokenId.jadeLanguage(), 0, 0, true);
-                case HTML -> LanguageEmbedding.create(HTMLTokenId.language(), 0, 0, true);
+                case HTML, VUE_DIRECTIVE, QUOTE_ATTR, JAVASCRIPT_ATTR -> LanguageEmbedding.create(HTMLTokenId.language(), 0, 0, true);
                 case CSS -> LanguageEmbedding.create(CssTokenId.language(), 0, 0, true);
                 case STYLE_LESS -> LanguageEmbedding.create(LessLanguage.getLanguageInstance(), 0, 0, true);    
                 case STYLE_SCSS -> LanguageEmbedding.create(ScssLanguage.getLanguageInstance(), 0, 0, true);
