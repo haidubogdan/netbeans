@@ -103,7 +103,8 @@ public enum NodeType {
     mediaFeature,
     mediaQueryList,
     mediaQuery,
-    mediaFeatureRange,
+    mediaFeatureType,
+    mediaFeatureRangeContext,
     /**
      * NOT | ONLY prefix of the media query
      */
@@ -114,7 +115,7 @@ public enum NodeType {
     
     mediaBody,
     mediaFeatureValue,
-    mediaRangeParameter,
+    mediaRangeExcplicitValue,
     /**
      * Mozilla specific at rule @-moz-document See
      * https://developer.mozilla.org/en/CSS/@-moz-document
