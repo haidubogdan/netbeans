@@ -18,15 +18,18 @@
  */
 package org.netbeans.modules.javascript2.vue.editor;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
+
 import org.netbeans.api.editor.mimelookup.MimeRegistrations;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.html.editor.api.gsf.HtmlExtension;
 import org.netbeans.modules.html.editor.api.gsf.HtmlParserResult;
+import org.netbeans.modules.html.editor.lib.api.HtmlSource;
 import org.netbeans.modules.html.editor.lib.api.elements.Attribute;
 import org.netbeans.modules.javascript2.vue.editor.model.VueModel;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
@@ -39,18 +42,16 @@ import org.netbeans.modules.parsing.spi.SchedulerEvent;
     @MimeRegistration(mimeType = "text/x-vue", service = HtmlExtension.class),})
 public class VueHtmlExtension extends HtmlExtension {
 
+    public static final EnumSet<ColoringAttributes> CUSTOM_DIRECTIVE_SET = EnumSet.of(ColoringAttributes.CONSTRUCTOR);
+
     @Override
     public boolean isApplicationPiece(HtmlParserResult result) {
         return true;
     }
-    
-    @Override
-    public Map<OffsetRange, Set<ColoringAttributes>> getHighlights(HtmlParserResult result, SchedulerEvent event) {
-        final Map<OffsetRange, Set<ColoringAttributes>> highlights = new HashMap<>();
-VueModel model = VueModel.getModel(result);
-        for (Attribute ngAttr : model.getBindings()) {
 
-        }
-        return highlights;
+    @Override
+    public boolean isCustomAttribute(Attribute attribute, HtmlSource source) {
+        String attributeName = attribute.unqualifiedName().toString();
+        return VueUtils.isVueDirective(attributeName);
     }
 }

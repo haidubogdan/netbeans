@@ -24,4 +24,8 @@
     <fontcolor name="vue_directive" foreColor="66CCFF"/>
     <fontcolor name="attr_quote" foreColor="D3D3D3"/>
     <fontcolor name="var_tag" foreColor="66CCFF"/>
+    <fontcolor name="mod-method" default="vue_directive"/>
+    <fontcolor name="mod-constructor" default="vue_directive"> 
+        <font style="bold" />
+    </fontcolor>
 </fontscolors>
