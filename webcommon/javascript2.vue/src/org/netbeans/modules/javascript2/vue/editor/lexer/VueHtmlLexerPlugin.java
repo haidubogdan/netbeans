@@ -20,6 +20,7 @@ package org.netbeans.modules.javascript2.vue.editor.lexer;
 
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.api.html.lexer.HtmlLexerPlugin;
+import org.netbeans.modules.javascript2.vue.editor.VueUtils;
 
 /**
  *
@@ -27,6 +28,7 @@ import org.netbeans.api.html.lexer.HtmlLexerPlugin;
  */
 @MimeRegistration(mimeType = "text/html", service = HtmlLexerPlugin.class)
 public class VueHtmlLexerPlugin extends HtmlLexerPlugin {
+
 
     @Override
     public String getOpenDelimiter() {
@@ -45,9 +47,7 @@ public class VueHtmlLexerPlugin extends HtmlLexerPlugin {
 
     @Override
     public String createAttributeEmbedding(String elementName, String attributeName) {
-        if (attributeName.startsWith("v-") //NOI18N
-                || attributeName.startsWith(":") //NOI18N
-                || attributeName.contains(".")) { //NOI18N
+        if (VueUtils.isVueDirective(attributeName)) { //NOI18N
             return getContentMimeType();
         }
         return null;

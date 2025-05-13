@@ -25,8 +25,10 @@ import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
+import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
+import org.netbeans.modules.html.editor.api.gsf.HtmlParserResult;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueLexer;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.VueLanguageHierarchy;
@@ -100,6 +102,12 @@ public class VueLanguage extends DefaultLanguageConfig {
                 ;
     }
 
+    @Override
+    @SuppressWarnings("rawtypes")
+    public SemanticAnalyzer<VueParserResult> getSemanticAnalyzer() {
+        return new VueSemanticAnalyzer();
+    }
+
     private static final Language<VueTokenId> language
             = new VueLanguageHierarchy() {
 
@@ -144,7 +152,7 @@ public class VueLanguage extends DefaultLanguageConfig {
         }
     }
 
-    private static class VueParserResult extends ParserResult {
+    public static class VueParserResult extends ParserResult {
 
         public VueParserResult(final Snapshot snapshot) {
             super(snapshot);

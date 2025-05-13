@@ -20,20 +20,18 @@ package org.netbeans.modules.javascript2.vue.editor.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 import org.netbeans.api.annotations.common.NonNull;
-import org.netbeans.api.html.lexer.HTMLTokenId;
-import org.netbeans.api.lexer.TokenHierarchy;
-import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.html.editor.api.gsf.HtmlParserResult;
 import org.netbeans.modules.html.editor.lib.api.elements.Attribute;
 import org.netbeans.modules.html.editor.lib.api.elements.AttributeFilter;
 import org.netbeans.modules.html.editor.lib.api.elements.Element;
 import org.netbeans.modules.html.editor.lib.api.elements.OpenTag;
-import org.netbeans.modules.parsing.api.Snapshot;
+import org.netbeans.modules.javascript2.vue.editor.VueUtils;
 
 /**
  *
@@ -81,18 +79,10 @@ public class VueModel {
                     for (Attribute ngAttr : ot.attributes(new AttributeFilter() {
                         @Override
                         public boolean accepts(Attribute attribute) {
-                            //the data-bind attribute can contain custom directives which we do not have any metadata for
-                            //so the data-bind attribute is always considered as a knockout regardless the content, 
-                            //at least until we have some custom directives metadata facility.
-                            return false;
+                            String attributeName = attribute.unqualifiedName().toString();
+                            return VueUtils.isVueDirective(attributeName);
                         }
                     })) {
-                        Collection<Attribute> attrs = elements2attributes.get(ot);
-                        if (attrs == null) {
-                            attrs = new ArrayList<>();
-                            elements2attributes.put(ot, attrs);
-                        }
-                        attrs.add(ngAttr);
                         attributes.add(ngAttr);
                     }
             }
@@ -103,16 +93,7 @@ public class VueModel {
      * Gets a list of all angular attributes in the page.
      */
     @NonNull
-    public Collection<Attribute> getBindings() {
-        return attributes;
-    }
-
-    /**
-     * Checks whether the parser result contains any knockout code.
-     *
-     * TODO - check for the ko.applyBindings() presence instead?
-     */
-    public boolean containsKnockout() {
-        return !getBindings().isEmpty();
+    public Collection<Attribute> getDirectives() {
+        return Collections.unmodifiableCollection(attributes);
     }
 }
