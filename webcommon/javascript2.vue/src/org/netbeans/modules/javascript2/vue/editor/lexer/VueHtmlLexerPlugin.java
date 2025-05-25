@@ -29,7 +29,6 @@ import org.netbeans.modules.javascript2.vue.editor.VueUtils;
 @MimeRegistration(mimeType = "text/html", service = HtmlLexerPlugin.class)
 public class VueHtmlLexerPlugin extends HtmlLexerPlugin {
 
-
     @Override
     public String getOpenDelimiter() {
         return "{{"; //NOI18N

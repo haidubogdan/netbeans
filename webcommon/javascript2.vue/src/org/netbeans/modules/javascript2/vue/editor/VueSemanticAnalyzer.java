@@ -25,11 +25,9 @@ import java.util.Set;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
-import org.netbeans.modules.html.editor.api.gsf.HtmlParserResult;
-import org.netbeans.modules.javascript2.vue.editor.VueLanguage.VueParserResult;
+import org.netbeans.modules.javascript2.vue.editor.lexer.parser.VueParserResult;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
-import org.openide.filesystems.FileObject;
 
 /**
  *
@@ -38,7 +36,7 @@ import org.openide.filesystems.FileObject;
 public class VueSemanticAnalyzer extends SemanticAnalyzer<VueParserResult> {
 
     private boolean cancelled;
-    public static final EnumSet<ColoringAttributes> CUSTOM_DIRECTIVE_SET = EnumSet.of(ColoringAttributes.DECLARATION);
+    public static final EnumSet<ColoringAttributes> VUE_DIRECTIVE_ATTR = EnumSet.of(ColoringAttributes.CUSTOM1);
     private Map<OffsetRange, Set<ColoringAttributes>> semanticHighlights;
 
     @Override
@@ -79,20 +77,11 @@ public class VueSemanticAnalyzer extends SemanticAnalyzer<VueParserResult> {
 
         Map<OffsetRange, Set<ColoringAttributes>> highlights
                 = new HashMap<>();
-//        FileObject fo = parserResult.getFileObject();
-//        Project project = ProjectUtils.getMainOwner(fo);
-//        CustomDirectives ct = CustomDirectives.getInstance(project);
-//        
-//        //highlight custom directives which are not found in the project configuration
-//        for (Map.Entry<OffsetRange, String> entry : parserResult.getBladeCustomDirectiveOccurences().getAll().entrySet()) {
-//            if (ct.customDirectiveConfigured(entry.getValue()) ) {
-//                highlights.put(entry.getKey(), CUSTOM_DIRECTIVE_SET);
-//                continue;
-//            }
-//            highlights.put(entry.getKey(), UNDEFINED_FIELD_SET);
-//        }
-//
-        highlights.put(new OffsetRange(30, 35), CUSTOM_DIRECTIVE_SET);
+
+        for (OffsetRange range : parserResult.getVueDirectiveLocations()) {
+            highlights.put(range, VUE_DIRECTIVE_ATTR);
+        }
+        
         this.semanticHighlights = highlights;
     }
 

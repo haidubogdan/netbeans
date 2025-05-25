@@ -28,10 +28,11 @@ import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
-import org.netbeans.modules.html.editor.api.gsf.HtmlParserResult;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueLexer;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.VueLanguageHierarchy;
+import org.netbeans.modules.javascript2.vue.editor.lexer.parser.VueParser;
+import org.netbeans.modules.javascript2.vue.editor.lexer.parser.VueParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.api.Task;
 import org.netbeans.modules.parsing.spi.ParseException;
@@ -123,49 +124,4 @@ public class VueLanguage extends DefaultLanguageConfig {
 
             }.language();
 
-    // This is a fake parser to get work some features like folding.
-    private static class VueParser extends Parser {
-
-        private Snapshot lastSnapshot = null;
-
-        public VueParser() {
-        }
-
-        @Override
-        public void parse(Snapshot snapshot, Task task, SourceModificationEvent event) throws ParseException {
-            lastSnapshot = snapshot;
-        }
-
-        @Override
-        public Result getResult(Task task) throws ParseException {
-            return new VueParserResult(lastSnapshot);
-        }
-
-        @Override
-        public void addChangeListener(ChangeListener changeListener) {
-
-        }
-
-        @Override
-        public void removeChangeListener(ChangeListener changeListener) {
-
-        }
-    }
-
-    public static class VueParserResult extends ParserResult {
-
-        public VueParserResult(final Snapshot snapshot) {
-            super(snapshot);
-        }
-
-        @Override
-        protected void invalidate() {
-
-        }
-
-        @Override
-        public List<? extends org.netbeans.modules.csl.api.Error> getDiagnostics() {
-            return Collections.emptyList();
-        }
-    }
 }
