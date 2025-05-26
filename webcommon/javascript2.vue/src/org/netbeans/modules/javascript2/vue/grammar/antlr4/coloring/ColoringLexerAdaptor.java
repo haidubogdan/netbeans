@@ -28,8 +28,6 @@ import org.antlr.v4.runtime.Lexer;
 public abstract class ColoringLexerAdaptor extends Lexer {
 
     public static final String LANG_ATTR = "lang";  //NOI18N
-    private boolean attrQuoteOpened = false;
-    private boolean varInterpolationOpened = false;
     private String scriptLanguage = null;
     private String styleLanguage = null;
 
@@ -39,27 +37,9 @@ public abstract class ColoringLexerAdaptor extends Lexer {
 
     @Override
     public void reset() {
-        attrQuoteOpened = false;
-        varInterpolationOpened = false;
         scriptLanguage = null;
         styleLanguage = null;
         super.reset();
-    }
-
-    public void setAttrQuoteState(boolean state) {
-        attrQuoteOpened = state;
-    }
-
-    public boolean getAttrQuoteState() {
-        return attrQuoteOpened;
-    }
-
-    public void setVarInterpolationOpened(boolean state) {
-        varInterpolationOpened = state;
-    }
-
-    public boolean isVarInterpolationOpened() {
-        return varInterpolationOpened;
     }
 
     public void setScriptLanguage(String lang) {

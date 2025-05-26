@@ -49,11 +49,6 @@ public class VueLexer extends AbstractAntlrLexerBridge<VueAntlrColoringLexer, Vu
 
         return switch (antlrToken.getType()) {
             case VueAntlrColoringLexer.HTML -> groupToken(HTML, VueAntlrColoringLexer.HTML);
-            case VueAntlrColoringLexer.VUE_DIRECTIVE -> token(VUE_DIRECTIVE);
-            case VueAntlrColoringLexer.QUOTE_ATTR -> token(QUOTE_ATTR);
-            case VueAntlrColoringLexer.VAR_TAG -> token(VAR_TAG);
-            case VueAntlrColoringLexer.JAVASCRIPT_ATTR -> groupToken(JAVASCRIPT_ATTR, VueAntlrColoringLexer.JAVASCRIPT_ATTR);
-            case VueAntlrColoringLexer.JAVASCRIPT_INTERP -> groupToken(JAVASCRIPT_INTERP, VueAntlrColoringLexer.JAVASCRIPT_INTERP);   
             case VueAntlrColoringLexer.JAVASCRIPT -> assignScriptLexerToken(JAVASCRIPT, VueAntlrColoringLexer.JAVASCRIPT);
             case VueAntlrColoringLexer.CSS -> assignStyleLexerToken(CSS, VueAntlrColoringLexer.CSS);
             default -> groupToken(HTML, VueAntlrColoringLexer.HTML);
@@ -92,15 +87,11 @@ public class VueLexer extends AbstractAntlrLexerBridge<VueAntlrColoringLexer, Vu
 
     private static class State extends AbstractAntlrLexerBridge.LexerState<VueAntlrColoringLexer> {
 
-        final boolean attrQuoteOpened;
-        final boolean varInterpolationOpened;
         final String  scriptLanguage;
         final String  styleLanguage;
 
         public State(VueAntlrColoringLexer lexer) {
             super(lexer);
-            this.attrQuoteOpened = lexer.getAttrQuoteState();
-            this.varInterpolationOpened = lexer.isVarInterpolationOpened();
             this.scriptLanguage = lexer.getScriptLanguage();
             this.styleLanguage = lexer.getStyleLanguage();
         }
@@ -108,8 +99,6 @@ public class VueLexer extends AbstractAntlrLexerBridge<VueAntlrColoringLexer, Vu
         @Override
         public void restore(VueAntlrColoringLexer lexer) {
             super.restore(lexer);
-            lexer.setAttrQuoteState(attrQuoteOpened);
-            lexer.setVarInterpolationOpened(varInterpolationOpened);
             lexer.setScriptLanguage(scriptLanguage);
             lexer.setStyleLanguage(styleLanguage);
         }

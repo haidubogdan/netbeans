@@ -42,13 +42,8 @@ public enum VueTokenId implements TokenId {
     CSS("css"), // NOI18N
     STYLE_SCSS("css"), // NOI18N
     STYLE_LESS("css"), // NOI18N
-    JAVASCRIPT_ATTR("javascript"), // NOI18N
     JAVASCRIPT("javascript"), // NOI18N
     JAVASCRIPT_PUG("javascript"), // NOI18N
-    JAVASCRIPT_INTERP("javascript"), // NOI18N
-    QUOTE_ATTR("attr_quote"), // NOI18N
-    VUE_DIRECTIVE("vue_directive"), // NOI18N
-    VAR_TAG("var_tag"), // NOI18N
     ;
     private final String primaryCategory;
 
@@ -73,11 +68,9 @@ public enum VueTokenId implements TokenId {
                 LanguagePath languagePath, InputAttributes inputAttributes) {
 
             return switch (token.id()) {
-                case JAVASCRIPT_INTERP -> 
-                    LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
                 case JAVASCRIPT  -> LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
                 case JAVASCRIPT_PUG -> LanguageEmbedding.create(JadeTokenId.jadeLanguage(), 0, 0, true);
-                case HTML, VUE_DIRECTIVE, QUOTE_ATTR, JAVASCRIPT_ATTR -> LanguageEmbedding.create(HTMLTokenId.language(), 0, 0, true);
+                case HTML -> LanguageEmbedding.create(HTMLTokenId.language(), 0, 0, true);
                 case CSS -> LanguageEmbedding.create(CssTokenId.language(), 0, 0, true);
                 case STYLE_LESS -> LanguageEmbedding.create(LessLanguage.getLanguageInstance(), 0, 0, true);    
                 case STYLE_SCSS -> LanguageEmbedding.create(ScssLanguage.getLanguageInstance(), 0, 0, true);
