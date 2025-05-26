@@ -18,21 +18,13 @@
  */
 package org.netbeans.modules.javascript2.vue.editor;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 
 import org.netbeans.api.editor.mimelookup.MimeRegistrations;
-import org.netbeans.modules.csl.api.ColoringAttributes;
-import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.html.editor.api.gsf.HtmlExtension;
 import org.netbeans.modules.html.editor.api.gsf.HtmlParserResult;
 import org.netbeans.modules.html.editor.lib.api.HtmlSource;
 import org.netbeans.modules.html.editor.lib.api.elements.Attribute;
-import org.netbeans.modules.javascript2.vue.editor.model.VueModel;
-import org.netbeans.modules.parsing.spi.SchedulerEvent;
 
 /**
  *
@@ -41,8 +33,6 @@ import org.netbeans.modules.parsing.spi.SchedulerEvent;
 @MimeRegistrations({
     @MimeRegistration(mimeType = "text/x-vue", service = HtmlExtension.class),})
 public class VueHtmlExtension extends HtmlExtension {
-
-    public static final EnumSet<ColoringAttributes> CUSTOM_DIRECTIVE_SET = EnumSet.of(ColoringAttributes.CONSTRUCTOR);
 
     @Override
     public boolean isApplicationPiece(HtmlParserResult result) {

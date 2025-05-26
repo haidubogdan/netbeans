@@ -37,28 +37,30 @@ public class VueAntlrParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		TEMPLATE_TAG_OPEN=1, VUE_DIRECTIVE=2, QUOTE_ATTR=3, JAVASCRIPT=4, JAVASCRIPT_ATTR=5, 
-		JAVASCRIPT_INTERP=6, HTML=7, CSS=8, TEMPLATE_TAG_CLOSE=9, VAR_TAG=10;
+		TEMPLATE_TAG_OPEN=1, VUE_DIRECTIVE=2, JAVASCRIPT=3, JAVASCRIPT_ATTR_VALUE=4, 
+		VAR_TAG=5, HTML=6, OTHER=7, TEMPLATE_TAG_CLOSE=8, TEMPLATE_OTHER=9, VAR_INTERPOLATION_OTHER=10, 
+		VAR_INTERPOLATION_END=11;
 	public static final int
-		RULE_file = 0, RULE_statement = 1, RULE_vueDirective = 2;
+		RULE_file = 0, RULE_statement = 1, RULE_vueDirective = 2, RULE_vueInterpolation = 3;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"file", "statement", "vueDirective"
+			"file", "statement", "vueDirective", "vueInterpolation"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'<template'", null, null, null, null, null, null, null, "'</template>'"
+			null, "'<template'", null, null, null, "'{{'", null, null, "'</template>'", 
+			null, null, "'}}'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "TEMPLATE_TAG_OPEN", "VUE_DIRECTIVE", "QUOTE_ATTR", "JAVASCRIPT", 
-			"JAVASCRIPT_ATTR", "JAVASCRIPT_INTERP", "HTML", "CSS", "TEMPLATE_TAG_CLOSE", 
-			"VAR_TAG"
+			null, "TEMPLATE_TAG_OPEN", "VUE_DIRECTIVE", "JAVASCRIPT", "JAVASCRIPT_ATTR_VALUE", 
+			"VAR_TAG", "HTML", "OTHER", "TEMPLATE_TAG_CLOSE", "TEMPLATE_OTHER", "VAR_INTERPOLATION_OTHER", 
+			"VAR_INTERPOLATION_END"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -142,21 +144,21 @@ public class VueAntlrParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(9);
+			setState(11);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2046L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 366L) != 0)) {
 				{
 				{
-				setState(6);
+				setState(8);
 				statement();
 				}
 				}
-				setState(11);
+				setState(13);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(12);
+			setState(14);
 			match(EOF);
 			}
 		}
@@ -179,12 +181,10 @@ public class VueAntlrParser extends Parser {
 		public VueDirectiveContext vueDirective() {
 			return getRuleContext(VueDirectiveContext.class,0);
 		}
-		public TerminalNode QUOTE_ATTR() { return getToken(VueAntlrParser.QUOTE_ATTR, 0); }
-		public TerminalNode VAR_TAG() { return getToken(VueAntlrParser.VAR_TAG, 0); }
-		public TerminalNode JAVASCRIPT_ATTR() { return getToken(VueAntlrParser.JAVASCRIPT_ATTR, 0); }
-		public TerminalNode JAVASCRIPT_INTERP() { return getToken(VueAntlrParser.JAVASCRIPT_INTERP, 0); }
+		public VueInterpolationContext vueInterpolation() {
+			return getRuleContext(VueInterpolationContext.class,0);
+		}
 		public TerminalNode JAVASCRIPT() { return getToken(VueAntlrParser.JAVASCRIPT, 0); }
-		public TerminalNode CSS() { return getToken(VueAntlrParser.CSS, 0); }
 		public StatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -203,77 +203,49 @@ public class VueAntlrParser extends Parser {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_statement);
 		try {
-			setState(24);
+			setState(22);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case HTML:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(14);
+				setState(16);
 				match(HTML);
 				}
 				break;
 			case TEMPLATE_TAG_OPEN:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(15);
+				setState(17);
 				match(TEMPLATE_TAG_OPEN);
 				}
 				break;
 			case TEMPLATE_TAG_CLOSE:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(16);
+				setState(18);
 				match(TEMPLATE_TAG_CLOSE);
 				}
 				break;
 			case VUE_DIRECTIVE:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(17);
+				setState(19);
 				vueDirective();
 				}
 				break;
-			case QUOTE_ATTR:
+			case VAR_TAG:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(18);
-				match(QUOTE_ATTR);
-				}
-				break;
-			case VAR_TAG:
-				enterOuterAlt(_localctx, 6);
-				{
-				setState(19);
-				match(VAR_TAG);
-				}
-				break;
-			case JAVASCRIPT_ATTR:
-				enterOuterAlt(_localctx, 7);
-				{
 				setState(20);
-				match(JAVASCRIPT_ATTR);
-				}
-				break;
-			case JAVASCRIPT_INTERP:
-				enterOuterAlt(_localctx, 8);
-				{
-				setState(21);
-				match(JAVASCRIPT_INTERP);
+				vueInterpolation();
 				}
 				break;
 			case JAVASCRIPT:
-				enterOuterAlt(_localctx, 9);
+				enterOuterAlt(_localctx, 6);
 				{
-				setState(22);
+				setState(21);
 				match(JAVASCRIPT);
-				}
-				break;
-			case CSS:
-				enterOuterAlt(_localctx, 10);
-				{
-				setState(23);
-				match(CSS);
 				}
 				break;
 			default:
@@ -314,7 +286,7 @@ public class VueAntlrParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(26);
+			setState(24);
 			match(VUE_DIRECTIVE);
 			}
 		}
@@ -329,30 +301,74 @@ public class VueAntlrParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
+	public static class VueInterpolationContext extends ParserRuleContext {
+		public Token open_tag;
+		public Token close_tag;
+		public List<TerminalNode> VAR_TAG() { return getTokens(VueAntlrParser.VAR_TAG); }
+		public TerminalNode VAR_TAG(int i) {
+			return getToken(VueAntlrParser.VAR_TAG, i);
+		}
+		public VueInterpolationContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_vueInterpolation; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VueAntlrParserListener ) ((VueAntlrParserListener)listener).enterVueInterpolation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VueAntlrParserListener ) ((VueAntlrParserListener)listener).exitVueInterpolation(this);
+		}
+	}
+
+	public final VueInterpolationContext vueInterpolation() throws RecognitionException {
+		VueInterpolationContext _localctx = new VueInterpolationContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_vueInterpolation);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(26);
+			((VueInterpolationContext)_localctx).open_tag = match(VAR_TAG);
+			setState(27);
+			((VueInterpolationContext)_localctx).close_tag = match(VAR_TAG);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public static final String _serializedATN =
-		"\u0004\u0001\n\u001d\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
-		"\u0002\u0007\u0002\u0001\u0000\u0005\u0000\b\b\u0000\n\u0000\f\u0000\u000b"+
-		"\t\u0000\u0001\u0000\u0001\u0000\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
-		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
-		"\u0001\u0003\u0001\u0019\b\u0001\u0001\u0002\u0001\u0002\u0001\u0002\u0000"+
-		"\u0000\u0003\u0000\u0002\u0004\u0000\u0000#\u0000\t\u0001\u0000\u0000"+
-		"\u0000\u0002\u0018\u0001\u0000\u0000\u0000\u0004\u001a\u0001\u0000\u0000"+
-		"\u0000\u0006\b\u0003\u0002\u0001\u0000\u0007\u0006\u0001\u0000\u0000\u0000"+
-		"\b\u000b\u0001\u0000\u0000\u0000\t\u0007\u0001\u0000\u0000\u0000\t\n\u0001"+
-		"\u0000\u0000\u0000\n\f\u0001\u0000\u0000\u0000\u000b\t\u0001\u0000\u0000"+
-		"\u0000\f\r\u0005\u0000\u0000\u0001\r\u0001\u0001\u0000\u0000\u0000\u000e"+
-		"\u0019\u0005\u0007\u0000\u0000\u000f\u0019\u0005\u0001\u0000\u0000\u0010"+
-		"\u0019\u0005\t\u0000\u0000\u0011\u0019\u0003\u0004\u0002\u0000\u0012\u0019"+
-		"\u0005\u0003\u0000\u0000\u0013\u0019\u0005\n\u0000\u0000\u0014\u0019\u0005"+
-		"\u0005\u0000\u0000\u0015\u0019\u0005\u0006\u0000\u0000\u0016\u0019\u0005"+
-		"\u0004\u0000\u0000\u0017\u0019\u0005\b\u0000\u0000\u0018\u000e\u0001\u0000"+
-		"\u0000\u0000\u0018\u000f\u0001\u0000\u0000\u0000\u0018\u0010\u0001\u0000"+
-		"\u0000\u0000\u0018\u0011\u0001\u0000\u0000\u0000\u0018\u0012\u0001\u0000"+
-		"\u0000\u0000\u0018\u0013\u0001\u0000\u0000\u0000\u0018\u0014\u0001\u0000"+
-		"\u0000\u0000\u0018\u0015\u0001\u0000\u0000\u0000\u0018\u0016\u0001\u0000"+
-		"\u0000\u0000\u0018\u0017\u0001\u0000\u0000\u0000\u0019\u0003\u0001\u0000"+
-		"\u0000\u0000\u001a\u001b\u0005\u0002\u0000\u0000\u001b\u0005\u0001\u0000"+
-		"\u0000\u0000\u0002\t\u0018";
+		"\u0004\u0001\u000b\u001e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
+		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0001\u0000\u0005\u0000"+
+		"\n\b\u0000\n\u0000\f\u0000\r\t\u0000\u0001\u0000\u0001\u0000\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0003\u0001"+
+		"\u0017\b\u0001\u0001\u0002\u0001\u0002\u0001\u0003\u0001\u0003\u0001\u0003"+
+		"\u0001\u0003\u0000\u0000\u0004\u0000\u0002\u0004\u0006\u0000\u0000\u001f"+
+		"\u0000\u000b\u0001\u0000\u0000\u0000\u0002\u0016\u0001\u0000\u0000\u0000"+
+		"\u0004\u0018\u0001\u0000\u0000\u0000\u0006\u001a\u0001\u0000\u0000\u0000"+
+		"\b\n\u0003\u0002\u0001\u0000\t\b\u0001\u0000\u0000\u0000\n\r\u0001\u0000"+
+		"\u0000\u0000\u000b\t\u0001\u0000\u0000\u0000\u000b\f\u0001\u0000\u0000"+
+		"\u0000\f\u000e\u0001\u0000\u0000\u0000\r\u000b\u0001\u0000\u0000\u0000"+
+		"\u000e\u000f\u0005\u0000\u0000\u0001\u000f\u0001\u0001\u0000\u0000\u0000"+
+		"\u0010\u0017\u0005\u0006\u0000\u0000\u0011\u0017\u0005\u0001\u0000\u0000"+
+		"\u0012\u0017\u0005\b\u0000\u0000\u0013\u0017\u0003\u0004\u0002\u0000\u0014"+
+		"\u0017\u0003\u0006\u0003\u0000\u0015\u0017\u0005\u0003\u0000\u0000\u0016"+
+		"\u0010\u0001\u0000\u0000\u0000\u0016\u0011\u0001\u0000\u0000\u0000\u0016"+
+		"\u0012\u0001\u0000\u0000\u0000\u0016\u0013\u0001\u0000\u0000\u0000\u0016"+
+		"\u0014\u0001\u0000\u0000\u0000\u0016\u0015\u0001\u0000\u0000\u0000\u0017"+
+		"\u0003\u0001\u0000\u0000\u0000\u0018\u0019\u0005\u0002\u0000\u0000\u0019"+
+		"\u0005\u0001\u0000\u0000\u0000\u001a\u001b\u0005\u0005\u0000\u0000\u001b"+
+		"\u001c\u0005\u0005\u0000\u0000\u001c\u0007\u0001\u0000\u0000\u0000\u0002"+
+		"\u000b\u0016";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

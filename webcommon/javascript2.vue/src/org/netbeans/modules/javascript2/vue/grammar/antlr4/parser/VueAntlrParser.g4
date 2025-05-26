@@ -49,14 +49,14 @@ statement :
     | TEMPLATE_TAG_OPEN
     | TEMPLATE_TAG_CLOSE
     | vueDirective
-    | QUOTE_ATTR
-    | VAR_TAG
-    | JAVASCRIPT_ATTR
-    | JAVASCRIPT_INTERP
+    | vueInterpolation
     | JAVASCRIPT
-    | CSS
     ;
 
 vueDirective :
     VUE_DIRECTIVE
+;
+
+vueInterpolation :
+    open_tag=VAR_TAG close_tag=VAR_TAG
 ;

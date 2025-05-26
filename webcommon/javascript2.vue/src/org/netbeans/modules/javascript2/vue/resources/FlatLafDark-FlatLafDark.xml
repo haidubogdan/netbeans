@@ -21,6 +21,6 @@
 -->
 <!DOCTYPE fontscolors PUBLIC "-//NetBeans//DTD Editor Fonts and Colors settings 1.1//EN" "http://www.netbeans.org/dtds/EditorFontsColors-1_1.dtd">
 <fontscolors>
-    <fontcolor name="var_tag" foreColor="66CCFF"/>
     <fontcolor name="mod-custom1" foreColor="66CCFF"/>
+    <fontcolor name="mod-custom2" foreColor="66CCFF"/>
 </fontscolors>

@@ -40,8 +40,10 @@ import org.netbeans.modules.parsing.api.Snapshot;
  */
 public class VueParserResult extends ParserResult {
 
-    volatile boolean finished = false;
+    private volatile boolean finished = false;
+    //offset ranges for coloring highlight
     private final List<OffsetRange> vueDirectiveLocations = new ArrayList<>();
+    private final List<OffsetRange> vueTagsLocations = new ArrayList<>();
 
     public VueParserResult(final Snapshot snapshot) {
         super(snapshot);
@@ -60,7 +62,7 @@ public class VueParserResult extends ParserResult {
         if (!finished) {
             VueAntlrParser parser = createParser(getSnapshot());
             parser.setBuildParseTree(false);
-            parser.addParseListener(new VueDirectiveListener());
+            parser.addParseListener(new VueElementHighlightsLocationListener());
             evaluateParser(parser);
             finished = true;
         }
@@ -82,7 +84,7 @@ public class VueParserResult extends ParserResult {
         return Collections.emptyList();
     }
 
-    private class VueDirectiveListener extends VueAntlrParserBaseListener {
+    private class VueElementHighlightsLocationListener extends VueAntlrParserBaseListener {
 
         @Override
         public void exitVueDirective(VueAntlrParser.VueDirectiveContext ctx) {
@@ -91,9 +93,26 @@ public class VueParserResult extends ParserResult {
                 vueDirectiveLocations.add(new OffsetRange(vueDirective.getStartIndex(), vueDirective.getStopIndex() + 1));
             }
         }
+
+        @Override
+        public void enterVueInterpolation(VueAntlrParser.VueInterpolationContext ctx) {
+            Token vueOpenTag = ctx.open_tag;
+            if (vueOpenTag != null) {
+                vueTagsLocations.add(new OffsetRange(vueOpenTag.getStartIndex(), vueOpenTag.getStopIndex() + 1));
+            }
+            
+            Token vueCloseTag = ctx.close_tag;
+            if (vueCloseTag != null) {
+                vueTagsLocations.add(new OffsetRange(vueCloseTag.getStartIndex(), vueCloseTag.getStopIndex() + 1));
+            }
+        }
     }
 
     public List<OffsetRange> getVueDirectiveLocations() {
         return vueDirectiveLocations;
+    }
+    
+    public List<OffsetRange> getVueTagsLocations() {
+        return vueTagsLocations;
     }
 }

@@ -28,11 +28,7 @@ import org.antlr.v4.runtime.Lexer;
  */
 public abstract class LexerAdaptor extends Lexer {
 
-    public static final String LANG_ATTR = "lang";  //NOI18N
     private boolean attrQuoteOpened = false;
-    private boolean varInterpolationOpened = false;
-    private String scriptLanguage = null;
-    private String styleLanguage = null;
 
     public LexerAdaptor(CharStream input) {
         super(input);
@@ -41,9 +37,6 @@ public abstract class LexerAdaptor extends Lexer {
     @Override
     public void reset() {
         attrQuoteOpened = false;
-        varInterpolationOpened = false;
-        scriptLanguage = null;
-        styleLanguage = null;
         super.reset();
     }
 
@@ -55,50 +48,4 @@ public abstract class LexerAdaptor extends Lexer {
         return attrQuoteOpened;
     }
 
-    public void setVarInterpolationOpened(boolean state) {
-        varInterpolationOpened = state;
-    }
-
-    public boolean isVarInterpolationOpened() {
-        return varInterpolationOpened;
-    }
-
-    public void setScriptLanguage(String lang) {
-        scriptLanguage = lang;
-    }
-
-    public void setScriptLanguage() {
-        scriptLanguage = extractLangFromInput();
-    }
-
-    public String getScriptLanguage() {
-        return scriptLanguage;
-    }
-
-    public void setStyleLanguage(String lang) {
-        scriptLanguage = lang;
-    }
-
-    public void setStyleLanguage() {
-        styleLanguage = extractLangFromInput();
-    }
-
-    public String getStyleLanguage() {
-        return styleLanguage;
-    }
-
-    private String extractLangFromInput() {
-        String input = this.getText();
-        String langAttrEq = LANG_ATTR + "=";  //NOI18N
-        if (input == null || !input.startsWith(langAttrEq)) {
-            return null;
-        }
-        String langValue = input.substring(langAttrEq.length());
-        //check if only quotes
-        if (langValue.length() == 2) {
-            return null;
-        }
-
-        return langValue.substring(1, langValue.length() - 1);
-    }
 }

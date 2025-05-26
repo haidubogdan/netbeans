@@ -37,6 +37,7 @@ public class VueSemanticAnalyzer extends SemanticAnalyzer<VueParserResult> {
 
     private boolean cancelled;
     public static final EnumSet<ColoringAttributes> VUE_DIRECTIVE_ATTR = EnumSet.of(ColoringAttributes.CUSTOM1);
+    public static final EnumSet<ColoringAttributes> VUE_TAG = EnumSet.of(ColoringAttributes.CUSTOM2);
     private Map<OffsetRange, Set<ColoringAttributes>> semanticHighlights;
 
     @Override
@@ -80,6 +81,10 @@ public class VueSemanticAnalyzer extends SemanticAnalyzer<VueParserResult> {
 
         for (OffsetRange range : parserResult.getVueDirectiveLocations()) {
             highlights.put(range, VUE_DIRECTIVE_ATTR);
+        }
+        
+        for (OffsetRange range : parserResult.getVueTagsLocations()) {
+            highlights.put(range, VUE_TAG);
         }
         
         this.semanticHighlights = highlights;
