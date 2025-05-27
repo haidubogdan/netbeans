@@ -41,10 +41,11 @@ public class VueAntlrParser extends Parser {
 		VAR_TAG=5, HTML=6, OTHER=7, TEMPLATE_TAG_CLOSE=8, TEMPLATE_OTHER=9, VAR_INTERPOLATION_OTHER=10, 
 		VAR_INTERPOLATION_END=11;
 	public static final int
-		RULE_file = 0, RULE_statement = 1, RULE_vueDirective = 2, RULE_vueInterpolation = 3;
+		RULE_file = 0, RULE_statement = 1, RULE_template = 2, RULE_vueDirective = 3, 
+		RULE_vueInterpolation = 4;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"file", "statement", "vueDirective", "vueInterpolation"
+			"file", "statement", "template", "vueDirective", "vueInterpolation"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -144,21 +145,21 @@ public class VueAntlrParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(11);
+			setState(13);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 366L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 74L) != 0)) {
 				{
 				{
-				setState(8);
+				setState(10);
 				statement();
 				}
 				}
-				setState(13);
+				setState(15);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(14);
+			setState(16);
 			match(EOF);
 			}
 		}
@@ -176,13 +177,8 @@ public class VueAntlrParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatementContext extends ParserRuleContext {
 		public TerminalNode HTML() { return getToken(VueAntlrParser.HTML, 0); }
-		public TerminalNode TEMPLATE_TAG_OPEN() { return getToken(VueAntlrParser.TEMPLATE_TAG_OPEN, 0); }
-		public TerminalNode TEMPLATE_TAG_CLOSE() { return getToken(VueAntlrParser.TEMPLATE_TAG_CLOSE, 0); }
-		public VueDirectiveContext vueDirective() {
-			return getRuleContext(VueDirectiveContext.class,0);
-		}
-		public VueInterpolationContext vueInterpolation() {
-			return getRuleContext(VueInterpolationContext.class,0);
+		public TemplateContext template() {
+			return getRuleContext(TemplateContext.class,0);
 		}
 		public TerminalNode JAVASCRIPT() { return getToken(VueAntlrParser.JAVASCRIPT, 0); }
 		public StatementContext(ParserRuleContext parent, int invokingState) {
@@ -203,53 +199,144 @@ public class VueAntlrParser extends Parser {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_statement);
 		try {
-			setState(22);
+			setState(21);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case HTML:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(16);
+				setState(18);
 				match(HTML);
 				}
 				break;
 			case TEMPLATE_TAG_OPEN:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(17);
-				match(TEMPLATE_TAG_OPEN);
-				}
-				break;
-			case TEMPLATE_TAG_CLOSE:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(18);
-				match(TEMPLATE_TAG_CLOSE);
-				}
-				break;
-			case VUE_DIRECTIVE:
-				enterOuterAlt(_localctx, 4);
-				{
 				setState(19);
-				vueDirective();
-				}
-				break;
-			case VAR_TAG:
-				enterOuterAlt(_localctx, 5);
-				{
-				setState(20);
-				vueInterpolation();
+				template();
 				}
 				break;
 			case JAVASCRIPT:
-				enterOuterAlt(_localctx, 6);
+				enterOuterAlt(_localctx, 3);
 				{
-				setState(21);
+				setState(20);
 				match(JAVASCRIPT);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class TemplateContext extends ParserRuleContext {
+		public TerminalNode TEMPLATE_TAG_OPEN() { return getToken(VueAntlrParser.TEMPLATE_TAG_OPEN, 0); }
+		public TerminalNode TEMPLATE_TAG_CLOSE() { return getToken(VueAntlrParser.TEMPLATE_TAG_CLOSE, 0); }
+		public List<TerminalNode> HTML() { return getTokens(VueAntlrParser.HTML); }
+		public TerminalNode HTML(int i) {
+			return getToken(VueAntlrParser.HTML, i);
+		}
+		public List<VueDirectiveContext> vueDirective() {
+			return getRuleContexts(VueDirectiveContext.class);
+		}
+		public VueDirectiveContext vueDirective(int i) {
+			return getRuleContext(VueDirectiveContext.class,i);
+		}
+		public List<VueInterpolationContext> vueInterpolation() {
+			return getRuleContexts(VueInterpolationContext.class);
+		}
+		public VueInterpolationContext vueInterpolation(int i) {
+			return getRuleContext(VueInterpolationContext.class,i);
+		}
+		public List<TerminalNode> JAVASCRIPT() { return getTokens(VueAntlrParser.JAVASCRIPT); }
+		public TerminalNode JAVASCRIPT(int i) {
+			return getToken(VueAntlrParser.JAVASCRIPT, i);
+		}
+		public List<TerminalNode> JAVASCRIPT_ATTR_VALUE() { return getTokens(VueAntlrParser.JAVASCRIPT_ATTR_VALUE); }
+		public TerminalNode JAVASCRIPT_ATTR_VALUE(int i) {
+			return getToken(VueAntlrParser.JAVASCRIPT_ATTR_VALUE, i);
+		}
+		public TemplateContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_template; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VueAntlrParserListener ) ((VueAntlrParserListener)listener).enterTemplate(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VueAntlrParserListener ) ((VueAntlrParserListener)listener).exitTemplate(this);
+		}
+	}
+
+	public final TemplateContext template() throws RecognitionException {
+		TemplateContext _localctx = new TemplateContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_template);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(23);
+			match(TEMPLATE_TAG_OPEN);
+			setState(31);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 124L) != 0)) {
+				{
+				setState(29);
+				_errHandler.sync(this);
+				switch (_input.LA(1)) {
+				case HTML:
+					{
+					setState(24);
+					match(HTML);
+					}
+					break;
+				case VUE_DIRECTIVE:
+					{
+					setState(25);
+					vueDirective();
+					}
+					break;
+				case VAR_TAG:
+					{
+					setState(26);
+					vueInterpolation();
+					}
+					break;
+				case JAVASCRIPT:
+					{
+					setState(27);
+					match(JAVASCRIPT);
+					}
+					break;
+				case JAVASCRIPT_ATTR_VALUE:
+					{
+					setState(28);
+					match(JAVASCRIPT_ATTR_VALUE);
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				setState(33);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(34);
+			match(TEMPLATE_TAG_CLOSE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -282,11 +369,11 @@ public class VueAntlrParser extends Parser {
 
 	public final VueDirectiveContext vueDirective() throws RecognitionException {
 		VueDirectiveContext _localctx = new VueDirectiveContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_vueDirective);
+		enterRule(_localctx, 6, RULE_vueDirective);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24);
+			setState(36);
 			match(VUE_DIRECTIVE);
 			}
 		}
@@ -325,13 +412,13 @@ public class VueAntlrParser extends Parser {
 
 	public final VueInterpolationContext vueInterpolation() throws RecognitionException {
 		VueInterpolationContext _localctx = new VueInterpolationContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_vueInterpolation);
+		enterRule(_localctx, 8, RULE_vueInterpolation);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(26);
+			setState(38);
 			((VueInterpolationContext)_localctx).open_tag = match(VAR_TAG);
-			setState(27);
+			setState(39);
 			((VueInterpolationContext)_localctx).close_tag = match(VAR_TAG);
 			}
 		}
@@ -347,28 +434,35 @@ public class VueAntlrParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u000b\u001e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
-		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0001\u0000\u0005\u0000"+
-		"\n\b\u0000\n\u0000\f\u0000\r\t\u0000\u0001\u0000\u0001\u0000\u0001\u0001"+
-		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0003\u0001"+
-		"\u0017\b\u0001\u0001\u0002\u0001\u0002\u0001\u0003\u0001\u0003\u0001\u0003"+
-		"\u0001\u0003\u0000\u0000\u0004\u0000\u0002\u0004\u0006\u0000\u0000\u001f"+
-		"\u0000\u000b\u0001\u0000\u0000\u0000\u0002\u0016\u0001\u0000\u0000\u0000"+
-		"\u0004\u0018\u0001\u0000\u0000\u0000\u0006\u001a\u0001\u0000\u0000\u0000"+
-		"\b\n\u0003\u0002\u0001\u0000\t\b\u0001\u0000\u0000\u0000\n\r\u0001\u0000"+
-		"\u0000\u0000\u000b\t\u0001\u0000\u0000\u0000\u000b\f\u0001\u0000\u0000"+
-		"\u0000\f\u000e\u0001\u0000\u0000\u0000\r\u000b\u0001\u0000\u0000\u0000"+
-		"\u000e\u000f\u0005\u0000\u0000\u0001\u000f\u0001\u0001\u0000\u0000\u0000"+
-		"\u0010\u0017\u0005\u0006\u0000\u0000\u0011\u0017\u0005\u0001\u0000\u0000"+
-		"\u0012\u0017\u0005\b\u0000\u0000\u0013\u0017\u0003\u0004\u0002\u0000\u0014"+
-		"\u0017\u0003\u0006\u0003\u0000\u0015\u0017\u0005\u0003\u0000\u0000\u0016"+
-		"\u0010\u0001\u0000\u0000\u0000\u0016\u0011\u0001\u0000\u0000\u0000\u0016"+
-		"\u0012\u0001\u0000\u0000\u0000\u0016\u0013\u0001\u0000\u0000\u0000\u0016"+
-		"\u0014\u0001\u0000\u0000\u0000\u0016\u0015\u0001\u0000\u0000\u0000\u0017"+
-		"\u0003\u0001\u0000\u0000\u0000\u0018\u0019\u0005\u0002\u0000\u0000\u0019"+
-		"\u0005\u0001\u0000\u0000\u0000\u001a\u001b\u0005\u0005\u0000\u0000\u001b"+
-		"\u001c\u0005\u0005\u0000\u0000\u001c\u0007\u0001\u0000\u0000\u0000\u0002"+
-		"\u000b\u0016";
+		"\u0004\u0001\u000b*\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0001"+
+		"\u0000\u0005\u0000\f\b\u0000\n\u0000\f\u0000\u000f\t\u0000\u0001\u0000"+
+		"\u0001\u0000\u0001\u0001\u0001\u0001\u0001\u0001\u0003\u0001\u0016\b\u0001"+
+		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0005\u0002\u001e\b\u0002\n\u0002\f\u0002!\t\u0002\u0001\u0002\u0001"+
+		"\u0002\u0001\u0003\u0001\u0003\u0001\u0004\u0001\u0004\u0001\u0004\u0001"+
+		"\u0004\u0000\u0000\u0005\u0000\u0002\u0004\u0006\b\u0000\u0000,\u0000"+
+		"\r\u0001\u0000\u0000\u0000\u0002\u0015\u0001\u0000\u0000\u0000\u0004\u0017"+
+		"\u0001\u0000\u0000\u0000\u0006$\u0001\u0000\u0000\u0000\b&\u0001\u0000"+
+		"\u0000\u0000\n\f\u0003\u0002\u0001\u0000\u000b\n\u0001\u0000\u0000\u0000"+
+		"\f\u000f\u0001\u0000\u0000\u0000\r\u000b\u0001\u0000\u0000\u0000\r\u000e"+
+		"\u0001\u0000\u0000\u0000\u000e\u0010\u0001\u0000\u0000\u0000\u000f\r\u0001"+
+		"\u0000\u0000\u0000\u0010\u0011\u0005\u0000\u0000\u0001\u0011\u0001\u0001"+
+		"\u0000\u0000\u0000\u0012\u0016\u0005\u0006\u0000\u0000\u0013\u0016\u0003"+
+		"\u0004\u0002\u0000\u0014\u0016\u0005\u0003\u0000\u0000\u0015\u0012\u0001"+
+		"\u0000\u0000\u0000\u0015\u0013\u0001\u0000\u0000\u0000\u0015\u0014\u0001"+
+		"\u0000\u0000\u0000\u0016\u0003\u0001\u0000\u0000\u0000\u0017\u001f\u0005"+
+		"\u0001\u0000\u0000\u0018\u001e\u0005\u0006\u0000\u0000\u0019\u001e\u0003"+
+		"\u0006\u0003\u0000\u001a\u001e\u0003\b\u0004\u0000\u001b\u001e\u0005\u0003"+
+		"\u0000\u0000\u001c\u001e\u0005\u0004\u0000\u0000\u001d\u0018\u0001\u0000"+
+		"\u0000\u0000\u001d\u0019\u0001\u0000\u0000\u0000\u001d\u001a\u0001\u0000"+
+		"\u0000\u0000\u001d\u001b\u0001\u0000\u0000\u0000\u001d\u001c\u0001\u0000"+
+		"\u0000\u0000\u001e!\u0001\u0000\u0000\u0000\u001f\u001d\u0001\u0000\u0000"+
+		"\u0000\u001f \u0001\u0000\u0000\u0000 \"\u0001\u0000\u0000\u0000!\u001f"+
+		"\u0001\u0000\u0000\u0000\"#\u0005\b\u0000\u0000#\u0005\u0001\u0000\u0000"+
+		"\u0000$%\u0005\u0002\u0000\u0000%\u0007\u0001\u0000\u0000\u0000&\'\u0005"+
+		"\u0005\u0000\u0000\'(\u0005\u0005\u0000\u0000(\t\u0001\u0000\u0000\u0000"+
+		"\u0004\r\u0015\u001d\u001f";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

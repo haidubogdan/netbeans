@@ -95,7 +95,7 @@ public class VueParserResult extends ParserResult {
         }
 
         @Override
-        public void enterVueInterpolation(VueAntlrParser.VueInterpolationContext ctx) {
+        public void exitVueInterpolation(VueAntlrParser.VueInterpolationContext ctx) {
             Token vueOpenTag = ctx.open_tag;
             if (vueOpenTag != null) {
                 vueTagsLocations.add(new OffsetRange(vueOpenTag.getStartIndex(), vueOpenTag.getStopIndex() + 1));

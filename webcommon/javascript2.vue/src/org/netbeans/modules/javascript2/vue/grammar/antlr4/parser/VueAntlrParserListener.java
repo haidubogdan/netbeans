@@ -48,6 +48,16 @@ public interface VueAntlrParserListener extends ParseTreeListener {
 	 */
 	void exitStatement(VueAntlrParser.StatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link VueAntlrParser#template}.
+	 * @param ctx the parse tree
+	 */
+	void enterTemplate(VueAntlrParser.TemplateContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VueAntlrParser#template}.
+	 * @param ctx the parse tree
+	 */
+	void exitTemplate(VueAntlrParser.TemplateContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link VueAntlrParser#vueDirective}.
 	 * @param ctx the parse tree
 	 */

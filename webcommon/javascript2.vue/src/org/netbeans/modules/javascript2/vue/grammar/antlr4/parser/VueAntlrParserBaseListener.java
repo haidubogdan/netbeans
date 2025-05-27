@@ -61,6 +61,18 @@ public class VueAntlrParserBaseListener implements VueAntlrParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterTemplate(VueAntlrParser.TemplateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTemplate(VueAntlrParser.TemplateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterVueDirective(VueAntlrParser.VueDirectiveContext ctx) { }
 	/**
 	 * {@inheritDoc}

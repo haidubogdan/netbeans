@@ -46,12 +46,15 @@ file : (statement)* EOF;
 
 statement :
     HTML
-    | TEMPLATE_TAG_OPEN
-    | TEMPLATE_TAG_CLOSE
-    | vueDirective
-    | vueInterpolation
+    | template
     | JAVASCRIPT
     ;
+
+template:
+    TEMPLATE_TAG_OPEN 
+          (HTML | vueDirective | vueInterpolation | JAVASCRIPT | JAVASCRIPT_ATTR_VALUE)* 
+    TEMPLATE_TAG_CLOSE
+;
 
 vueDirective :
     VUE_DIRECTIVE
