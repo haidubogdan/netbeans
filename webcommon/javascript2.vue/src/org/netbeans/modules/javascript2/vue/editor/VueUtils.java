@@ -20,8 +20,6 @@ package org.netbeans.modules.javascript2.vue.editor;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.netbeans.modules.csl.api.OffsetRange;
-import org.netbeans.modules.parsing.api.Snapshot;
 
 /**
  *
@@ -53,6 +51,8 @@ public class VueUtils {
         EVENT_HANDLER_NAMES.add("change"); // NOI18N
         EVENT_HANDLER_NAMES.add("drag"); // NOI18N
         EVENT_HANDLER_NAMES.add("drop"); // NOI18N
+        EVENT_HANDLER_NAMES.add("input"); // NOI18N
+        EVENT_HANDLER_NAMES.add("update"); // NOI18N
     }
 
     public static boolean isVueDirective(String attributeName) {
@@ -61,21 +61,5 @@ public class VueUtils {
                 || attributeName.startsWith("[") //NOI18N
                 || attributeName.contains(".") //NOI18N
                 || EVENT_HANDLER_NAMES.contains(attributeName);
-    }
-
-    public static OffsetRange getValidDocumentOffsetRange(int efrom, int eto, Snapshot snapshot) {
-        if (efrom == -1 || eto == -1) {
-            throw new IllegalArgumentException(String.format("bad range: %s - %s", efrom, eto));
-        }
-        int dfrom = snapshot.getOriginalOffset(efrom);
-        int dto = snapshot.getOriginalOffset(eto);
-        if (dfrom == -1 || dto == -1) {
-            return null;
-        }
-        if (dfrom > dto) {
-            return null;
-        }
-
-        return new OffsetRange(dfrom, dto);
     }
 }

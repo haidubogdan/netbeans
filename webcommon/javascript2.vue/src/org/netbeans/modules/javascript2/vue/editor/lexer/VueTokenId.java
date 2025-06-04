@@ -67,6 +67,7 @@ public enum VueTokenId implements TokenId {
         protected LanguageEmbedding<? extends TokenId> embedding(Token<VueTokenId> token,
                 LanguagePath languagePath, InputAttributes inputAttributes) {
 
+            //LanguageRegistry.getInstance().getLanguageByMimeType("text/html") ??
             return switch (token.id()) {
                 case JAVASCRIPT  -> LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
                 case JAVASCRIPT_PUG -> LanguageEmbedding.create(JadeTokenId.jadeLanguage(), 0, 0, true);

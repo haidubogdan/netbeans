@@ -45,14 +45,12 @@ options { tokenVocab = VueAntlrLexer; }
 file : (statement)* EOF;
 
 statement :
-    HTML
-    | template
-    | JAVASCRIPT
+    template
     ;
 
 template:
     TEMPLATE_TAG_OPEN 
-          (HTML | vueDirective | vueInterpolation | JAVASCRIPT | JAVASCRIPT_ATTR_VALUE)* 
+          (vueDirective JAVASCRIPT_ATTR_VALUE? | vueInterpolation)* 
     TEMPLATE_TAG_CLOSE
 ;
 
