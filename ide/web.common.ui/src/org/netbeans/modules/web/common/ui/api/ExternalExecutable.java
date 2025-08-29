@@ -42,6 +42,7 @@ import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
+import org.netbeans.api.extexecution.IExecutable;
 import org.netbeans.api.extexecution.base.ProcessBuilder;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.extexecution.base.input.InputProcessors;
@@ -59,7 +60,7 @@ import org.openide.windows.InputOutput;
  * Class usable for running any external executable (program or script).
  * @since 1.74
  */
-public final class ExternalExecutable {
+public final class ExternalExecutable implements IExecutable {
 
     private static final Logger LOGGER = Logger.getLogger(ExternalExecutable.class.getName());
 
