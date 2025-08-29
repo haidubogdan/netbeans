@@ -62,6 +62,7 @@ import org.netbeans.modules.javascript.nodejs.spi.DebuggerStartModifier;
 import org.netbeans.modules.javascript.nodejs.spi.DebuggerStartModifierFactory;
 import org.netbeans.modules.javascript.nodejs.ui.customizer.NodeJsCustomizerProvider;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
+import org.netbeans.modules.javascript.nodejs.util.DockerContainerUtils;
 import org.netbeans.modules.javascript.nodejs.util.FileUtils;
 import org.netbeans.modules.javascript.nodejs.util.NodeJsUtils;
 import org.netbeans.modules.javascript.nodejs.util.StringUtils;
@@ -119,6 +120,13 @@ public class NodeExecutable {
 
     @CheckForNull
     public static NodeExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
+        if (DockerContainerUtils.useDockerExecContainer(project)) {
+            List<String> executableParams = DockerContainerUtils.generateExecutableParams(project);
+            if (!executableParams.isEmpty()) {
+                return new DockerNodeExecutable("node", project, executableParams); // NOI18N
+            }
+            LOGGER.log(Level.WARNING, null, "No params generated for docker node executable");  // NOI18N
+        }
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNode(false)
                 .getResult();
@@ -713,4 +721,31 @@ public class NodeExecutable {
 
     }
 
+    private static final class DockerNodeExecutable extends NodeExecutable {
+        private final String docker;
+        private final List<String> executableParams;
+
+        DockerNodeExecutable(String nodePath, Project project, List<String> executableParams) {
+            super(nodePath, project);
+            docker = DockerContainerUtils.getDockerExecutablePath();
+            this.executableParams = executableParams;
+        }
+
+        @Override
+        String getCommand() {
+            return docker;
+        }
+
+        @Override
+        List<String> getParams(List<String> params) {
+            StringBuilder sb = new StringBuilder(200);
+            //force the node command (no need to adapt for windows)
+            sb.append("node");// NOI18N
+            sb.append(" "); // NOI18N
+            sb.append(StringUtils.implode(super.getParams(params), " ")); // NOI18N
+            executableParams.add(sb.toString());
+            return Collections.unmodifiableList(executableParams);
+        }
+    }
+    
 }
