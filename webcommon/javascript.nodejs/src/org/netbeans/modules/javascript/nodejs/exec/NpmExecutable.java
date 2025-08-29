@@ -40,10 +40,12 @@ import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.Project;
+import static org.netbeans.modules.javascript.nodejs.exec.NodeExecutable.LOGGER;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptionsValidator;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
+import org.netbeans.modules.javascript.nodejs.util.DockerContainerUtils;
 import org.netbeans.modules.javascript.nodejs.util.FileUtils;
 import org.netbeans.modules.javascript.nodejs.util.NodeJsUtils;
 import org.netbeans.modules.javascript.nodejs.util.StringUtils;
@@ -72,7 +74,6 @@ public class NpmExecutable {
     protected final Project project;
     protected final String npmPath;
 
-
     static {
         if (Utilities.isWindows()) {
             NPM_NAME = "npm.cmd"; // NOI18N
@@ -89,9 +90,18 @@ public class NpmExecutable {
 
     @CheckForNull
     public static NpmExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
+        
+        if (DockerContainerUtils.useDockerExecContainer(project)) {
+            List<String> executableParams = DockerContainerUtils.generateExecutableParams(project);
+            if (!executableParams.isEmpty()) {
+                 return new DockerNpmExecutable("npm", project, executableParams); // NOI18N
+            }
+            LOGGER.log(Level.WARNING, null, "No params generated for docker npm executable");  // NOI18N
+        }
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNpm()
                 .getResult();
+
         if (validateResult(result) != null) {
             if (showOptions) {
                 OptionsDisplayer.getDefault().open(NodeJsOptionsPanelController.OPTIONS_PATH);
@@ -372,6 +382,33 @@ public class NpmExecutable {
             return Collections.singletonList(sb.toString());
         }
 
+    }
+    
+    private static final class DockerNpmExecutable extends NpmExecutable {
+        private final String docker;
+            private final List<String> executableParams;
+
+        DockerNpmExecutable(String npmPath, Project project, List<String> executableParams) {
+            super(npmPath, project);
+            docker = DockerContainerUtils.getDockerExecutablePath();
+            this.executableParams = executableParams;
+        }
+
+        @Override
+        String getCommand() {
+            return docker;
+        }
+
+        @Override
+        List<String> getParams(List<String> params) {
+            StringBuilder sb = new StringBuilder(200);
+            //force the node command (no need to adapt for windows)
+            sb.append("npm"); // NOI18N
+            sb.append(" "); // NOI18N
+            sb.append(StringUtils.implode(super.getParams(params), " ")); // NOI18N
+            executableParams.add(sb.toString());
+            return Collections.unmodifiableList(executableParams);
+        }
     }
 
     private static final class StringBuilderInputProcessorFactory implements ExecutionDescriptor.InputProcessorFactory2 {
