@@ -304,6 +304,7 @@
                 <friend>org.netbeans.modules.dlight.uncover</friend>
                 <friend>org.netbeans.modules.dlight.util</friend>
                 <friend>org.netbeans.modules.dlight.webstack</friend>
+                <friend>org.netbeans.modules.docker.execution</friend>
                 <friend>org.netbeans.modules.nativeexecution.nb</friend>
                 <friend>org.netbeans.modules.odcs.cnd</friend>
                 <friend>org.netbeans.modules.remotefs.versioning</friend>
