@@ -1,0 +1,11 @@
+
+- global docker bin path
+- test docker container is running
+- visibile used docker bin path
+- adapt -i or -t on execution
+- listener for changing a config
+- fix add new container syncronization
+- unit tests ??
+- npm validator via docker
+- generate uid for panels
+- notify when running command using docker ?

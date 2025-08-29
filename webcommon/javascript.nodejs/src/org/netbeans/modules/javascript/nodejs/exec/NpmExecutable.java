@@ -44,6 +44,7 @@ import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptionsValidator;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
+import org.netbeans.modules.javascript.nodejs.util.DockerContainerUtils;
 import org.netbeans.modules.javascript.nodejs.util.FileUtils;
 import org.netbeans.modules.javascript.nodejs.util.NodeJsUtils;
 import org.netbeans.modules.javascript.nodejs.util.StringUtils;
@@ -72,7 +73,6 @@ public class NpmExecutable {
     protected final Project project;
     protected final String npmPath;
 
-
     static {
         if (Utilities.isWindows()) {
             NPM_NAME = "npm.cmd"; // NOI18N
@@ -89,9 +89,15 @@ public class NpmExecutable {
 
     @CheckForNull
     public static NpmExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
+        
+        if (DockerContainerUtils.useDockerExecContainer(project)) {
+            //TODO validate
+            return new DockerNpmExecutable(NPM_NAME, project);
+        }
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNpm()
                 .getResult();
+
         if (validateResult(result) != null) {
             if (showOptions) {
                 OptionsDisplayer.getDefault().open(NodeJsOptionsPanelController.OPTIONS_PATH);
@@ -372,6 +378,32 @@ public class NpmExecutable {
             return Collections.singletonList(sb.toString());
         }
 
+    }
+    
+    private static final class DockerNpmExecutable extends NpmExecutable {
+        //TODO use preferences
+        private final String docker;
+
+        DockerNpmExecutable(String npmPath, Project project) {
+            super(npmPath, project);
+            docker = DockerContainerUtils.getDockerExecutablePath();
+        }
+
+        @Override
+        String getCommand() {
+            return docker;
+        }
+
+        @Override
+        List<String> getParams(List<String> params) {
+            StringBuilder sb = new StringBuilder(200);
+            List<String> proxyParams = DockerContainerUtils.loadExecutableParams(project);
+            sb.append(npmPath);
+            sb.append(" "); // NOI18N
+            sb.append(StringUtils.implode(super.getParams(params), " ")); // NOI18N
+            proxyParams.add(sb.toString());
+            return proxyParams;
+        }
     }
 
     private static final class StringBuilderInputProcessorFactory implements ExecutionDescriptor.InputProcessorFactory2 {

@@ -62,6 +62,7 @@ import org.netbeans.modules.javascript.nodejs.spi.DebuggerStartModifier;
 import org.netbeans.modules.javascript.nodejs.spi.DebuggerStartModifierFactory;
 import org.netbeans.modules.javascript.nodejs.ui.customizer.NodeJsCustomizerProvider;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
+import org.netbeans.modules.javascript.nodejs.util.DockerContainerUtils;
 import org.netbeans.modules.javascript.nodejs.util.FileUtils;
 import org.netbeans.modules.javascript.nodejs.util.NodeJsUtils;
 import org.netbeans.modules.javascript.nodejs.util.StringUtils;
@@ -119,6 +120,10 @@ public class NodeExecutable {
 
     @CheckForNull
     public static NodeExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
+        if (DockerContainerUtils.useDockerExecContainer(project)) {
+            //TODO validate
+            return new DockerNodeExecutable("node", project); // NOI18N
+        }
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNode(false)
                 .getResult();
@@ -713,4 +718,30 @@ public class NodeExecutable {
 
     }
 
+    private static final class DockerNodeExecutable extends NodeExecutable {
+        //TODO use preferences
+        private final String docker;
+
+        DockerNodeExecutable(String nodePath, Project project) {
+            super(nodePath, project);
+            docker = DockerContainerUtils.getDockerExecutablePath();
+        }
+
+        @Override
+        String getCommand() {
+            return docker;
+        }
+
+        @Override
+        List<String> getParams(List<String> params) {
+            StringBuilder sb = new StringBuilder(200);
+            List<String> proxyParams = DockerContainerUtils.loadExecutableParams(project);
+            sb.append(nodePath);
+            sb.append(" "); // NOI18N
+            sb.append(StringUtils.implode(super.getParams(params), " ")); // NOI18N
+            proxyParams.add(sb.toString());
+            return proxyParams;
+        }
+    }
+    
 }
