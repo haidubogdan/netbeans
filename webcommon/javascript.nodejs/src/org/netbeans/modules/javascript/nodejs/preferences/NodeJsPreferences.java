@@ -46,6 +46,8 @@ public final class NodeJsPreferences {
     public static final String ASK_RUN_CONFIGURATION = "ask.run.enabled"; // NOI18N
     public static final String ASK_SYNC_ENABLED = "ask.sync.enabled"; // NOI18N
     public static final String DEBUG_PROTOCOL = "debug.protocol"; // NOI18N
+    public static final String USE_DOCKER_CONFIG = "use.docker.config"; // NOI18N
+    public static final String DOCKER_CONFIG_NAME = "docker.config.name"; // NOI18N
 
     private final Project project;
 
@@ -194,7 +196,23 @@ public final class NodeJsPreferences {
             getPrivatePreferences().put(DEBUG_PROTOCOL, debugProtocol);
         }
     }
+    
+    public boolean getUseDockerConfig() {
+        return getSharedPreferences().getBoolean(USE_DOCKER_CONFIG, false);
+    }
 
+    public void setUseDockerConfig(boolean useDockerConfig) {
+        getSharedPreferences().putBoolean(USE_DOCKER_CONFIG, useDockerConfig);
+    }
+
+    public String getDockerConfigName() {
+        return getSharedPreferences().get(DOCKER_CONFIG_NAME, null);
+    }
+
+    public void setDockerConfigName(String dockerConfigName) {
+        getSharedPreferences().put(DOCKER_CONFIG_NAME, dockerConfigName);
+    }
+    
     private synchronized Preferences getPrivatePreferences() {
         if (privatePreferences == null) {
             privatePreferences = ProjectUtils.getPreferences(project, NodeJsPreferences.class, false);
