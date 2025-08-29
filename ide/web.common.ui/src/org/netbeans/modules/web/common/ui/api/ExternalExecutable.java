@@ -46,6 +46,9 @@ import org.netbeans.api.extexecution.base.ProcessBuilder;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.extexecution.base.input.InputProcessors;
 import org.netbeans.api.progress.BaseProgressUtils;
+import org.netbeans.modules.docker.execution.DockerCommands;
+import static org.netbeans.modules.docker.execution.DockerCommands.*;
+import org.netbeans.modules.docker.execution.DockerExecutableConfig;
 import org.netbeans.modules.web.common.spi.ExternalExecutableUserWarning;
 import org.openide.util.BaseUtilities;
 import org.openide.util.Lookup;
@@ -99,7 +102,8 @@ public final class ExternalExecutable {
     private boolean fileOutputOnly = false;
     private boolean noInfo = false;
     private boolean noOutput = false;
-
+    private DockerExecutableConfig dockerConfig = null;
+    private boolean skipExecutableValidation = false;
 
     /**
      * Parse command which can be just binary or binary with parameters.
@@ -108,8 +112,16 @@ public final class ExternalExecutable {
      */
     public ExternalExecutable(String command) {
         Pair<String, List<String>> parsedCommand = parseCommand(command);
-        executable = parsedCommand.first();
-        parameters = parsedCommand.second();
+        if (dockerConfig != null) {
+            parameters = new ArrayList<>();
+            parsedCommand = parseCommand(DockerCommands.DOCKER_BASE_COMMAND + " " + command);
+            executable = parsedCommand.first();
+            parameters.addAll(parsedCommand.second());
+        } else {
+            parsedCommand = parseCommand(command);
+            executable = parsedCommand.first();
+            parameters = parsedCommand.second();
+        }
         this.command = command.trim();
     }
 
@@ -295,6 +307,21 @@ public final class ExternalExecutable {
         return this;
     }
 
+    public ExternalExecutable dockerConfig(DockerExecutableConfig dockerConfig) {
+        this.dockerConfig = dockerConfig;
+        return this;
+    }
+    
+    /**
+     * Just trust the alias command
+     * 
+     * @return 
+     */
+    public ExternalExecutable skipExecutableValidation() {
+        this.skipExecutableValidation = true;
+        return this;
+    }
+
     /**
      * Run this executable with the {@link #DEFAULT_EXECUTION_DESCRIPTOR default execution descriptor}.
      * @return task representing the actual run, value representing result of the {@link Future} is exit code of the process
@@ -424,42 +451,85 @@ public final class ExternalExecutable {
     @CheckForNull
     private Future<Integer> runInternal(ExecutionDescriptor executionDescriptor, ExecutionDescriptor.InputProcessorFactory2 outProcessorFactory) {
         Parameters.notNull("executionDescriptor", executionDescriptor); // NOI18N
-        final String error = ExternalExecutableValidator.validateCommand(executable, executableName);
-        if (error != null) {
-            if (warnUser) {
-                ExternalExecutableUserWarning euw = Lookup.getDefault().lookup(ExternalExecutableUserWarning.class);
-                if (euw == null) {
-                    LOGGER.info("No implementation of "+ExternalExecutableUserWarning.class);
-                } else {
-                    euw.displayError(error, optionsPath);
+
+        //skip file validation if the alias can be used
+        if (skipExecutableValidation) {
+            final String error = ExternalExecutableValidator.validateCommand(executable, executableName);
+            if (error != null) {
+                if (warnUser) {
+                    ExternalExecutableUserWarning euw = Lookup.getDefault().lookup(ExternalExecutableUserWarning.class);
+                    if (euw == null) {
+                        LOGGER.info("No implementation of "+ExternalExecutableUserWarning.class);
+                    } else {
+                        euw.displayError(error, optionsPath);
+                    }
                 }
+                return null;
             }
-            return null;
         }
+        
         ProcessBuilder processBuilder = getProcessBuilder();
         executionDescriptor = getExecutionDescriptor(executionDescriptor, outProcessorFactory);
         return ExecutionService.newService(processBuilder, executionDescriptor, getDisplayName()).run();
     }
 
     private ProcessBuilder getProcessBuilder() {
-        ProcessBuilder processBuilder = createProcessBuilder();
+        ProcessBuilder processBuilder;
         List<String> arguments = new ArrayList<>();
-        for (String param : parameters) {
-            fullCommand.add(param);
-            arguments.add(param);
+        
+        if (dockerConfig != null) {
+            processBuilder = createDockerProcessBuilder();
+            arguments.add(DOCKER_EXEC);
+            fullCommand.add(DOCKER_EXEC);
+            
+            if (dockerConfig.getDockerWorkDir() != null && !dockerConfig.getDockerWorkDir().trim().isEmpty()) {
+                arguments.add("-" + DOCKER_WORKDIR_OPTION); // NOI18N
+                arguments.add(dockerConfig.getDockerWorkDir());
+            }
+
+            if (dockerConfig.getDockerInteractive()) {
+                arguments.add("-" + DOCKER_INTERACTIVE_OPTION); // NOI18N
+            }
+
+            if (dockerConfig.getDockerUser() != null) {
+                arguments.add("-" + DOCKER_USER_OPTION); // NOI18N
+                arguments.add(dockerConfig.getDockerUser());
+            }
+            
+            arguments.add(dockerConfig.getDockerContainerName());
+
+            if (dockerConfig.getBashType() != null) {
+                arguments.add(dockerConfig.getBashType());
+            }
+
+            arguments.add("-" + DOCKER_COMMAND_OPTION); // NOI18N
+            
+            String execCommand = command + " " + String.join(" ", parameters) + String.join(" ", additionalParameters); // NOI18N
+            fullCommand.add(execCommand);
+            arguments.add(execCommand);
+            processBuilder.setArguments(arguments);
+        } else {
+            processBuilder = createProcessBuilder();
+            for (String param : parameters) {
+                fullCommand.add(param);
+                arguments.add(param);
+            }
+            for (String param : additionalParameters) {
+                fullCommand.add(param);
+                arguments.add(param);
+            }
+            processBuilder.setArguments(arguments);
+        
+            if (workDir != null) {
+                processBuilder.setWorkingDirectory(workDir.getAbsolutePath());
+            }
+            for (Map.Entry<String, String> variable : environmentVariables.entrySet()) {
+                processBuilder.getEnvironment().setVariable(variable.getKey(), variable.getValue());
+            }
         }
-        for (String param : additionalParameters) {
-            fullCommand.add(param);
-            arguments.add(param);
-        }
-        processBuilder.setArguments(arguments);
-        if (workDir != null) {
-            processBuilder.setWorkingDirectory(workDir.getAbsolutePath());
-        }
-        for (Map.Entry<String, String> variable : environmentVariables.entrySet()) {
-            processBuilder.getEnvironment().setVariable(variable.getKey(), variable.getValue());
-        }
-        processBuilder.setRedirectErrorStream(redirectErrorStream);
+
+        processBuilder.setRedirectErrorStream(true);
+
         return processBuilder;
     }
 
@@ -471,6 +541,14 @@ public final class ExternalExecutable {
         return processBuilder;
     }
 
+    private ProcessBuilder createDockerProcessBuilder() {
+        fullCommand.clear();
+        fullCommand.add(DOCKER_BASE_COMMAND);
+        ProcessBuilder processBuilder = ProcessBuilder.getLocal();
+        processBuilder.setExecutable(DOCKER_BASE_COMMAND);
+        return processBuilder;
+    }
+    
     private String getDisplayName() {
         if (displayName != null) {
             return displayName;
