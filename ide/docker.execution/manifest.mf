@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.netbeans.modules.docker.execution
+OpenIDE-Module-Localizing-Bundle: org/netbeans/modules/docker/execution/resources/Bundle.properties
+AutoUpdate-Show-In-Client: false
+

@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
+import org.netbeans.api.extexecution.IExecutable;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.extexecution.base.input.InputProcessors;
 import org.netbeans.api.extexecution.base.input.LineProcessor;
@@ -79,6 +80,7 @@ import org.openide.util.lookup.Lookups;
 import org.openide.windows.InputOutput;
 import org.openide.windows.OutputEvent;
 import org.openide.windows.OutputListener;
+import org.netbeans.modules.docker.execution.DockerExecutableBuilder;
 
 public class NodeExecutable {
 
@@ -119,6 +121,10 @@ public class NodeExecutable {
 
     @CheckForNull
     public static NodeExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
+        if (1==1) {
+            
+        }
+        
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNode(false)
                 .getResult();
@@ -354,13 +360,16 @@ public class NodeExecutable {
         }
     }
 
-    private ExternalExecutable getExecutable(String title) {
+    private IExecutable getExecutable(String title) {
         assert title != null;
-        return new ExternalExecutable(getCommand())
-                .workDir(getWorkDir())
-                .displayName(title)
-                .optionsPath(NodeJsOptionsPanelController.OPTIONS_PATH)
-                .noOutput(false);
+        IExecutable exec;
+        if (1==1) {
+            exec = DockerExecutableBuilder.createExecutable(project, Arrays.asList("node"));
+        } else {
+            exec = new ExternalExecutable(getCommand());
+        }
+        
+        return exec;
     }
 
     private ExecutionDescriptor getDescriptor(AtomicReference<Future<Integer>> taskRef) {
@@ -484,6 +493,13 @@ public class NodeExecutable {
             sb.append(StringUtils.implode(super.getParams(params), "\" \"")); // NOI18N
             sb.append("\""); // NOI18N
             return Collections.singletonList(sb.toString());
+        }
+
+    }
+    
+    private static final class DockerNodeExecutable extends NodeExecutable {
+        DockerNodeExecutable(String nodePath, Project project) {
+            super(nodePath, project);
         }
 
     }
