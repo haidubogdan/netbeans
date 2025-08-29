@@ -51,6 +51,7 @@ import org.netbeans.api.extexecution.print.ConvertedLine;
 import org.netbeans.api.extexecution.print.LineConvertor;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.execution.DockerExecutableConfig;
 import org.netbeans.modules.javascript.nodejs.api.DebuggerOptions;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
@@ -356,11 +357,16 @@ public class NodeExecutable {
 
     private ExternalExecutable getExecutable(String title) {
         assert title != null;
-        return new ExternalExecutable(getCommand())
+        ExternalExecutable exec = new ExternalExecutable(getCommand())
                 .workDir(getWorkDir())
                 .displayName(title)
                 .optionsPath(NodeJsOptionsPanelController.OPTIONS_PATH)
                 .noOutput(false);
+
+        //todo add docker enabled
+        exec.dockerConfig(DockerExecutableConfig.forProject(project));
+        exec.skipExecutableValidation();
+        return exec;
     }
 
     private ExecutionDescriptor getDescriptor(AtomicReference<Future<Integer>> taskRef) {
