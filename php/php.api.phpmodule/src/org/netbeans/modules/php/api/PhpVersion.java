@@ -41,6 +41,7 @@ import org.openide.util.NbBundle;
     "PhpVersion.PHP_82=PHP 8.2",
     "PhpVersion.PHP_83=PHP 8.3",
     "PhpVersion.PHP_84=PHP 8.4",
+    "PhpVersion.PHP_85=PHP 8.5",
 })
 public enum PhpVersion {
 
@@ -115,6 +116,11 @@ public enum PhpVersion {
      * @since 2.100
      */
     PHP_84(Bundle.PhpVersion_PHP_84()),
+    /**
+     * PHP 8.4.
+     * @since 2.x
+     */
+    PHP_85(Bundle.PhpVersion_PHP_85()),
     ;
 
     private final String displayName;
