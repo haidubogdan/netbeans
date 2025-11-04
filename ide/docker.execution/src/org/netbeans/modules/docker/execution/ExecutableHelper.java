@@ -18,18 +18,25 @@
  */
 package org.netbeans.modules.docker.execution;
 
+import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
+import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
+
 /**
  *
  * @author bhaidu
  */
-public final class DockerCommands {
-
-    public static final String DOCKER_BASE_COMMAND = "docker"; // NOI18N
-    public static final String DOCKER_EXEC = "exec"; // NOI18N
-    
-    public static final String DOCKER_COMMAND_OPTION = "c"; // NOI18N
-    public static final String DOCKER_INTERACTIVE_OPTION = "i"; // NOI18N
-    public static final String DOCKER_TTY_OPTION = "t"; // NOI18N
-    public static final String DOCKER_WORKDIR_OPTION = "w"; // NOI18N
-    public static final String DOCKER_USER_OPTION = "u"; // NOI18N
+public class ExecutableHelper {
+    public static ExternalExecutable addDockerConfigFromProject(Project project, ExternalExecutable exec) {
+        DockerProjectPreferences dockerPreferences = new DockerProjectPreferences(project);
+        exec.addDockerConfig(
+                dockerPreferences.getDockerContainerName(),
+                dockerPreferences.getDockerExecBashPath(),
+                dockerPreferences.getDockerInteractive(),
+                dockerPreferences.getDockerPseudoTerminal(),
+                dockerPreferences.getDockerUser(),
+                dockerPreferences.getDockerWorkdir()
+                );
+        return exec;
+    }
 }

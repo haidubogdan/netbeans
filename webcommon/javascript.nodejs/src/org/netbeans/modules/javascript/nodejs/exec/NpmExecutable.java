@@ -40,7 +40,7 @@ import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig;
+import org.netbeans.modules.docker.execution.ExecutableHelper;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptionsValidator;
@@ -72,7 +72,6 @@ public class NpmExecutable {
 
     protected final Project project;
     protected final String npmPath;
-    protected final DockerExecutableConfig dockerExecConfig;
 
     static {
         if (Utilities.isWindows()) {
@@ -86,22 +85,10 @@ public class NpmExecutable {
         assert npmPath != null;
         this.npmPath = npmPath;
         this.project = project;
-        this.dockerExecConfig = null;
-    }
-
-    NpmExecutable(@NullAllowed Project project, DockerExecutableConfig dockerExecConfig) {
-        this.npmPath = NPM_NAME;
-        this.project = project;
-        this.dockerExecConfig = dockerExecConfig;
     }
 
     @CheckForNull
     public static NpmExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
-        DockerExecutableConfig dockerConfig = DockerExecutableConfig.forProject(project);
-
-        if (dockerConfig != null) {
-            return createExecutable(project, dockerConfig);
-        }
 
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNpm()
@@ -121,11 +108,6 @@ public class NpmExecutable {
             return new MacNpmExecutable(npm, project);
         }
         return new NpmExecutable(npm, project);
-    }
-
-    //docker npm executable ??
-    private static NpmExecutable createExecutable(Project project, DockerExecutableConfig dockerConfig) {
-        return new NpmExecutable(project, dockerConfig);
     }
 
     public String getExecutable() {
@@ -260,7 +242,7 @@ public class NpmExecutable {
                 .optionsPath(NodeJsOptionsPanelController.OPTIONS_PATH)
                 .noOutput(false);
 
-        exec.dockerConfig(DockerExecutableConfig.forProject(project));
+        exec = ExecutableHelper.addDockerConfigFromProject(project, exec);
         exec.skipExecutableValidation();
         return exec;
     }

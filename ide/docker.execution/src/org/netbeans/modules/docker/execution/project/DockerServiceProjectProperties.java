@@ -117,7 +117,6 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
         dockerPreferences.setDockerInteractive(interactive);
         dockerPreferences.setDockerUser(currentConfig.getValue(DOCKER_USER));
         dockerPreferences.setDockerWorkdir(currentConfig.getValue(DOCKER_WORKDIR));
-
     }
 
     private void storeDockerExecConfigs(AntProjectHelper helper) {

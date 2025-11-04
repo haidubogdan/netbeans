@@ -46,9 +46,9 @@ import org.netbeans.api.extexecution.base.ProcessBuilder;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.extexecution.base.input.InputProcessors;
 import org.netbeans.api.progress.BaseProgressUtils;
-import org.netbeans.modules.docker.execution.DockerCommands;
-import static org.netbeans.modules.docker.execution.DockerCommands.*;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig;
+import org.netbeans.modules.docker.config.DockerCommands;
+import static org.netbeans.modules.docker.config.DockerCommands.*;
+import org.netbeans.modules.docker.config.DockerExecutableConfig;
 import org.netbeans.modules.web.common.spi.ExternalExecutableUserWarning;
 import org.openide.util.BaseUtilities;
 import org.openide.util.Lookup;
@@ -307,6 +307,12 @@ public final class ExternalExecutable {
         return this;
     }
 
+    public ExternalExecutable addDockerConfig(String containerName, String bashPath, 
+            boolean interactive, boolean tty, String user, String containerWorkDir) {
+        this.dockerConfig = new DockerExecutableConfig(containerName, bashPath, interactive, tty, user, containerWorkDir);
+        return this;
+    }
+    
     public ExternalExecutable dockerConfig(DockerExecutableConfig dockerConfig) {
         this.dockerConfig = dockerConfig;
         return this;
@@ -498,8 +504,8 @@ public final class ExternalExecutable {
             
             arguments.add(dockerConfig.getDockerContainerName());
 
-            if (dockerConfig.getBashType() != null) {
-                arguments.add(dockerConfig.getBashType());
+            if (dockerConfig.getBashPath() != null) {
+                arguments.add(dockerConfig.getBashPath());
             }
 
             arguments.add("-" + DOCKER_COMMAND_OPTION); // NOI18N

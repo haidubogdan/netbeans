@@ -51,7 +51,7 @@ import org.netbeans.api.extexecution.print.ConvertedLine;
 import org.netbeans.api.extexecution.print.LineConvertor;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig;
+import org.netbeans.modules.docker.execution.ExecutableHelper;
 import org.netbeans.modules.javascript.nodejs.api.DebuggerOptions;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
@@ -364,7 +364,7 @@ public class NodeExecutable {
                 .noOutput(false);
 
         //todo add docker enabled
-        exec.dockerConfig(DockerExecutableConfig.forProject(project));
+        exec = ExecutableHelper.addDockerConfigFromProject(project, exec);
         exec.skipExecutableValidation();
         return exec;
     }

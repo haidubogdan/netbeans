@@ -39,10 +39,6 @@ import javax.swing.JPanel;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.project.ConfigManager;
-import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
-import org.netbeans.modules.docker.execution.project.ui.ConfigListCellRenderer;
-import org.netbeans.modules.docker.execution.project.ui.DockerConfigComboBoxModel;
 import org.netbeans.modules.javascript.nodejs.exec.NpmExecutable;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.platform.NodeJsSupport;
@@ -115,15 +111,15 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
     }
     
     private void loadDockerConfigInputs() {
-        DockerServiceProjectProperties dockerProperties = DockerServiceProjectProperties.fromProject(project);
-        ConfigManager dockerConfigManager = dockerProperties.getConfigManager();
-        DockerConfigComboBoxModel comboModel = new DockerConfigComboBoxModel(dockerConfigManager);
-        dockerConfigOptions.setRenderer(new ConfigListCellRenderer(dockerConfigManager));
-        dockerConfigOptions.setModel(comboModel);
-
-        NodeJsPreferences preferences = new NodeJsPreferences(project);
-        useDockerConfig.setSelected(preferences.getUseDockerConfig());
-        dockerConfigOptions.setSelectedItem(preferences.getDockerConfigName());
+//        DockerServiceProjectProperties dockerProperties = DockerServiceProjectProperties.fromProject(project);
+//        ConfigManager dockerConfigManager = dockerProperties.getConfigManager();
+//        DockerConfigComboBoxModel comboModel = new DockerConfigComboBoxModel(dockerConfigManager);
+//        dockerConfigOptions.setRenderer(new ConfigListCellRenderer(dockerConfigManager));
+//        dockerConfigOptions.setModel(comboModel);
+//
+//        NodeJsPreferences preferences = new NodeJsPreferences(project);
+//        useDockerConfig.setSelected(preferences.getUseDockerConfig());
+//        dockerConfigOptions.setSelectedItem(preferences.getDockerConfigName());
     }
 
     /**
