@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.docker.execution;
+package org.netbeans.modules.docker.config;
 
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.*;
 import org.netbeans.modules.docker.execution.project.ConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
 import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.*;

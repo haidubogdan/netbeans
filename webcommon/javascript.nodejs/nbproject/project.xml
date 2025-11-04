@@ -78,7 +78,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.modules.docker.execution</code-name-base>
+                    <code-name-base>org.netbeans.modules.docker.config</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>

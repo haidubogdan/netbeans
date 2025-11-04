@@ -126,9 +126,9 @@
                 </test-type>
             </test-dependencies>
             <friend-packages>
+                <friend>org.netbeans.modules.docker.config</friend>
                 <friend>org.netbeans.modules.javascript.nodejs</friend>
                 <friend>org.netbeans.modules.web.common.ui</friend>
-                <package>org.netbeans.modules.docker.execution</package>
                 <package>org.netbeans.modules.docker.execution.project</package>
                 <package>org.netbeans.modules.docker.execution.project.ui</package>
             </friend-packages>

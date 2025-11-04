@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.docker.execution;
+package org.netbeans.modules.docker.config;
 
 /**
  *
