@@ -59,7 +59,7 @@ public final class LocalNativeProcess extends AbstractNativeProcess {
     @Override
     protected void create() throws Throwable {
         if (hostInfo.getOSFamily() == OSFamily.WINDOWS) {
-            createWin();
+            //createWin();
         } else {
             createNonWin();
         }
