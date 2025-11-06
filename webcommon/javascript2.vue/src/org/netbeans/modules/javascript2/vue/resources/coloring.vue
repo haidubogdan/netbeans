@@ -1,3 +1,4 @@
+<!--Coloring is added after parsing-->
 <script setup>
 import { ref } from 'vue'
 const greeting = ref('Hello World!')

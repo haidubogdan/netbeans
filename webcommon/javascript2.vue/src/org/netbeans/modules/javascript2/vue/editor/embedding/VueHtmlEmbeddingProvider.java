@@ -28,6 +28,9 @@ import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.javascript2.vue.editor.VueLanguage;
 import static org.netbeans.modules.javascript2.vue.editor.embedding.VueHtmlEmbeddingProvider.TARGET_MIME_TYPE;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId;
+import static org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.CSS;
+import static org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.STYLE_LESS;
+import static org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.STYLE_SCSS;
 import org.netbeans.modules.parsing.api.Embedding;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.EmbeddingProvider;
@@ -61,8 +64,13 @@ public class VueHtmlEmbeddingProvider extends EmbeddingProvider {
                 Token<?> token = ts.token();
                 TokenId id = token.id();
 
-                if (token.text() != null && id == VueTokenId.HTML) {
-                    embeddings.add(snapshot.create(ts.offset(), token.length(), TARGET_MIME_TYPE));
+                if (token.text() != null && id instanceof VueTokenId) {
+                    switch ((VueTokenId) id) {
+                        //javascript, css, scss, less require content embedding due to braces matcher issue
+                        case HTML,CSS,STYLE_SCSS, STYLE_LESS -> {
+                            embeddings.add(snapshot.create(ts.offset(), token.length(), TARGET_MIME_TYPE));
+                        }
+                    }
                 }
             }
         } catch (Exception ex) {
