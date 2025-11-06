@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-lexer grammar VueAntlrColoringLexer;
+parser grammar VueAntlrParser;
 
 @header{
  /*
@@ -37,58 +37,27 @@ lexer grammar VueAntlrColoringLexer;
  * specific language governing permissions and limitations
  * under the License.
  */
-  package org.netbeans.modules.javascript2.vue.grammar.antlr4.coloring;
+  package org.netbeans.modules.javascript2.vue.grammar.antlr4.parser;
 }
 
-options { 
-    superClass = ColoringLexerAdaptor;
- }
+options { tokenVocab = VueAntlrLexer; }
 
-tokens {
- JAVASCRIPT,
- HTML,
- CSS
-}
+file : (statement)* EOF;
 
-//fragments
+statement :
+    template
+    ;
 
-fragment DoubleQuoteStringFragment 
-    : '"' ([\\"] | . )*? '"';
+template:
+    TEMPLATE_TAG_OPEN 
+          (vueDirective JAVASCRIPT_ATTR_VALUE? | vueInterpolation)* 
+    TEMPLATE_TAG_CLOSE
+;
 
-fragment SingleQuoteStringFragment 
-    : '\'' (~('\'' | '\\') | '\\' . )* '\'';
+vueDirective :
+    VUE_DIRECTIVE
+;
 
-fragment StringLiteral : DoubleQuoteStringFragment | SingleQuoteStringFragment;
-
-//TOKENS
-
-SCRIPT_TAG_START : '<script' (' ')* ->type(HTML),pushMode(INSIDE_SCRIPT_TAG_START);
-STYLE_TAG_OPEN : '<style' (' ')* ->type(HTML),pushMode(INSIDE_STYLE_TAG_START);
-
-OTHER : . ->type(HTML);   
-
-mode INSIDE_STYLE_TAG_START;
-
-STYLE_LANG_ATTR : 'lang=' StringLiteral {this.setStyleLanguage();}->type(HTML);
-STYLE_TAG_START_END : '>' ->type(HTML),pushMode(INSIDE_STYLE);
-STYLE_TAG_START_OTHER : . ->type(HTML); 
-EXIT_STYLE_TAG_START_EOF : EOF->type(HTML),popMode;
-
-mode INSIDE_STYLE;
-    
-STYLE_TAG_CLOSE : '</style>'->type(HTML),mode(DEFAULT_MODE);
-STYLE_OTHER : . ->type(CSS); 
-EXIT_STYLE_EOF : EOF->type(HTML),popMode;
-
-mode INSIDE_SCRIPT_TAG_START;
-
-SCRIPT_LANG_ATTR : 'lang=' StringLiteral {this.setScriptLanguage();}->type(HTML);
-SCRIPT_TAG_START_END : '>' ->type(HTML),pushMode(INSIDE_SCRIPT);
-SCRIPT_TAG_START_OTHER : . ->type(HTML); 
-EXIT_SCRIPT_TAG_START_EOF : EOF->type(HTML),popMode;
-
-mode INSIDE_SCRIPT;
-
-SCRIPT_TAG_CLOSE : '</script>'->type(HTML),mode(DEFAULT_MODE);
-SCRIPT_TAG_OTHER : . ->type(JAVASCRIPT); 
-EXIT_SCRIPT_TAG_EOF : EOF->type(HTML),popMode;    
+vueInterpolation :
+    open_tag=VAR_TAG close_tag=VAR_TAG
+;
