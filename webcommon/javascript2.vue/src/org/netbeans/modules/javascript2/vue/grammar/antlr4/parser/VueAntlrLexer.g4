@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-lexer grammar VueAntlrColoringLexer;
+lexer grammar VueAntlrLexer;
 
 @header{
  /*
@@ -37,20 +37,29 @@ lexer grammar VueAntlrColoringLexer;
  * specific language governing permissions and limitations
  * under the License.
  */
-  package org.netbeans.modules.javascript2.vue.grammar.antlr4.coloring;
+  package org.netbeans.modules.javascript2.vue.grammar.antlr4.parser;
 }
 
 options { 
-    superClass = ColoringLexerAdaptor;
+    superClass = LexerAdaptor;
  }
 
 tokens {
- JAVASCRIPT,
- HTML,
- CSS
+ TEMPLATE_TAG_OPEN,
+ VUE_DIRECTIVE,
+ JAVASCRIPT_ATTR_VALUE,
+ VAR_TAG,
+ ERROR
 }
 
 //fragments
+
+fragment Identifier 
+    : [a-zA-Z_\u0080-\ufffe][a-zA-Z0-9_\u0080-\ufffe]*;
+
+fragment PropertyChain
+    : (Identifier ('.' Identifier)*) 
+      | ('[' Identifier ']');
 
 fragment DoubleQuoteStringFragment 
     : '"' ([\\"] | . )*? '"';
@@ -62,33 +71,43 @@ fragment StringLiteral : DoubleQuoteStringFragment | SingleQuoteStringFragment;
 
 //TOKENS
 
-SCRIPT_TAG_START : '<script' (' ')* ->type(HTML),pushMode(INSIDE_SCRIPT_TAG_START);
-STYLE_TAG_OPEN : '<style' (' ')* ->type(HTML),pushMode(INSIDE_STYLE_TAG_START);
+TEMPLATE_TAG_OPEN : '<template' ->pushMode(INSIDE_TEMPLATE);
 
-OTHER : . ->type(HTML);   
-
-mode INSIDE_STYLE_TAG_START;
-
-STYLE_LANG_ATTR : 'lang=' StringLiteral {this.setStyleLanguage();}->type(HTML);
-STYLE_TAG_START_END : '>' ->type(HTML),pushMode(INSIDE_STYLE);
-STYLE_TAG_START_OTHER : . ->type(HTML); 
-EXIT_STYLE_TAG_START_EOF : EOF->type(HTML),popMode;
-
-mode INSIDE_STYLE;
+OTHER : . ->skip;   
     
-STYLE_TAG_CLOSE : '</style>'->type(HTML),mode(DEFAULT_MODE);
-STYLE_OTHER : . ->type(CSS); 
-EXIT_STYLE_EOF : EOF->type(HTML),popMode;
+mode INSIDE_TEMPLATE;
 
-mode INSIDE_SCRIPT_TAG_START;
+TEMPLATE_TAG_CLOSE : '</' (' ')* 'template' (' ')* '>'->popMode;
+VUE_DIRECTIVE_WITH_VALUE :
+     (
+        'v-' Identifier ('-' Identifier)* (':' PropertyChain)? //attribute bind
+         | '@' PropertyChain //on event listener
+         | ':' (Identifier | ('[' Identifier ']') ) //short attribute bind
+     ) '=' ->type(VUE_DIRECTIVE), pushMode(ATTR_VALUE);
 
-SCRIPT_LANG_ATTR : 'lang=' StringLiteral {this.setScriptLanguage();}->type(HTML);
-SCRIPT_TAG_START_END : '>' ->type(HTML),pushMode(INSIDE_SCRIPT);
-SCRIPT_TAG_START_OTHER : . ->type(HTML); 
-EXIT_SCRIPT_TAG_START_EOF : EOF->type(HTML),popMode;
+//directives which don't expect value assignment
+VUE_DIRECTIVE_SIMPLE : 
+    ('v-' (
+        'once' //Render the element and component once only, and skip future updates
+       | 'else' //if block
+       | 'pre' //Skip compilation for this element and all its children
+       | 'cloak' //hide un-compiled template
+       | 'slot:' Identifier  //slot reference
+    )
+    | '@' PropertyChain )->type(VUE_DIRECTIVE);
 
-mode INSIDE_SCRIPT;
+VAR_TAG : '{{' ->pushMode(INSIDE_VAR_INTERPOLATION);
+TEMPLATE_OTHER : . ->skip; 
+EXIT_TEMPLATE_EOF : EOF->type(ERROR),popMode;
 
-SCRIPT_TAG_CLOSE : '</script>'->type(HTML),mode(DEFAULT_MODE);
-SCRIPT_TAG_OTHER : . ->type(JAVASCRIPT); 
-EXIT_SCRIPT_TAG_EOF : EOF->type(HTML),popMode;    
+mode ATTR_VALUE;
+
+SCRIPT_ATTR_STRING_VALUE : StringLiteral->type(JAVASCRIPT_ATTR_VALUE),popMode; 
+
+EXIT_SCRIPT_ATTR_EOF : EOF->type(ERROR),popMode;
+
+mode INSIDE_VAR_INTERPOLATION;
+
+VAR_INTERPOLATION_END : '}}' ->type(VAR_TAG), popMode; 
+VAR_INTERPOLATION_OTHER : . ->skip; 
+EXIT_VAR_INTERPOLATION_EOF : EOF->type(ERROR),popMode;

@@ -49,11 +49,11 @@ public class VueLexer extends AbstractAntlrLexerBridge<VueAntlrColoringLexer, Vu
 
         return switch (antlrToken.getType()) {
             case VueAntlrColoringLexer.HTML -> groupToken(HTML, VueAntlrColoringLexer.HTML);
-            case VueAntlrColoringLexer.VUE_DIRECTIVE -> token(VUE_DIRECTIVE);
-            case VueAntlrColoringLexer.QUOTE_ATTR -> token(QUOTE_ATTR);
-            case VueAntlrColoringLexer.VAR_TAG -> token(VAR_TAG);
-            case VueAntlrColoringLexer.JAVASCRIPT_ATTR -> groupToken(JAVASCRIPT_ATTR, VueAntlrColoringLexer.JAVASCRIPT_ATTR);
-            case VueAntlrColoringLexer.JAVASCRIPT_INTERP -> groupToken(JAVASCRIPT_INTERP, VueAntlrColoringLexer.JAVASCRIPT_INTERP);   
+//            case VueAntlrColoringLexer.VUE_DIRECTIVE -> token(VUE_DIRECTIVE);
+//            case VueAntlrColoringLexer.QUOTE_ATTR -> token(QUOTE_ATTR);
+//            case VueAntlrColoringLexer.VAR_TAG -> token(VAR_TAG);
+//            case VueAntlrColoringLexer.JAVASCRIPT_ATTR -> groupToken(JAVASCRIPT_ATTR, VueAntlrColoringLexer.JAVASCRIPT_ATTR);
+//            case VueAntlrColoringLexer.JAVASCRIPT_INTERP -> groupToken(JAVASCRIPT_INTERP, VueAntlrColoringLexer.JAVASCRIPT_INTERP);   
             case VueAntlrColoringLexer.JAVASCRIPT -> assignScriptLexerToken(JAVASCRIPT, VueAntlrColoringLexer.JAVASCRIPT);
             case VueAntlrColoringLexer.CSS -> assignStyleLexerToken(CSS, VueAntlrColoringLexer.CSS);
             default -> groupToken(HTML, VueAntlrColoringLexer.HTML);
