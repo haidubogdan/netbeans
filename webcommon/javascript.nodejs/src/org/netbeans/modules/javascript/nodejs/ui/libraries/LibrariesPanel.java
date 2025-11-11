@@ -39,16 +39,12 @@ import javax.swing.JPanel;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.project.ConfigManager;
-import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
-import org.netbeans.modules.docker.execution.project.ui.ConfigListCellRenderer;
-import org.netbeans.modules.docker.execution.project.ui.DockerConfigComboBoxModel;
 import org.netbeans.modules.javascript.nodejs.exec.NpmExecutable;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.platform.NodeJsSupport;
-import org.netbeans.modules.javascript.nodejs.preferences.NodeJsPreferences;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
 import org.netbeans.modules.web.common.api.UsageLogger;
+import org.netbeans.spi.project.ui.CustomizerProvider;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.HelpCtx;
@@ -92,7 +88,7 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
             }
             loadInstalledLibraries();
         } else {
-            loadDockerConfigInputs();
+            loadDockerConfigInput();
             show(packageJsonProblemLabel);
         }
     }
@@ -114,16 +110,8 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
         layout.replace(currentComponent, component);
     }
     
-    private void loadDockerConfigInputs() {
-        DockerServiceProjectProperties dockerProperties = DockerServiceProjectProperties.fromProject(project);
-        ConfigManager dockerConfigManager = dockerProperties.getConfigManager();
-        DockerConfigComboBoxModel comboModel = new DockerConfigComboBoxModel(dockerConfigManager);
-        dockerConfigOptions.setRenderer(new ConfigListCellRenderer(dockerConfigManager));
-        dockerConfigOptions.setModel(comboModel);
+    private void loadDockerConfigInput() {
 
-        NodeJsPreferences preferences = new NodeJsPreferences(project);
-        useDockerConfig.setSelected(preferences.getUseDockerConfig());
-        dockerConfigOptions.setSelectedItem(preferences.getDockerConfigName());
     }
 
     /**
@@ -182,7 +170,7 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
                     @Override
                     public void run() {
                         if (installedLibraries == null) {
-                            loadDockerConfigInputs();
+                            loadDockerConfigInput();
                             show(npmProblemPanel);
                         } else {
                             regularPanel.setInstalledLibraries(installedLibraries);
@@ -209,10 +197,6 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
         "LibrariesPanel.updatingPackageJson=Updating package.json."
     })
     void storeChanges() {
-        NodeJsPreferences preferences = new NodeJsPreferences(project);
-        preferences.setUseDockerConfig(useDockerConfig.isSelected());
-        preferences.setDockerConfigName(String.valueOf(dockerConfigOptions.getSelectedItem()));
-        
         if (installedLibraries == null) {
             return; // 254260
         }
@@ -496,7 +480,7 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
         configureButton = new javax.swing.JButton();
         retryButton = new javax.swing.JButton();
         useDockerConfig = new javax.swing.JCheckBox();
-        dockerConfigOptions = new javax.swing.JComboBox<>();
+        learnMoreLabel = new javax.swing.JLabel();
         npmProblemLabel = new javax.swing.JLabel();
         loadingLabel = new javax.swing.JLabel();
         tabbedPane = new javax.swing.JTabbedPane();
@@ -525,7 +509,12 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
 
         org.openide.awt.Mnemonics.setLocalizedText(useDockerConfig, org.openide.util.NbBundle.getMessage(LibrariesPanel.class, "LibrariesPanel.useDockerConfig.text")); // NOI18N
 
-        dockerConfigOptions.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
+        org.openide.awt.Mnemonics.setLocalizedText(learnMoreLabel, org.openide.util.NbBundle.getMessage(LibrariesPanel.class, "LibrariesPanel.learnMoreLabel.text")); // NOI18N
+        learnMoreLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dockerConfigInfoAction(evt);
+            }
+        });
 
         javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
@@ -537,8 +526,12 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
                     .addComponent(useDockerConfig))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(retryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dockerConfigOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(buttonPanelLayout.createSequentialGroup()
+                        .addComponent(retryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(buttonPanelLayout.createSequentialGroup()
+                        .addComponent(learnMoreLabel)
+                        .addContainerGap())))
         );
 
         buttonPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {configureButton, retryButton});
@@ -552,8 +545,8 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(useDockerConfig)
-                    .addComponent(dockerConfigOptions))
-                .addGap(17, 17, 17))
+                    .addComponent(learnMoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18))
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(npmProblemLabel, org.openide.util.NbBundle.getMessage(LibrariesPanel.class, "LibrariesPanel.npmProblemLabel.text")); // NOI18N
@@ -576,7 +569,7 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
                 .addComponent(npmProblemLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         loadingLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -608,12 +601,17 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
         loadInstalledLibraries();
     }//GEN-LAST:event_retryButtonActionPerformed
 
+    private void dockerConfigInfoAction(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dockerConfigInfoAction
+        CustomizerProvider projectCustomizer = project.getLookup().lookup(CustomizerProvider.class);
+        projectCustomizer.showCustomizer();
+    }//GEN-LAST:event_dockerConfigInfoAction
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton configureButton;
     private org.netbeans.modules.javascript.nodejs.ui.libraries.DependenciesPanel developmentPanel;
-    private javax.swing.JComboBox<String> dockerConfigOptions;
+    private javax.swing.JLabel learnMoreLabel;
     private javax.swing.JLabel loadingLabel;
     private javax.swing.JLabel npmProblemLabel;
     private javax.swing.JPanel npmProblemPanel;

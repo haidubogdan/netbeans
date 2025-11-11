@@ -39,6 +39,8 @@ public class DockerProjectPreferences {
 
     public static final boolean DEFAULT_DOCKER_EXEC_TTY = true;
     public static final boolean DEFAULT_DOCKER_EXEC_INTERACTIVE = true;
+    
+    public static final String DOCKER_NODE_NPM_NAME = "docker.exec.nodenpm"; // NOI18N
 
     private final Project project;
 
