@@ -97,7 +97,7 @@ public class NpmExecutable {
 
     @CheckForNull
     public static NpmExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
-        DockerExecutableConfig dockerConfig = DockerExecutableConfig.forProject(project);
+        DockerExecutableConfig dockerConfig = DockerExecutableConfig.forProject(project, DockerExecutableConfig.Type.NPM_NODE);
 
         if (dockerConfig != null) {
             return createExecutable(project, dockerConfig);
@@ -123,7 +123,6 @@ public class NpmExecutable {
         return new NpmExecutable(npm, project);
     }
 
-    //docker npm executable ??
     private static NpmExecutable createExecutable(Project project, DockerExecutableConfig dockerConfig) {
         return new NpmExecutable(project, dockerConfig);
     }
@@ -260,7 +259,7 @@ public class NpmExecutable {
                 .optionsPath(NodeJsOptionsPanelController.OPTIONS_PATH)
                 .noOutput(false);
 
-        exec.dockerConfig(DockerExecutableConfig.forProject(project));
+        exec.dockerConfig(DockerExecutableConfig.forProject(project, DockerExecutableConfig.Type.NPM_NODE));
         exec.skipExecutableValidation();
         return exec;
     }

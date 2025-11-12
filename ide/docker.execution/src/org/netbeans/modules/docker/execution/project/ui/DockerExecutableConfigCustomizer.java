@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JComponent;
 import org.netbeans.api.project.Project;
 import java.awt.event.ActionListener;
+import org.netbeans.modules.docker.execution.DockerExecutableConfig.Type;
 import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.openide.util.Lookup;
@@ -48,7 +49,7 @@ public class DockerExecutableConfigCustomizer implements ProjectCustomizer.Compo
         if (component == null) {
             Project project = context.lookup(Project.class);
             assert project != null;
-            DockerServiceProjectProperties dockerPropeties = DockerServiceProjectProperties.fromProject(project);
+            DockerServiceProjectProperties dockerPropeties = DockerServiceProjectProperties.fromProject(project, Type.GENERIC);
             component = new DockerExecutableConfigPanel(dockerPropeties);
             category.setOkButtonListener(new Listener(component));
         }

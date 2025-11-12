@@ -364,7 +364,7 @@ public class NodeExecutable {
                 .noOutput(false);
 
         //todo add docker enabled
-        exec.dockerConfig(DockerExecutableConfig.forProject(project));
+        exec.dockerConfig(DockerExecutableConfig.forProject(project, DockerExecutableConfig.Type.NPM_NODE));
         exec.skipExecutableValidation();
         return exec;
     }

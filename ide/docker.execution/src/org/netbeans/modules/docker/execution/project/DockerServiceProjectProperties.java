@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
+import org.netbeans.modules.docker.execution.DockerExecutableConfig;
 import org.netbeans.modules.docker.execution.project.ConfigManager.Configuration;
 import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.EditableProperties;
@@ -67,14 +68,14 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
 
     private final Map<String, Map<String, String>> configs;
 
-    private DockerServiceProjectProperties(Project project) {
+    private DockerServiceProjectProperties(Project project, DockerExecutableConfig.Type type) {
         this.project = project;
-        this.dockerPreferences = new DockerProjectPreferences(project);
+        this.dockerPreferences = new DockerProjectPreferences(project, type);
         configs = readDockerConfigs();
     }
 
-    public static DockerServiceProjectProperties fromProject(Project project) {
-        DockerServiceProjectProperties instance = new DockerServiceProjectProperties(project);
+    public static DockerServiceProjectProperties fromProject(Project project, DockerExecutableConfig.Type type) {
+        DockerServiceProjectProperties instance = new DockerServiceProjectProperties(project, type);
         instance.initConfigManager();
         return instance;
     }
