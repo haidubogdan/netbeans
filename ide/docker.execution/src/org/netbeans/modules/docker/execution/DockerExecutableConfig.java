@@ -38,10 +38,11 @@ public class DockerExecutableConfig {
 
     private final String user;
     private String containerWorkDir;
+    
+    public static enum Type { NPM_NODE, GENERIC };
 
-    public static DockerExecutableConfig forProject(Project project) {
-        DockerSupport support = DockerSupport.forProject(project);
-        DockerProjectPreferences dockerPreferences = new DockerProjectPreferences(project);
+    public static DockerExecutableConfig forProject(Project project, DockerExecutableConfig.Type type) {
+        DockerProjectPreferences dockerPreferences = new DockerProjectPreferences(project, type);
         DockerExecutableConfig dockerConfig = new DockerExecutableConfig(dockerPreferences);
         
         return dockerConfig;
