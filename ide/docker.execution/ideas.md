@@ -1,0 +1,3 @@
+- Docker config using just preferences
+- customizer for docker execution
+- event dispatcher
