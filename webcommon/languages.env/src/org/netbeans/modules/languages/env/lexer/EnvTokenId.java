@@ -35,7 +35,11 @@ public enum EnvTokenId implements TokenId {
     COMMENT("comment"),
     KEY("key"),
     STRING("string"),
+    NUMBER("number"),
+    KEYWORD("keyword"),
     VALUE("value"),
+    EMAIL("email"),
+    PATH("path"),
     OPERATOR("operator"),
     WS("whitespace"),
     ERROR("error");

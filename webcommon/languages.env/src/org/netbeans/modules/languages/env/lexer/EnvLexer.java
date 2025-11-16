@@ -43,9 +43,13 @@ public class EnvLexer extends AbstractAntlrLexerBridge<EnvAntlrGrammarLexer, Env
         return switch (antlrToken.getType()) {
             case COMMENT -> groupToken(EnvTokenId.COMMENT, COMMENT);
             case KEY -> token(EnvTokenId.KEY);
+            case NUMBER -> token(EnvTokenId.NUMBER);
+            case KEYWORD -> token(EnvTokenId.KEYWORD);  
             case STRING -> token(EnvTokenId.STRING);
+            case EMAIL -> token(EnvTokenId.EMAIL);
+            case PATH  -> token(EnvTokenId.PATH);
             case VALUE -> groupToken(EnvTokenId.VALUE, VALUE);    
-            case ASSIGN_OPERATOR -> token(EnvTokenId.OPERATOR); 
+            case OPERATOR, ASSIGN_OPERATOR -> token(EnvTokenId.OPERATOR); 
             case WS -> groupToken(EnvTokenId.WS, WS);    
             case NL -> groupToken(EnvTokenId.WS, NL);
             default -> groupToken(EnvTokenId.ERROR, ERROR);

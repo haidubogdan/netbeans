@@ -8,9 +8,15 @@ tokens {
     COMMENT,
     STRING,
     VALUE,
+    NUMBER,
+    KEYWORD,
+    OPERATOR,
+    EMAIL,
     ASSIGN_OPERATOR
 }
 
+options { caseInsensitive = true; }    
+    
 fragment Esc
    : '\\'
    ;
@@ -42,9 +48,15 @@ fragment NewLineComment
     : '#' ~ [\r\n]* (NL | EOF)
     ;
 
+fragment Identifier 
+    : [a-z_\u0080-\ufffe][a-z0-9_.\u0080-\ufffe-]*; 
 
+fragment Numeric
+    : [0-9]+ ('.' [0-9]+ (',' [0-9])? )?
+    | [0-9]+ (',' [0-9]+ ('.' [0-9])? )?
+    ;
 KEY
-    : [a-zA-Z_]+[a-zA-Z0-9_]*
+    : [a-z_]+[a-z0-9_]*
     ;
 
 COMMENT
@@ -72,6 +84,39 @@ mode VarAssign;
 STRING : SQuoteLiteral | DQuoteLiteral;
 
 EXIT_COMMENT : ' ' NewLineComment->type(COMMENT), popMode;
+
+OPERATOR_VAR
+    : ','->type(OPERATOR)
+    ;
+
+EMAIL_VAR
+    : [a-z0–9._%+-]+ '@' [a-z0–9.-]+ '.' [a-z]+ ->type(EMAIL)
+    ;
+
+PATH
+    : ('http' 's'? '://')? Identifier ('/' Identifier)+ '/'?
+    ;
+KEYWORD_VAR
+    : (
+    'true'
+    | 'false'
+    | 'null'
+    | 'prod' | 'production' | 'live'
+    | 'development' | 'local'
+    )->type(KEYWORD)
+    ;
+
+IP_VAR :
+    [1-9][0-9][0-9]?('.' [0-9][0-9][0-9]?)('.' [0-9][0-9]?[0-9]?)('.' [0-9][0-9]?[0-9]?)->type(NUMBER)
+    ;
+
+NUMERIC_VAR 
+    : Numeric->type(NUMBER)
+    ;
+
+IDENTIFIER_VAR
+    : Identifier->type(VALUE)
+    ;
 
 EXIT_VAR_ASSING : NewLine->type(NL), popMode;
 

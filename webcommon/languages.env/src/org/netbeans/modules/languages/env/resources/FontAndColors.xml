@@ -25,6 +25,10 @@
     <fontcolor name="string" default="string"/>
     <fontcolor name="operator" foreColor="white"/>
     <fontcolor name="key" default="identifier"/>
+    <fontcolor name="number" default="number"/>
+    <fontcolor name="keyword" default="keyword"/>
+    <fontcolor name="email" default="identifier"/>
+    <fontcolor name="path" default="identifier"/>
     <fontcolor name="value" default="keyword"/>
     <fontcolor name="whitespace" />
     <fontcolor name="error" default="error"/>
