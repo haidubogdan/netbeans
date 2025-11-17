@@ -18,6 +18,7 @@
  */
 package org.netbeans.modules.docker.execution;
 
+import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.project.ConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
@@ -38,11 +39,13 @@ public class DockerExecutableConfig {
 
     private final String user;
     private String containerWorkDir;
+
+    private final boolean isValid;
     
     public static enum Type { NPM_NODE, GENERIC };
 
-    public static DockerExecutableConfig forProject(Project project, DockerExecutableConfig.Type type) {
-        DockerProjectPreferences dockerPreferences = new DockerProjectPreferences(project, type);
+    public static DockerExecutableConfig forProject(Project project, Preferences preferences) {
+        DockerProjectPreferences dockerPreferences = new DockerProjectPreferences(project, preferences);
         DockerExecutableConfig dockerConfig = new DockerExecutableConfig(dockerPreferences);
         
         return dockerConfig;
@@ -50,7 +53,7 @@ public class DockerExecutableConfig {
 
     public DockerExecutableConfig(DockerProjectPreferences dockerPreferences) {
         this.containerName = dockerPreferences.getDockerContainerName();
-        assert containerName != null && !containerName.isEmpty();
+        this.isValid = containerName != null && !containerName.isEmpty();
         this.bashType = dockerPreferences.getDockerExecBashPath();
         this.asTerminal = dockerPreferences.getDockerPseudoTerminal();
         this.interactive = dockerPreferences.getDockerInteractive();
@@ -60,7 +63,7 @@ public class DockerExecutableConfig {
 
     public DockerExecutableConfig(ConfigManager.Configuration configuration) {
         this.containerName = configuration.getValue(DOCKER_CONTAINER_NAME);
-        assert containerName != null && !containerName.isEmpty();
+        this.isValid = containerName != null && !containerName.isEmpty();
         this.bashType = configuration.getValue(DOCKER_BASH_PATH);
         this.asTerminal = Boolean.parseBoolean(configuration.getValue(DOCKER_USE_TTY));
         this.interactive = Boolean.parseBoolean(configuration.getValue(DOCKER_USE_INTERACTIVE));
@@ -95,5 +98,9 @@ public class DockerExecutableConfig {
     
     public String getDockerUser() {
         return user;
+    }
+    
+    public boolean isValid() {
+        return isValid;
     }
 }

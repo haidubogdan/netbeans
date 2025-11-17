@@ -39,8 +39,8 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         comboModel = new DockerConfigComboBoxModel(manager);
         ConfigOptionCombo.setRenderer(new ConfigListCellRenderer(manager));
         ConfigOptionCombo.setModel(comboModel);
-        nodeNpmDockerName.setRenderer(new ConfigListCellRenderer(manager));
-        ConfigOptionCombo.setModel(comboModel);
+        nodeNpmDockerConfigCombo.setRenderer(new ConfigListCellRenderer(manager));
+        nodeNpmDockerConfigCombo.setModel(comboModel);
         init();
     }
 //
@@ -51,9 +51,8 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 //    }
 
     private void init() {
-        String configName = manager.currentConfiguration().getName();
-        ConfigOptionCombo.setSelectedItem(configName);
-        selectCurrentItem();
+        selectDefaultDockerOption();
+        selectNpmNodeDockerOption();
     }
 
     void saveSettings() {
@@ -67,7 +66,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         properties.saveProperties();
     }
 
-    private void selectCurrentItem() {
+    private void selectDefaultDockerOption() {
         final Configuration currentConfig = manager.currentConfiguration();
         ConfigOptionCombo.setSelectedItem(currentConfig.getName());
         dockerContainerName.setText(currentConfig.getValue(DOCKER_CONTAINER_NAME));
@@ -78,6 +77,12 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         dockerInteractive.setSelected(interactive);
         dockerVolumeDir.setText(currentConfig.getValue(DOCKER_WORKDIR));
         dockerUser.setText(currentConfig.getValue(DOCKER_USER));
+        //configDel.setEnabled(!config.isDefault());
+    }
+    
+    private void selectNpmNodeDockerOption() {
+        final Configuration currentConfig = manager.currentConfiguration();
+        nodeNpmDockerConfigCombo.setSelectedItem(currentConfig.getName());
         //configDel.setEnabled(!config.isDefault());
     }
 
@@ -109,7 +114,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         jSeparator2 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
         npmNodeDockerEnabled = new javax.swing.JCheckBox();
-        nodeNpmDockerName = new javax.swing.JComboBox<>();
+        nodeNpmDockerConfigCombo = new javax.swing.JComboBox<>();
 
         org.openide.awt.Mnemonics.setLocalizedText(LBL_ContainerName, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.LBL_ContainerName.text")); // NOI18N
 
@@ -155,9 +160,9 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(npmNodeDockerEnabled, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.npmNodeDockerEnabled.text")); // NOI18N
 
-        nodeNpmDockerName.addActionListener(new java.awt.event.ActionListener() {
+        nodeNpmDockerConfigCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nodeNpmDockerNameconfigComboActionPerformed(evt);
+                nodeNpmDockerConfigComboconfigComboActionPerformed(evt);
             }
         });
 
@@ -209,7 +214,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addComponent(npmNodeDockerEnabled)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(nodeNpmDockerName, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(nodeNpmDockerConfigCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jSeparator2))))
                 .addContainerGap())
         );
@@ -252,7 +257,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(npmNodeDockerEnabled)
-                    .addComponent(nodeNpmDockerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nodeNpmDockerConfigCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(83, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -286,19 +291,21 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
             Configuration currentConfig = manager.currentConfiguration();
             currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
             currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
-            selectCurrentItem();
+            selectDefaultDockerOption();
         }
     }//GEN-LAST:event_configNewActionPerformed
 
     private void configComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configComboActionPerformed
         String config = (String) ConfigOptionCombo.getSelectedItem();
         manager.markAsCurrentConfiguration(config == null || config.length() == 0 ? null : config);
-        selectCurrentItem();
+        selectDefaultDockerOption();
     }//GEN-LAST:event_configComboActionPerformed
 
-    private void nodeNpmDockerNameconfigComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeNpmDockerNameconfigComboActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nodeNpmDockerNameconfigComboActionPerformed
+    private void nodeNpmDockerConfigComboconfigComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
+        String config = (String) nodeNpmDockerConfigCombo.getSelectedItem();
+        manager.markAsCurrentConfiguration(config == null || config.length() == 0 ? null : config);
+        selectNpmNodeDockerOption();
+    }//GEN-LAST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -320,7 +327,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JComboBox<String> nodeNpmDockerName;
+    private javax.swing.JComboBox<String> nodeNpmDockerConfigCombo;
     private javax.swing.JCheckBox npmNodeDockerEnabled;
     // End of variables declaration//GEN-END:variables
 }

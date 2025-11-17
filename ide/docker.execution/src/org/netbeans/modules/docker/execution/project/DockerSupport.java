@@ -47,15 +47,13 @@ public class DockerSupport {
     @ProjectServiceProvider(service = DockerSupport.class, projectType = "org-netbeans-modules-web-clientproject") // NOI18N
     public static DockerSupport create(Project project) {
         DockerSupport support = new DockerSupport(project);
-        // listeners
-//        NodeJsOptions nodeJsOptions = NodeJsOptions.getInstance();
-//        nodeJsOptions.addPreferenceChangeListener(WeakListeners.create(PreferenceChangeListener.class, support.optionsListener, nodeJsOptions));
+ 
         return support;
     }
     
     public static DockerSupport forProject(Project project) {
         DockerSupport support = project.getLookup().lookup(DockerSupport.class);
-        assert support != null : "NodeJsSupport should be found in project " + project.getClass().getName() + " (lookup: " + project.getLookup() + ")";
+        assert support != null : "DockerSupport should be found in project " + project.getClass().getName() + " (lookup: " + project.getLookup() + ")";
         return support;
     }
     

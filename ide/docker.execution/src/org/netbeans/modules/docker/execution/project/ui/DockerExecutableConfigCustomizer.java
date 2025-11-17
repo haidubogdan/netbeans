@@ -49,7 +49,7 @@ public class DockerExecutableConfigCustomizer implements ProjectCustomizer.Compo
         if (component == null) {
             Project project = context.lookup(Project.class);
             assert project != null;
-            DockerServiceProjectProperties dockerPropeties = DockerServiceProjectProperties.fromProject(project, Type.GENERIC);
+            DockerServiceProjectProperties dockerPropeties = DockerServiceProjectProperties.fromProject(project, null);
             component = new DockerExecutableConfigPanel(dockerPropeties);
             category.setOkButtonListener(new Listener(component));
         }
