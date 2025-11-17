@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -52,6 +53,7 @@ import org.netbeans.modules.web.common.api.ValidationResult;
 import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
+import org.openide.util.NbPreferences;
 import org.openide.util.Utilities;
 import org.openide.windows.InputOutput;
 
@@ -97,7 +99,8 @@ public class NpmExecutable {
 
     @CheckForNull
     public static NpmExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
-        DockerExecutableConfig dockerConfig = DockerExecutableConfig.forProject(project, DockerExecutableConfig.Type.NPM_NODE);
+        Preferences preferences = NodeJsOptions.getInstance().getDockerConfigPreferences();
+        DockerExecutableConfig dockerConfig = DockerExecutableConfig.forProject(project, preferences);
 
         if (dockerConfig != null) {
             return createExecutable(project, dockerConfig);
@@ -259,7 +262,7 @@ public class NpmExecutable {
                 .optionsPath(NodeJsOptionsPanelController.OPTIONS_PATH)
                 .noOutput(false);
 
-        exec.dockerConfig(DockerExecutableConfig.forProject(project, DockerExecutableConfig.Type.NPM_NODE));
+        exec.dockerConfig(DockerExecutableConfig.forProject(project, NodeJsOptions.getInstance().getDockerConfigPreferences()));
         exec.skipExecutableValidation();
         return exec;
     }

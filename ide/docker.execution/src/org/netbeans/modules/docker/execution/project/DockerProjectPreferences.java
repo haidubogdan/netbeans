@@ -22,7 +22,6 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig;
 
 /**
  *
@@ -42,18 +41,16 @@ public class DockerProjectPreferences {
     public static final boolean DEFAULT_DOCKER_EXEC_INTERACTIVE = true;
     
     public static final String DOCKER_NODE_NPM_NAME = "docker.exec.nodenpm"; // NOI18N
-    
-    public final DockerExecutableConfig.Type scriptType;
 
     private final Project project;
 
     // @GuardedBy("this")
     private Preferences publicPreferences;
 
-    public DockerProjectPreferences(Project project, DockerExecutableConfig.Type scriptType) {
+    public DockerProjectPreferences(Project project, Preferences preferences) {
         assert project != null;
         this.project = project;
-        this.scriptType = scriptType;
+        this.publicPreferences = preferences;
     }
 
     public void setDockerConfigName(String name) {

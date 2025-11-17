@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.netbeans.api.annotations.common.CheckForNull;
@@ -73,6 +74,7 @@ import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
+import org.openide.util.NbPreferences;
 import org.openide.util.Pair;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
@@ -364,7 +366,8 @@ public class NodeExecutable {
                 .noOutput(false);
 
         //todo add docker enabled
-        exec.dockerConfig(DockerExecutableConfig.forProject(project, DockerExecutableConfig.Type.NPM_NODE));
+        Preferences preferences = NodeJsOptions.getInstance().getDockerConfigPreferences();
+        exec.dockerConfig(DockerExecutableConfig.forProject(project, preferences));
         exec.skipExecutableValidation();
         return exec;
     }
