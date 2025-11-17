@@ -35,6 +35,7 @@ public final class NodeJsOptions {
     public static final String NPM_PATH = "npm.path"; // NOI18N
     public static final String NPM_IGNORE_NODE_MODULES = "npm.ignore.node_modules"; // NOI18N
     public static final String EXPRESS_PATH = "express.path"; // NOI18N
+    public static final String DOCKER_CONFIG = "docker.config"; // NOI18N
 
     // Do not change arbitrary - consult with layer's folder OptionsExport
     // Path to Preferences node for storing these preferences
@@ -141,4 +142,7 @@ public final class NodeJsOptions {
         preferences.put(EXPRESS_PATH, express);
     }
 
+    public Preferences getDockerConfigPreferences() {
+        return preferences.node(DOCKER_CONFIG);
+    }
 }

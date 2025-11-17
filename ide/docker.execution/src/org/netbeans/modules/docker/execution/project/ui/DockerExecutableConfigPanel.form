@@ -69,7 +69,7 @@
                               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                               <Component id="npmNodeDockerEnabled" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="nodeNpmDockerName" max="32767" attributes="0"/>
+                              <Component id="nodeNpmDockerConfigCombo" max="32767" attributes="0"/>
                           </Group>
                           <Component id="jSeparator2" max="32767" attributes="0"/>
                       </Group>
@@ -123,7 +123,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="npmNodeDockerEnabled" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="nodeNpmDockerName" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="nodeNpmDockerConfigCombo" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="83" max="32767" attributes="0"/>
           </Group>
@@ -261,9 +261,9 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="nodeNpmDockerName">
+    <Component class="javax.swing.JComboBox" name="nodeNpmDockerConfigCombo">
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeNpmDockerNameconfigComboActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeNpmDockerConfigComboconfigComboActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
