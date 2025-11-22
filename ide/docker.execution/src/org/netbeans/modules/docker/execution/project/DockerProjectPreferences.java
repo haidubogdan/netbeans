@@ -40,6 +40,7 @@ public class DockerProjectPreferences {
     public static final boolean DEFAULT_DOCKER_EXEC_TTY = true;
     public static final boolean DEFAULT_DOCKER_EXEC_INTERACTIVE = true;
     
+    public static final String DOCKER_NPM_ENABLED = "docker.exec.npm.enabled"; // NOI18N
     public static final String DOCKER_NODE_NPM_NAME = "docker.exec.nodenpm"; // NOI18N
 
     private final Project project;
@@ -109,6 +110,14 @@ public class DockerProjectPreferences {
         return getPublicPreferences().get(DOCKER_WORKDIR, null);
     }
 
+    public void setDockerNpmEnabled(boolean npmEnabled) {
+        getPublicPreferences().putBoolean(DOCKER_NPM_ENABLED, npmEnabled);
+    }
+
+    public boolean getDockerNpmEnabled() {
+        return getPublicPreferences().getBoolean(DOCKER_NPM_ENABLED, false);
+    }
+    
     private synchronized Preferences getPublicPreferences() {
         if (publicPreferences == null) {
             publicPreferences = ProjectUtils.getPreferences(project, DockerProjectPreferences.class, true);

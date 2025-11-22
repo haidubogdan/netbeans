@@ -53,6 +53,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private void init() {
         selectDefaultDockerOption();
         selectNpmNodeDockerOption();
+        npmNodeDockerEnabled.setSelected(properties.isDockerNpmEnabled());
     }
 
     void saveSettings() {
@@ -63,6 +64,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         currentConfig.putValue(DOCKER_USE_INTERACTIVE, dockerInteractive.isSelected() ? "true" : "false");
         currentConfig.putValue(DOCKER_WORKDIR, dockerVolumeDir.getText());
         currentConfig.putValue(DOCKER_USER, dockerUser.getText());
+        properties.setDockerNpmEnabled(npmNodeDockerEnabled.isSelected());
         properties.saveProperties();
     }
 

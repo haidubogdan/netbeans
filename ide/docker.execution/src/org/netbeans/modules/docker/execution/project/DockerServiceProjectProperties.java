@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
@@ -59,6 +61,8 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
 
     public static final String DOCKER_CONFIG_FOLDER = "nbproject/docker_configs";
 
+    private final PreferenceChangeListener preferencesListener = new PreferencesListener();
+
     private static final String[] CFG_PROPS = new String[]{
         DOCKER_CONTAINER_NAME,
         DOCKER_BASH_PATH,
@@ -69,10 +73,14 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
 
     private final Map<String, Map<String, String>> configs;
 
+    private boolean dockerNpmEnabled = false;
+
     private DockerServiceProjectProperties(Project project, Preferences preferences) {
         this.project = project;
         this.dockerPreferences = new DockerProjectPreferences(project, preferences);
         configs = readDockerConfigs();
+        this.dockerNpmEnabled = dockerPreferences.getDockerNpmEnabled();
+        addListeners();
     }
 
     public static DockerServiceProjectProperties fromProject(Project project, Preferences preferences) {
@@ -90,6 +98,10 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
 
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    private void addListeners() {
+        dockerPreferences.addPreferenceChangeListener(preferencesListener);
     }
 
     @Override
@@ -118,7 +130,7 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
         dockerPreferences.setDockerInteractive(interactive);
         dockerPreferences.setDockerUser(currentConfig.getValue(DOCKER_USER));
         dockerPreferences.setDockerWorkdir(currentConfig.getValue(DOCKER_WORKDIR));
-
+        dockerPreferences.setDockerNpmEnabled(dockerNpmEnabled);
     }
 
     private void storeDockerExecConfigs() {
@@ -164,7 +176,6 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
         Map<String, Map<String, String>> cfgs = ConfigManagerUtils.createEmptyConfigs();
         Map<String, String> def = new TreeMap<>();
 
-
         cfgs.put(null, new HashMap<>());
 
         def.put(DOCKER_CONTAINER_NAME, dockerPreferences.getDockerContainerName());
@@ -194,6 +205,14 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
         return cfgs;
     }
 
+    public void setDockerNpmEnabled(boolean useDocker) {
+        this.dockerNpmEnabled = useDocker;
+    }
+
+    public boolean isDockerNpmEnabled() {
+        return dockerNpmEnabled;
+    }
+
     public void save() {
         try {
             // store properties
@@ -207,5 +226,14 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
         } catch (MutexException e) {
             Exceptions.printStackTrace((IOException) e.getException());
         }
+    }
+
+    private final class PreferencesListener implements PreferenceChangeListener {
+
+        @Override
+        public void preferenceChange(PreferenceChangeEvent evt) {
+            int x = 1;
+        }
+
     }
 }
