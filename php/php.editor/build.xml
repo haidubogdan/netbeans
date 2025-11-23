@@ -86,7 +86,8 @@
     <target name="gen-astscanner">
         <jflex file="tools/ASTPHP5Scanner.flex"
         destdir="src"
-        skel="tools/skeletonParser.netbeans"/>
+        skel="tools/skeletonParser.netbeans"
+        />
         <replace file="src/org/netbeans/modules/php/editor/parser/ASTPHP5Scanner.java">
             <replacetoken>if (!zzEOFDone) {&#xA;      zzEOFDone = true;&#xA;      yyclose();&#xA;    }</replacetoken>
             <replacevalue>/*if (!zzEOFDone) {&#xA;      zzEOFDone = true;&#xA;      yyclose();&#xA;    }*/</replacevalue>
@@ -115,10 +116,10 @@
             symbols="ASTPHP5Symbols"
             force="true"
             interface="on"/>
-<!--        <taskdef name="parsercutter"
+        <taskdef name="parsercutter"
             classname="org.netbeans.modules.php.editor.cup.parser.cutter.ParserCutter"
             classpath="/opt/parser.cutter/dist/parser.cutter.jar" />
-            <parsercutter parserpath="src/org/netbeans/modules/php/editor/parser/ASTPHP5Parser.java" />-->
+            <parsercutter parserpath="src/org/netbeans/modules/php/editor/parser/ASTPHP5Parser.java" />
             <replaceregexp match="[ \t]+$" replace="" byline="true" >
                 <fileset dir="src/org/netbeans/modules/php/editor/parser">
                     <include name="ASTPHP5Parser.java"/>

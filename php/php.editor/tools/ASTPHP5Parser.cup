@@ -396,11 +396,11 @@ terminal String T_INCLUDE,T_INCLUDE_ONCE,T_EVAL,T_REQUIRE,T_REQUIRE_ONCE;
 terminal T_COMMA;
 terminal String T_LOGICAL_OR,T_LOGICAL_XOR,T_LOGICAL_AND,T_PRINT;
 terminal T_EQUAL;
-terminal T_PIPE_OPERATOR;
 terminal T_PLUS_EQUAL,T_MINUS_EQUAL,T_MUL_EQUAL,T_DIV_EQUAL,T_CONCAT_EQUAL,T_MOD_EQUAL,T_AND_EQUAL,T_OR_EQUAL,T_XOR_EQUAL,T_SL_EQUAL,T_SR_EQUAL;
 terminal T_QUESTION_MARK;
 terminal T_SEMICOLON;
 terminal T_BOOLEAN_OR, T_BOOLEAN_AND;
+terminal T_PIPE_OPERATOR;
 terminal T_OR;
 terminal T_KOVA;
 terminal T_REFERENCE;
@@ -525,13 +525,6 @@ non terminal Expression expr_without_class_instance;
 non terminal Expression yield_expr;
 non terminal Expression yield_from_expr;
 non terminal Expression inline_function;
-//
-non terminal PipeOperatorExpression pipe_operator;
-non terminal List pipe_chain_list;
-non terminal List non_empty_pipe_chain_list;
-non terminal PipeCallable pipe_callable;
-non terminal List pipe_chainlist_list;
-//
 non terminal MatchExpression match;
 non terminal List match_arm_list;
 non terminal List non_empty_match_arm_list;
@@ -705,6 +698,7 @@ precedence right T_POW;
 precedence left T_QUESTION_MARK,T_SEMICOLON;
 precedence left T_BOOLEAN_OR;
 precedence left T_BOOLEAN_AND;
+precedence left T_PIPE_OPERATOR;
 precedence left T_OR;
 precedence left T_KOVA;
 precedence left T_REFERENCE;
@@ -3716,7 +3710,10 @@ T_LIST:start T_OPEN_PARENTHESE array_pair_list:varList T_CLOSE_PARENTHESE:close 
 {:
     RESULT = new InfixExpression(expr1left, expr2right, expr1 , InfixExpression.OperatorType.STRING_XOR, expr2);
 :}
-
+| expr:expr1 T_PIPE_OPERATOR expr:expr2
+{:
+    RESULT = new InfixExpression(expr1left, expr2right, expr1 , InfixExpression.OperatorType.PIPE, expr2);
+:}
 | expr:expr1 T_OR expr:expr2
 {:
     RESULT = new InfixExpression(expr1left, expr2right, expr1 , InfixExpression.OperatorType.OR, expr2);
@@ -4025,62 +4022,6 @@ T_CURLY_OPEN:blockStart inner_statement_list:list T_CURLY_CLOSE:blockEnd
 {:
     // PHP 7.4
     RESULT = new ArrowFunctionDeclaration(stleft, exprright, paramList, returnType, expr, isReference.booleanValue(), true);
-:}
-;
-
-pipe_operator ::=
-    T_PIPE_OPERATOR:token pipe_chain_list:list
-{:
-    RESULT = new PipeOperatorExpression(tokenleft, listright, new OffsetRange(listleft, listright));
-:}
-;
-
-pipe_chain_list ::=
-/* empty */
-{:
-    RESULT = new ArrayList<>();
-:}
-
-| non_empty_pipe_chain_list:list
-{:
-    RESULT = list;
-:}
-;
-
-non_empty_pipe_chain_list ::=
-pipe_callable:expr
-{:
-    List<Expression> list = new ArrayList<>();
-    list.add(expr);
-    RESULT = list;
-:}
-
-| non_empty_pipe_chain_list:list pipe_callable:expr
-{:
-    list.add(expr);
-    RESULT = list;
-:}
-;
-
-pipe_callable ::=
-pipe_chainlist_list:conditions T_PIPE_OPERATOR expr_with_error:expr
-{:
-    RESULT = new PipeCallable(conditionsleft, exprright, conditions, expr, false);
-:}
-;
-
-pipe_chainlist_list ::=
-expr_with_error:expr
-{:
-    List<Expression> list = new ArrayList<>();
-    list.add(expr);
-    RESULT = list;
-:}
-
-| pipe_chainlist_list:list T_PIPE_OPERATOR expr_with_error:expr
-{:
-    list.add(expr);
-    RESULT = list;
 :}
 ;
 

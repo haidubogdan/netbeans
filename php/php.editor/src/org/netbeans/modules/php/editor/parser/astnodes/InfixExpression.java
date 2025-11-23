@@ -39,6 +39,7 @@ public class InfixExpression extends Expression {
         IS_SMALLER_OR_EQUAL("<="), //NOI18N
         LGREATER(">"), //NOI18N
         IS_GREATER_OR_EQUAL(">="), //NOI18N
+        PIPE("|>"), //NOI18N
         SPACESHIP("<=>"), //NOI18N
         BOOL_OR("||"), //NOI18N
         BOOL_AND("&&"), //NOI18N

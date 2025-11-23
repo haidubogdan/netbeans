@@ -276,6 +276,7 @@ public class PHP5ErrorHandlerImpl implements PHP5ErrorHandler {
                 case ASTPHP5Symbols.T_LIST : text = "list"; break; //NOI18N
                 case ASTPHP5Symbols.T_NAMESPACE : text = "namespace"; break; //NOI18N
                 case ASTPHP5Symbols.T_NS_SEPARATOR : text = "\\"; break; //NOI18N
+                case ASTPHP5Symbols.T_PIPE_OPERATOR : text = "|>"; break; //NOI18N
                 case ASTPHP5Symbols.T_OR : text = "|"; break; //NOI18N
                 case ASTPHP5Symbols.T_IS_IDENTICAL : text = "==="; break; //NOI18N
                 case ASTPHP5Symbols.T_INC : text = "++"; break; //NOI18N

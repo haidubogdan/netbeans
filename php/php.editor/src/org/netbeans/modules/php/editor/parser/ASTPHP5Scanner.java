@@ -2172,10 +2172,10 @@ public class ASTPHP5Scanner implements Scanner {
    * when the end of file is reached
    */
   private void zzDoEOF() throws java.io.IOException {
-    /*if (!zzEOFDone) {
+    /*/*if (!zzEOFDone) {
       zzEOFDone = true;
       yyclose();
-    }*/
+    }*/*/
   }
 
 
