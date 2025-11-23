@@ -31,16 +31,18 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private final ConfigManager manager;
     private final DockerServiceProjectProperties properties;
     private final DockerConfigComboBoxModel comboModel;
+    private final DockerConfigComboBoxModel npmComboModel;
 
     public DockerExecutableConfigPanel(DockerServiceProjectProperties properties) {
         this.properties = properties;
         this.manager = properties.getConfigManager();
         initComponents();
         comboModel = new DockerConfigComboBoxModel(manager);
+        npmComboModel = new DockerConfigComboBoxModel(manager);
         ConfigOptionCombo.setRenderer(new ConfigListCellRenderer(manager));
         ConfigOptionCombo.setModel(comboModel);
         nodeNpmDockerConfigCombo.setRenderer(new ConfigListCellRenderer(manager));
-        nodeNpmDockerConfigCombo.setModel(comboModel);
+        nodeNpmDockerConfigCombo.setModel(npmComboModel);
         init();
     }
 //
@@ -304,9 +306,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_configComboActionPerformed
 
     private void nodeNpmDockerConfigComboconfigComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
-        String config = (String) nodeNpmDockerConfigCombo.getSelectedItem();
-        manager.markAsCurrentConfiguration(config == null || config.length() == 0 ? null : config);
-        selectNpmNodeDockerOption();
+        
     }//GEN-LAST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
 
     
