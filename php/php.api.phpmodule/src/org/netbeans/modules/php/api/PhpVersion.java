@@ -379,6 +379,7 @@ public enum PhpVersion {
         PHP_82(LocalDate.of(2022, 12, 8), LocalDate.of(2024, 12, 31), LocalDate.of(2026, 12, 31)),
         PHP_83(LocalDate.of(2023, 11, 23), LocalDate.of(2025, 12, 31), LocalDate.of(2027, 12, 31)),
         PHP_84(LocalDate.of(2024, 11, 21), LocalDate.of(2026, 12, 31), LocalDate.of(2028, 12, 31)),
+        PHP_85(LocalDate.of(2025, 11, 20), LocalDate.of(2027, 12, 31), LocalDate.of(2029, 12, 31)),
         ;
 
         private final LocalDate initialRelease;
