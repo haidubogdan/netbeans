@@ -18,6 +18,7 @@
  */
 package org.netbeans.modules.docker.execution.project;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,6 +135,17 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
     }
 
     private void storeDockerExecConfigs() {
+        FileObject projectDir = project.getProjectDirectory();
+        FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
+        
+        if (dockerConfigFolder == null || !dockerConfigFolder.isFolder()) {
+            File projectDirFolder = FileUtil.toFile(projectDir);
+            File dir = new File(projectDirFolder, DOCKER_CONFIG_FOLDER);
+            
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+        }
 
         for (String name : configManager.configurationNames()) {
             if (name == null) {
@@ -142,13 +154,33 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
             }
 
             String sharedPath = DOCKER_CONFIG_FOLDER + "/" + name + ".properties"; // NOI18N
+            
+            if (projectDir.getFileObject(sharedPath) == null) {
+                try {
+                    createFileObject(projectDir, sharedPath);
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                    continue;
+                }
+            }
+            
+            if (projectDir.getFileObject(sharedPath) == null) {
+                continue;
+            }
+            
             EditableProperties ep = ProjectHelper.getProperties(project, sharedPath);
+
+            if (ep == null) {
+                continue;
+            }
+
             if (!configManager.exists(name)) {
                 try {
                     // deleted config
                     ProjectHelper.storeEditableProperties(project, sharedPath, ep);
                     continue;
                 } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
                     continue;
                 }
             }
@@ -235,5 +267,14 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
             int x = 1;
         }
 
+    }
+
+    private static FileObject createFileObject(FileObject dir, String relToDir) throws IOException {
+        FileObject createdFO = dir.getFileObject(relToDir);
+        if (createdFO != null) {
+            throw new IllegalArgumentException("File " + createdFO + " already exists."); // NOI18N
+        }
+        createdFO = FileUtil.createData(dir, relToDir);
+        return createdFO;
     }
 }
