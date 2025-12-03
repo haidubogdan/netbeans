@@ -89,7 +89,6 @@ public final class PHPBracesMatcher implements BracesMatcher, BracesMatcher.Cont
                 }
 
                 TokenId id = token.id();
-
                 originOffset = ts.offset();
                 if (LexUtilities.textEquals(token.text(), '(')) {
                     return new int [] {ts.offset(), ts.offset() + token.length()};
@@ -108,6 +107,7 @@ public final class PHPBracesMatcher implements BracesMatcher, BracesMatcher.Cont
                 } else if (LexUtilities.textEquals(token.text(), '#', '[')) { // [NETBEANS-4443] PHP 8.0
                     return new int [] {ts.offset(), ts.offset() + token.length()};
                 } else if (LexUtilities.textEquals(token.text(), ':')) {
+                    int count = 0;
                     do {
                         ts.movePrevious();
                         token = LexUtilities.findPreviousToken(ts,
@@ -116,6 +116,7 @@ public final class PHPBracesMatcher implements BracesMatcher, BracesMatcher.Cont
                                 PHPTokenId.PHP_OPENTAG, PHPTokenId.PHP_CURLY_CLOSE, PHPTokenId.PHP_CASE,
                                 PHPTokenId.PHP_TOKEN));
                         id = token.id();
+                        System.out.println("Count is at"  + count++);
                     } while (id == PHPTokenId.PHP_TOKEN && !TokenUtilities.textEquals(token.text(), ":")); // NOI18N
                     if (id == PHPTokenId.PHP_IF || id == PHPTokenId.PHP_ELSE || id == PHPTokenId.PHP_ELSEIF
                             || id == PHPTokenId.PHP_FOR || id == PHPTokenId.PHP_FOREACH || id == PHPTokenId.PHP_WHILE
@@ -123,6 +124,7 @@ public final class PHPBracesMatcher implements BracesMatcher, BracesMatcher.Cont
                         ts.move(offset);
                         ts.moveNext();
                         token = ts.token();
+                        
                         return new int [] {ts.offset(), ts.offset() + token.length()};
                     }
                 } else if (id == PHPTokenId.PHP_ENDFOR || id == PHPTokenId.PHP_ENDFOREACH
