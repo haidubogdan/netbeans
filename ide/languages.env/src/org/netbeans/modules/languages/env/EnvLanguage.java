@@ -23,11 +23,13 @@ import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.netbeans.modules.csl.api.CodeCompletionHandler;
 import org.netbeans.modules.csl.api.DeclarationFinder;
+import org.netbeans.modules.csl.api.HintsProvider;
 import org.netbeans.modules.csl.api.OccurrencesFinder;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import static org.netbeans.modules.languages.env.EnvFileResolver.MIME_TYPE;
 import org.netbeans.modules.languages.env.completion.EnvCompletionHandler;
+import org.netbeans.modules.languages.env.hints.EnvHintsProvider;
 import org.netbeans.modules.languages.env.lexer.EnvLexer;
 import org.netbeans.modules.languages.env.lexer.EnvTokenId;
 import org.netbeans.modules.languages.env.lexer.EnvTokenId.EnvLanguageHierarchy;
@@ -106,6 +108,16 @@ public class EnvLanguage extends DefaultLanguageConfig {
         return new EnvCompletionHandler();
     }
 
+    @Override
+    public boolean hasHintsProvider() {
+        return true;
+    }
+    
+    @Override
+    public HintsProvider getHintsProvider() {
+        return new EnvHintsProvider();
+    }
+    
     private static final Language<EnvTokenId> language
             = new EnvLanguageHierarchy() {
 

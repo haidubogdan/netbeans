@@ -31,13 +31,13 @@ public abstract class ParserAdaptor extends Parser {
         STANDARD
     }
         
-    protected ParserContext bladeParserContext = ParserContext.STANDARD;
+    protected ParserContext parserContext = ParserContext.STANDARD;
     
     public ParserAdaptor(TokenStream input) {
         super(input);
     }
     
-    public void setBladeParserContext(ParserContext context){
-        this.bladeParserContext = context;
+    public void setEnvParserContext(ParserContext context){
+        this.parserContext = context;
     }
 }
