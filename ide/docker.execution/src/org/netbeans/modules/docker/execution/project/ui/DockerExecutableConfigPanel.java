@@ -18,10 +18,13 @@
  */
 package org.netbeans.modules.docker.execution.project.ui;
 
+import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.execution.DockerExecModel;
 import org.netbeans.modules.docker.execution.project.ConfigManager;
 import org.netbeans.modules.docker.execution.project.ConfigManager.Configuration;
 import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.*;
 import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
+import org.netbeans.modules.docker.execution.project.DockerSettings;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
@@ -30,19 +33,23 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
     private final ConfigManager manager;
     private final DockerServiceProjectProperties properties;
-    private final DockerConfigComboBoxModel comboModel;
-    private final DockerConfigComboBoxModel npmComboModel;
+    private final DockerConfigComboBoxModel1 comboModel;
+    private final DockerConfigComboBoxModel1 npmComboModel;
 
-    public DockerExecutableConfigPanel(DockerServiceProjectProperties properties) {
-        this.properties = properties;
-        this.manager = properties.getConfigManager();
+    public DockerExecutableConfigPanel(Project project) {
+        this.properties = null;
+        this.manager = null;
         initComponents();
-        comboModel = new DockerConfigComboBoxModel(manager);
-        npmComboModel = new DockerConfigComboBoxModel(manager);
-        ConfigOptionCombo.setRenderer(new ConfigListCellRenderer(manager));
+        DockerExecModel dockerModel = new DockerExecModel(project);
+        comboModel = DockerConfigComboBoxModel1.build(dockerModel.getProfiles());
+        npmComboModel = DockerConfigComboBoxModel1.build(dockerModel.getProfiles());
+//        ConfigOptionCombo.setRenderer(new ConfigListCellRenderer(manager));
         ConfigOptionCombo.setModel(comboModel);
-        nodeNpmDockerConfigCombo.setRenderer(new ConfigListCellRenderer(manager));
+//        nodeNpmDockerConfigCombo.setRenderer(new ConfigListCellRenderer(manager));
         nodeNpmDockerConfigCombo.setModel(npmComboModel);
+        String currentProfile = dockerModel.getCurrentProfile();
+        //validate configProfile
+        dockerModel.getConfigMap(currentProfile);
         init();
     }
 //
@@ -53,34 +60,35 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 //    }
 
     private void init() {
-        selectDefaultDockerOption();
-        selectNpmNodeDockerOption();
-        npmNodeDockerEnabled.setSelected(properties.isDockerNpmEnabled());
+//        selectDefaultDockerOption();
+//        selectNpmNodeDockerOption();
+//        npmNodeDockerEnabled.setSelected(properties.isDockerNpmEnabled());
     }
 
-    void saveSettings() {
-        Configuration currentConfig = manager.currentConfiguration();
-        currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
-        currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
-        currentConfig.putValue(DOCKER_USE_TTY, dockerPseudoTerminal.isSelected() ? "true" : "false");
-        currentConfig.putValue(DOCKER_USE_INTERACTIVE, dockerInteractive.isSelected() ? "true" : "false");
-        currentConfig.putValue(DOCKER_WORKDIR, dockerVolumeDir.getText());
-        currentConfig.putValue(DOCKER_USER, dockerUser.getText());
-        properties.setDockerNpmEnabled(npmNodeDockerEnabled.isSelected());
-        properties.saveProperties();
+    public void saveSettings() {
+        
+//        Configuration currentConfig = manager.currentConfiguration();
+//        currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
+//        currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
+//        currentConfig.putValue(DOCKER_USE_TTY, dockerPseudoTerminal.isSelected() ? "true" : "false");
+//        currentConfig.putValue(DOCKER_USE_INTERACTIVE, dockerInteractive.isSelected() ? "true" : "false");
+//        currentConfig.putValue(DOCKER_WORKDIR, dockerVolumeDir.getText());
+//        currentConfig.putValue(DOCKER_USER, dockerUser.getText());
+//        properties.setDockerNpmEnabled(npmNodeDockerEnabled.isSelected());
+//        properties.saveProperties();
     }
 
     private void selectDefaultDockerOption() {
-        final Configuration currentConfig = manager.currentConfiguration();
-        ConfigOptionCombo.setSelectedItem(currentConfig.getName());
-        dockerContainerName.setText(currentConfig.getValue(DOCKER_CONTAINER_NAME));
-        dockerBashType.setText(currentConfig.getValue(DOCKER_BASH_PATH));
-        boolean ttySelected = Boolean.parseBoolean(currentConfig.getValue(DOCKER_USE_TTY));
-        dockerPseudoTerminal.setSelected(ttySelected);
-        boolean interactive = Boolean.parseBoolean(currentConfig.getValue(DOCKER_USE_INTERACTIVE));
-        dockerInteractive.setSelected(interactive);
-        dockerVolumeDir.setText(currentConfig.getValue(DOCKER_WORKDIR));
-        dockerUser.setText(currentConfig.getValue(DOCKER_USER));
+//        final Configuration currentConfig = manager.currentConfiguration();
+//        ConfigOptionCombo.setSelectedItem(currentConfig.getName());
+//        dockerContainerName.setText(currentConfig.getValue(DOCKER_CONTAINER_NAME));
+//        dockerBashType.setText(currentConfig.getValue(DOCKER_BASH_PATH));
+//        boolean ttySelected = Boolean.parseBoolean(currentConfig.getValue(DOCKER_USE_TTY));
+//        dockerPseudoTerminal.setSelected(ttySelected);
+//        boolean interactive = Boolean.parseBoolean(currentConfig.getValue(DOCKER_USE_INTERACTIVE));
+//        dockerInteractive.setSelected(interactive);
+//        dockerVolumeDir.setText(currentConfig.getValue(DOCKER_WORKDIR));
+//        dockerUser.setText(currentConfig.getValue(DOCKER_USER));
         //configDel.setEnabled(!config.isDefault());
     }
     
@@ -288,20 +296,20 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                 return;
             }
 
-            manager.createNew(config, name);
-
-            comboModel.addElement(config);
-            manager.markAsCurrentConfiguration(config);
-            Configuration currentConfig = manager.currentConfiguration();
-            currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
-            currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
+//            manager.createNew(config, name);
+//
+//            comboModel.addElement(config);
+//            manager.markAsCurrentConfiguration(config);
+//            Configuration currentConfig = manager.currentConfiguration();
+//            currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
+//            currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
             selectDefaultDockerOption();
         }
     }//GEN-LAST:event_configNewActionPerformed
 
     private void configComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configComboActionPerformed
         String config = (String) ConfigOptionCombo.getSelectedItem();
-        manager.markAsCurrentConfiguration(config == null || config.length() == 0 ? null : config);
+        //manager.markAsCurrentConfiguration(config == null || config.length() == 0 ? null : config);
         selectDefaultDockerOption();
     }//GEN-LAST:event_configComboActionPerformed
 
