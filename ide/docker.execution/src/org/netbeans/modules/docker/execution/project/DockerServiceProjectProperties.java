@@ -28,9 +28,7 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectManager;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig;
 import org.netbeans.modules.docker.execution.project.ConfigManager.Configuration;
-import org.netbeans.spi.project.support.ant.AntProjectHelper;
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -243,6 +241,10 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
 
     public boolean isDockerNpmEnabled() {
         return dockerNpmEnabled;
+    }
+    
+    public Project getProject() {
+        return project;
     }
 
     public void save() {
