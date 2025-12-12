@@ -43,6 +43,8 @@ public class DockerProjectPreferences {
     public static final String DOCKER_NPM_ENABLED = "docker.exec.npm.enabled"; // NOI18N
     public static final String DOCKER_NODE_NPM_NAME = "docker.exec.nodenpm"; // NOI18N
 
+    public static final String DEFAULT_CONFIG_NAME = "<default>";
+    
     private final Project project;
 
     // @GuardedBy("this")
@@ -59,7 +61,7 @@ public class DockerProjectPreferences {
     }
 
     public String getDockerConfigName() {
-        return getPublicPreferences().get(DOCKER_CONFIG_NAME, null);
+        return getPublicPreferences().get(DOCKER_CONFIG_NAME, DEFAULT_CONFIG_NAME);
     }
 
     public void setDockerContainerName(String name) {
