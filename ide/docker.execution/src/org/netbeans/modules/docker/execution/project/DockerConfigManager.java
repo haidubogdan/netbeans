@@ -18,12 +18,17 @@
  */
 package org.netbeans.modules.docker.execution.project;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.PreferenceChangeListener;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.execution.DockerExecModel;
 import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
+import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.DOCKER_CONFIG_FOLDER;
 import org.netbeans.spi.project.support.ant.EditableProperties;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 
 /**
  *
@@ -70,5 +75,24 @@ public class DockerConfigManager {
         }
         
         return config;
+    }
+    
+    public static void saveConfigProfile(DockerExecModel model, String profile, Project project) {
+        
+        if (profile.equals(DEFAULT_CONFIG_NAME)) {
+            
+            return;
+        }
+        
+        FileObject projectDir = project.getProjectDirectory();
+        FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
+        if (dockerConfigFolder == null || !dockerConfigFolder.isFolder()) {
+            File projectDirFolder = FileUtil.toFile(projectDir);
+            File dir = new File(projectDirFolder, DOCKER_CONFIG_FOLDER);
+            
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+        }
     }
 }

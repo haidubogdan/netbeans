@@ -64,7 +64,11 @@ public class DockerSettings {
         result.add(DEFAULT_CONFIG_NAME);
 
         if (dockerConfigFolder != null && dockerConfigFolder.isFolder()) {
-            
+            for (FileObject configFile : dockerConfigFolder.getChildren()) {
+                if (configFile.hasExt("properties")) { // NOI18N
+                    result.add(configFile.getName());
+                }
+            }
         }
         
         return result;
