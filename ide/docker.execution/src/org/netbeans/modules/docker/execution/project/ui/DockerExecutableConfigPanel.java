@@ -18,31 +18,39 @@
  */
 package org.netbeans.modules.docker.execution.project.ui;
 
+import java.io.File;
+import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.DockerExecModel;
 import org.netbeans.modules.docker.execution.project.ConfigManager;
 import org.netbeans.modules.docker.execution.project.ConfigManager.Configuration;
+import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.*;
 import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
 import org.netbeans.modules.docker.execution.project.DockerSettings;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
 public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
-    private final ConfigManager manager;
+    private final Project project;
+    private final DockerExecModel dockerModel;
     private final DockerServiceProjectProperties properties;
     private final DockerConfigComboBoxModel1 comboModel;
     private final DockerConfigComboBoxModel1 npmComboModel;
 
     public DockerExecutableConfigPanel(Project project) {
         this.properties = null;
-        this.manager = null;
+        this.project = project;
+        this.dockerModel = new DockerExecModel(project);
         initComponents();
-        DockerExecModel dockerModel = new DockerExecModel(project);
-        comboModel = DockerConfigComboBoxModel1.build(dockerModel.getProfiles());
-        npmComboModel = DockerConfigComboBoxModel1.build(dockerModel.getProfiles());
+        
+        Set<String> profiles = dockerModel.getProfiles();
+        comboModel = DockerConfigComboBoxModel1.build(profiles);
+        npmComboModel = DockerConfigComboBoxModel1.build(profiles);
 //        ConfigOptionCombo.setRenderer(new ConfigListCellRenderer(manager));
         ConfigOptionCombo.setModel(comboModel);
 //        nodeNpmDockerConfigCombo.setRenderer(new ConfigListCellRenderer(manager));
@@ -66,7 +74,9 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     }
 
     public void saveSettings() {
-        
+        String config = (String) ConfigOptionCombo.getSelectedItem();
+        //model contains collection of Configuration / Profile / Properties class
+        DockerConfigManager.saveConfigProfile(dockerModel, config, project);
 //        Configuration currentConfig = manager.currentConfiguration();
 //        currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
 //        currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
@@ -93,8 +103,8 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     }
     
     private void selectNpmNodeDockerOption() {
-        final Configuration currentConfig = manager.currentConfiguration();
-        nodeNpmDockerConfigCombo.setSelectedItem(currentConfig.getName());
+        //final Configuration currentConfig = manager.currentConfiguration();
+        //nodeNpmDockerConfigCombo.setSelectedItem(currentConfig.getName());
         //configDel.setEnabled(!config.isDefault());
     }
 
@@ -289,12 +299,12 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
             }
             String config = name.replaceAll("[^a-zA-Z0-9_.-]", "_"); // NOI18N
 
-            if (manager.exists(config)) {
-                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
-                        NbBundle.getMessage(DockerExecutableConfigPanel.class, "MSG_ConfigurationExists", config),
-                        NotifyDescriptor.WARNING_MESSAGE));
-                return;
-            }
+//            if (manager.exists(config)) {
+//                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
+//                        NbBundle.getMessage(DockerExecutableConfigPanel.class, "MSG_ConfigurationExists", config),
+//                        NotifyDescriptor.WARNING_MESSAGE));
+//                return;
+//            }
 
 //            manager.createNew(config, name);
 //

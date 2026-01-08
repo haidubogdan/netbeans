@@ -183,22 +183,6 @@ public class DockerServiceProjectProperties implements ConfigManager.ConfigProvi
                 }
             }
 
-            Configuration configuration = configManager.configurationFor(name);
-
-            for (String propertyName : configuration.getPropertyNames()) {
-                String value = configuration.getValue(propertyName);
-
-                if (value == null) {
-                    continue;
-                }
-                ep.setProperty(propertyName, value);
-            }
-            try {
-                // deleted config
-                ProjectHelper.storeEditableProperties(project, sharedPath, ep);
-            } catch (IOException ex) {
-            }
-
         }
     }
 
