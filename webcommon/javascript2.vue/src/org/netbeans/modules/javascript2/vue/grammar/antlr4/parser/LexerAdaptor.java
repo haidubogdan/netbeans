@@ -28,6 +28,7 @@ import org.antlr.v4.runtime.Lexer;
 public abstract class LexerAdaptor extends Lexer {
 
     private boolean attrQuoteOpened = false;
+    private boolean insideTag = false;
     private int templateTagBalance = 0;
 
     public LexerAdaptor(CharStream input) {
@@ -37,11 +38,21 @@ public abstract class LexerAdaptor extends Lexer {
     @Override
     public void reset() {
         attrQuoteOpened = false;
+        insideTag = false;
+        templateTagBalance = 0;
         super.reset();
     }
 
     public void setAttrQuoteState(boolean state) {
         attrQuoteOpened = state;
+    }
+
+    public void setInsideTag(boolean state) {
+        insideTag = state;
+    }
+
+    public boolean isInsideTag() {
+        return insideTag;
     }
 
     public boolean getAttrQuoteState() {
