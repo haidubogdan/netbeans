@@ -67,6 +67,9 @@ fragment DoubleQuoteStringFragment
 fragment SingleQuoteStringFragment 
     : '\'' (~('\'' | '\\') | '\\' . )* '\'';
 
+fragment BackTickQuoteStringFragment
+   : '`' ([\\`] | . )*? '`';
+
 fragment StringLiteral : DoubleQuoteStringFragment | SingleQuoteStringFragment;
 
 //TOKENS
@@ -77,18 +80,23 @@ OTHER : . ->skip;
     
 mode INSIDE_TEMPLATE;
 
-I_TEMPLATE_TAG_OPEN : '<template' {this.incrementTemplateTagBalance();}->skip;
+I_TEMPLATE_TAG_OPEN : '<template' {this.incrementTemplateTagBalance();this.setInsideTag(true);}->skip;
 TEMPLATE_TAG_CLOSE : {this.getTemplateTagBalance() <= 0}? '</' (' ')* 'template' (' ')* '>'->popMode;
 I_TEMPLATE_TAG_CLOSE : '</' (' ')* 'template' (' ')* '>' {this.decreaseTemplateTagBalance();}->skip;
-VUE_DIRECTIVE_WITH_VALUE :
+
+TEMPLATE_TAG_OPENED : ('<' (' ')* [a-zA-z] {this.setInsideTag(true);}) ->skip;
+
+TEMPLATE_TAG_CLOSED : ('>' {this.setInsideTag(false);})->skip;
+
+VUE_DIRECTIVE_WITH_VALUE : {this.isInsideTag()}?
      (
-        'v-' Identifier ('-' Identifier)* (':' PropertyChain)? //attribute bind
+        'v-' Identifier ('-' Identifier)* ((':' | '.') PropertyChain)? //attribute bind
          | '@' PropertyChain //on event listener
          | ':' (Identifier | ('[' Identifier ']') ) //short attribute bind
      ) '=' ->type(VUE_DIRECTIVE), pushMode(ATTR_VALUE);
 
 //directives which don't expect value assignment
-VUE_DIRECTIVE_SIMPLE : 
+VUE_DIRECTIVE_SIMPLE : {this.isInsideTag()}?
     ('v-' (
         'once' //Render the element and component once only, and skip future updates
        | 'else' //if block
@@ -96,9 +104,12 @@ VUE_DIRECTIVE_SIMPLE :
        | 'cloak' //hide un-compiled template
        | 'slot:' Identifier  //slot reference
     )
-    | '@' PropertyChain )->type(VUE_DIRECTIVE);
+    | '@' PropertyChain | '#' Identifier )->type(VUE_DIRECTIVE);
 
 VAR_TAG : '{{' ->pushMode(INSIDE_VAR_INTERPOLATION);
+
+TEMPLATE_STRING : (StringLiteral | BackTickQuoteStringFragment) ->skip;
+
 TEMPLATE_OTHER : . ->skip; 
 EXIT_TEMPLATE_EOF : EOF->type(ERROR),popMode;
 
