@@ -25,6 +25,7 @@ import org.netbeans.modules.docker.execution.DockerExecModel;
 import org.netbeans.modules.docker.execution.project.ConfigManager;
 import org.netbeans.modules.docker.execution.project.ConfigManager.Configuration;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
+import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.*;
 import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
 import org.netbeans.modules.docker.execution.project.DockerSettings;
@@ -55,9 +56,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         ConfigOptionCombo.setModel(comboModel);
 //        nodeNpmDockerConfigCombo.setRenderer(new ConfigListCellRenderer(manager));
         nodeNpmDockerConfigCombo.setModel(npmComboModel);
-        String currentProfile = dockerModel.getCurrentProfile();
-        //validate configProfile
-        dockerModel.getConfigMap(currentProfile);
+
         init();
     }
 //
@@ -68,15 +67,19 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 //    }
 
     private void init() {
-//        selectDefaultDockerOption();
+        
+        //validate configProfile
+       
+        selectDefaultDockerOption();
 //        selectNpmNodeDockerOption();
 //        npmNodeDockerEnabled.setSelected(properties.isDockerNpmEnabled());
     }
 
     public void saveSettings() {
-        String config = (String) ConfigOptionCombo.getSelectedItem();
+        String selectedProfile = (String) ConfigOptionCombo.getSelectedItem();
+        DockerExecConfiguration config = createConfig();
         //model contains collection of Configuration / Profile / Properties class
-        DockerConfigManager.saveConfigProfile(dockerModel, config, project);
+        DockerConfigManager.saveConfigProfile(dockerModel, config, selectedProfile, project);
 //        Configuration currentConfig = manager.currentConfiguration();
 //        currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
 //        currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
@@ -89,17 +92,26 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     }
 
     private void selectDefaultDockerOption() {
-//        final Configuration currentConfig = manager.currentConfiguration();
-//        ConfigOptionCombo.setSelectedItem(currentConfig.getName());
-//        dockerContainerName.setText(currentConfig.getValue(DOCKER_CONTAINER_NAME));
-//        dockerBashType.setText(currentConfig.getValue(DOCKER_BASH_PATH));
-//        boolean ttySelected = Boolean.parseBoolean(currentConfig.getValue(DOCKER_USE_TTY));
-//        dockerPseudoTerminal.setSelected(ttySelected);
-//        boolean interactive = Boolean.parseBoolean(currentConfig.getValue(DOCKER_USE_INTERACTIVE));
-//        dockerInteractive.setSelected(interactive);
-//        dockerVolumeDir.setText(currentConfig.getValue(DOCKER_WORKDIR));
-//        dockerUser.setText(currentConfig.getValue(DOCKER_USER));
+        String currentProfile = dockerModel.getCurrentProfile();
+        DockerExecConfiguration config = dockerModel.getConfiguration(currentProfile);
+        dockerContainerName.setText(config.getContainerName());
+        dockerBashType.setText(config.getBashType());
+        dockerInteractive.setSelected(config.getInteractive());
+        dockerPseudoTerminal.setSelected(config.getAsTerminal());
+        dockerUser.setText(config.getDockerUser());
+        dockerVolumeDir.setText(config.getDockerWorkDir());
         //configDel.setEnabled(!config.isDefault());
+    }
+    
+    private DockerExecConfiguration createConfig() {
+        return new DockerExecConfiguration(
+            dockerContainerName.getText(),
+            dockerBashType.getText(),
+            dockerInteractive.isSelected(),
+            dockerPseudoTerminal.isSelected(),
+            dockerUser.getText(),
+            dockerVolumeDir.getText()
+        );
     }
     
     private void selectNpmNodeDockerOption() {
