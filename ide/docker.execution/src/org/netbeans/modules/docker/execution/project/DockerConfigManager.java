@@ -19,6 +19,7 @@
 package org.netbeans.modules.docker.execution.project;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.PreferenceChangeListener;
@@ -29,6 +30,7 @@ import static org.netbeans.modules.docker.execution.project.DockerServiceProject
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -54,36 +56,51 @@ public class DockerConfigManager {
     private static final String[] CFG_PROPS = new String[]{
         DOCKER_CONTAINER_NAME,
         DOCKER_BASH_PATH,
-        DOCKER_WORKDIR,
+        DOCKER_USE_INTERACTIVE,
         DOCKER_USE_TTY,
         DOCKER_USER,
-        DOCKER_USE_INTERACTIVE,};
+        DOCKER_WORKDIR,
+        };
 
-    public static Map<String, String> readConfigProfile(String profile, Project project) {
-        Map<String, String> config = new HashMap<>();
-
+    public static DockerExecConfiguration readConfigProfile(String profile, Project project) {
         String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
         if (!profile.equals(DEFAULT_CONFIG_NAME)) {
             
         }
 
+        //default config
         EditableProperties ep = ProjectHelper.getProperties(project, path);
 
+        Map<String, String> configMapping = new HashMap<>();
+
         for (String propertyName : CFG_PROPS) {
-            String value = ep.getProperty(propertyName);
-            int x= 1;
+            configMapping.put(propertyName, ep.getProperty(propertyName));
         }
         
-        return config;
+        return new DockerExecConfiguration(configMapping);
     }
     
-    public static void saveConfigProfile(DockerExecModel model, String profile, Project project) {
+    public static void saveConfigProfile(DockerExecModel model, 
+            DockerExecConfiguration config, String profile, Project project) {
         
+        String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
         if (profile.equals(DEFAULT_CONFIG_NAME)) {
-            
+            EditableProperties ep = ProjectHelper.getProperties(project, path);
+
+            ep.put(DOCKER_CONTAINER_NAME, config.getContainerName());
+            ep.put(DOCKER_BASH_PATH, config.getBashType());
+            ep.put(DOCKER_USE_INTERACTIVE, Boolean.toString(config.getInteractive()));
+            ep.put(DOCKER_USE_TTY, Boolean.toString(config.getAsTerminal()));
+            ep.put(DOCKER_USER, config.getDockerUser());
+            ep.put(DOCKER_WORKDIR, config.getDockerWorkDir());
+            try {
+                ProjectHelper.storeEditableProperties(project, path, ep);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
             return;
         }
-        
+
         FileObject projectDir = project.getProjectDirectory();
         FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
         if (dockerConfigFolder == null || !dockerConfigFolder.isFolder()) {
