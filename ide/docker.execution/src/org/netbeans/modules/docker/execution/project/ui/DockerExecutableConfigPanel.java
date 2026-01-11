@@ -67,32 +67,19 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 //    }
 
     private void init() {
-        
         //validate configProfile
-       
-        selectDefaultDockerOption();
-//        selectNpmNodeDockerOption();
-//        npmNodeDockerEnabled.setSelected(properties.isDockerNpmEnabled());
+        comboModel.setSelectedItem(dockerModel.getCurrentProfile());
+        loadDockerExecSettings();
     }
 
     public void saveSettings() {
         String selectedProfile = (String) ConfigOptionCombo.getSelectedItem();
         DockerExecConfiguration config = createConfig();
-        //model contains collection of Configuration / Profile / Properties class
         DockerConfigManager.saveConfigProfile(dockerModel, config, selectedProfile, project);
-//        Configuration currentConfig = manager.currentConfiguration();
-//        currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
-//        currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
-//        currentConfig.putValue(DOCKER_USE_TTY, dockerPseudoTerminal.isSelected() ? "true" : "false");
-//        currentConfig.putValue(DOCKER_USE_INTERACTIVE, dockerInteractive.isSelected() ? "true" : "false");
-//        currentConfig.putValue(DOCKER_WORKDIR, dockerVolumeDir.getText());
-//        currentConfig.putValue(DOCKER_USER, dockerUser.getText());
-//        properties.setDockerNpmEnabled(npmNodeDockerEnabled.isSelected());
-//        properties.saveProperties();
     }
 
-    private void selectDefaultDockerOption() {
-        String currentProfile = dockerModel.getCurrentProfile();
+    private void loadDockerExecSettings() {
+        String currentProfile = (String) comboModel.getSelectedItem();
         DockerExecConfiguration config = dockerModel.getConfiguration(currentProfile);
         dockerContainerName.setText(config.getContainerName());
         dockerBashType.setText(config.getBashType());
@@ -112,12 +99,6 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
             dockerUser.getText(),
             dockerVolumeDir.getText()
         );
-    }
-    
-    private void selectNpmNodeDockerOption() {
-        //final Configuration currentConfig = manager.currentConfiguration();
-        //nodeNpmDockerConfigCombo.setSelectedItem(currentConfig.getName());
-        //configDel.setEnabled(!config.isDefault());
     }
 
     /**
@@ -325,14 +306,12 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 //            Configuration currentConfig = manager.currentConfiguration();
 //            currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
 //            currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
-            selectDefaultDockerOption();
+            loadDockerExecSettings();
         }
     }//GEN-LAST:event_configNewActionPerformed
 
     private void configComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configComboActionPerformed
-        String config = (String) ConfigOptionCombo.getSelectedItem();
-        //manager.markAsCurrentConfiguration(config == null || config.length() == 0 ? null : config);
-        selectDefaultDockerOption();
+        loadDockerExecSettings();
     }//GEN-LAST:event_configComboActionPerformed
 
     private void nodeNpmDockerConfigComboconfigComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
