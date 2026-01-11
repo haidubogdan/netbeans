@@ -59,16 +59,15 @@ public class DockerConfigManager {
         DOCKER_USE_INTERACTIVE,
         DOCKER_USE_TTY,
         DOCKER_USER,
-        DOCKER_WORKDIR,
-        };
+        DOCKER_WORKDIR,};
 
     public static DockerExecConfiguration readConfigProfile(String profile, Project project) {
         String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
+
         if (!profile.equals(DEFAULT_CONFIG_NAME)) {
-            
+            path = DOCKER_CONFIG_FOLDER + "/" + profile + ".properties";
         }
 
-        //default config
         EditableProperties ep = ProjectHelper.getProperties(project, path);
 
         Map<String, String> configMapping = new HashMap<>();
@@ -76,40 +75,45 @@ public class DockerConfigManager {
         for (String propertyName : CFG_PROPS) {
             configMapping.put(propertyName, ep.getProperty(propertyName));
         }
-        
+
         return new DockerExecConfiguration(configMapping);
     }
-    
-    public static void saveConfigProfile(DockerExecModel model, 
-            DockerExecConfiguration config, String profile, Project project) {
-        
-        String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
-        if (profile.equals(DEFAULT_CONFIG_NAME)) {
-            EditableProperties ep = ProjectHelper.getProperties(project, path);
 
-            ep.put(DOCKER_CONTAINER_NAME, config.getContainerName());
-            ep.put(DOCKER_BASH_PATH, config.getBashType());
-            ep.put(DOCKER_USE_INTERACTIVE, Boolean.toString(config.getInteractive()));
-            ep.put(DOCKER_USE_TTY, Boolean.toString(config.getAsTerminal()));
-            ep.put(DOCKER_USER, config.getDockerUser());
-            ep.put(DOCKER_WORKDIR, config.getDockerWorkDir());
-            try {
-                ProjectHelper.storeEditableProperties(project, path, ep);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+    public static void saveConfigProfile(DockerExecModel model,
+            DockerExecConfiguration config, String profile, Project project) {
+
+        String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
+        
+        if (!profile.equals(DEFAULT_CONFIG_NAME)) {
+            FileObject projectDir = project.getProjectDirectory();
+            FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
+            if (dockerConfigFolder == null || !dockerConfigFolder.isFolder()) {
+                File projectDirFolder = FileUtil.toFile(projectDir);
+                File dir = new File(projectDirFolder, DOCKER_CONFIG_FOLDER);
+
+                if (!dir.exists()) {
+                    dir.mkdir();
+                }
             }
-            return;
+
+            path = DOCKER_CONFIG_FOLDER + "/" + profile + ".properties";
         }
 
-        FileObject projectDir = project.getProjectDirectory();
-        FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
-        if (dockerConfigFolder == null || !dockerConfigFolder.isFolder()) {
-            File projectDirFolder = FileUtil.toFile(projectDir);
-            File dir = new File(projectDirFolder, DOCKER_CONFIG_FOLDER);
-            
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
+        //TODO
+        //check if file exists
+        //assert ep is not null
+        EditableProperties ep = ProjectHelper.getProperties(project, path);
+        ep.put(DOCKER_CONTAINER_NAME, config.getContainerName());
+        ep.put(DOCKER_BASH_PATH, config.getBashType());
+        ep.put(DOCKER_USE_INTERACTIVE, Boolean.toString(config.getInteractive()));
+        ep.put(DOCKER_USE_TTY, Boolean.toString(config.getAsTerminal()));
+        ep.put(DOCKER_USER, config.getDockerUser());
+        ep.put(DOCKER_WORKDIR, config.getDockerWorkDir());
+     
+        try {
+            ProjectHelper.storeEditableProperties(project, path, ep);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 }
