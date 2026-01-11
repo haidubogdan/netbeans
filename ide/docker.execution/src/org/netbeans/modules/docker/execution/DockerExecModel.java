@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
+import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import org.netbeans.modules.docker.execution.project.DockerSettings;
 
 /**
@@ -47,9 +48,7 @@ public class DockerExecModel {
         return dockerSettings.getCurrentProfile();
     }
     
-    public Map<String, String> getConfigMap(String profile) {
-        Map<String, String> configMap = new HashMap<>();
-        configMap.putAll(DockerConfigManager.readConfigProfile(profile, project));
-        return configMap;
+    public DockerExecConfiguration getConfiguration(String profile) {
+        return DockerConfigManager.readConfigProfile(profile, project);
     }
 }
