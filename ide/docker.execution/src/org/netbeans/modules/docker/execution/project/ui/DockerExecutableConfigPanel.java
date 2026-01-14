@@ -52,9 +52,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         Set<String> profiles = dockerModel.getProfiles();
         comboModel = DockerConfigComboBoxModel1.build(profiles);
         npmComboModel = DockerConfigComboBoxModel1.build(profiles);
-//        ConfigOptionCombo.setRenderer(new ConfigListCellRenderer(manager));
         ConfigOptionCombo.setModel(comboModel);
-//        nodeNpmDockerConfigCombo.setRenderer(new ConfigListCellRenderer(manager));
         nodeNpmDockerConfigCombo.setModel(npmComboModel);
 
         init();
@@ -290,22 +288,22 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                         NotifyDescriptor.WARNING_MESSAGE));
                 return;
             }
-            String config = name.replaceAll("[^a-zA-Z0-9_.-]", "_"); // NOI18N
+            String configName = name.replaceAll("[^a-zA-Z0-9_.-]", "_"); // NOI18N
 
-//            if (manager.exists(config)) {
-//                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
-//                        NbBundle.getMessage(DockerExecutableConfigPanel.class, "MSG_ConfigurationExists", config),
-//                        NotifyDescriptor.WARNING_MESSAGE));
-//                return;
-//            }
+            if (dockerModel.profileExists(configName)) {
+                DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
+                        NbBundle.getMessage(DockerExecutableConfigPanel.class, "MSG_ConfigurationExists", configName),
+                        NotifyDescriptor.WARNING_MESSAGE));
+                return;
+            }
 
-//            manager.createNew(config, name);
-//
-//            comboModel.addElement(config);
-//            manager.markAsCurrentConfiguration(config);
-//            Configuration currentConfig = manager.currentConfiguration();
-//            currentConfig.putValue(DOCKER_CONTAINER_NAME, dockerContainerName.getText());
-//            currentConfig.putValue(DOCKER_BASH_PATH, dockerBashType.getText());
+            DockerExecConfiguration config = createConfig();
+            DockerConfigManager.saveConfigProfile(dockerModel, config, configName, project);
+
+            comboModel.addElement(configName);
+            comboModel.setSelectedItem(configName);
+            npmComboModel.addElement(configName);
+
             loadDockerExecSettings();
         }
     }//GEN-LAST:event_configNewActionPerformed

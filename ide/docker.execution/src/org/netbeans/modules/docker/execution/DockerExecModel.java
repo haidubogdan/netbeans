@@ -51,4 +51,8 @@ public class DockerExecModel {
     public DockerExecConfiguration getConfiguration(String profile) {
         return DockerConfigManager.readConfigProfile(profile, project);
     }
+    
+    public boolean profileExists(String profile) {
+        return getProfiles().contains(profile);
+    }
 }

@@ -97,6 +97,12 @@ public class DockerConfigManager {
             }
 
             path = DOCKER_CONFIG_FOLDER + "/" + profile + ".properties";
+            try {
+                createFileObject(projectDir, path);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+                return;
+            }
         }
 
         //TODO
@@ -115,5 +121,14 @@ public class DockerConfigManager {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+    
+    private static FileObject createFileObject(FileObject dir, String relToDir) throws IOException {
+        FileObject createdFO = dir.getFileObject(relToDir);
+        if (createdFO != null) {
+            throw new IllegalArgumentException("File " + createdFO + " already exists."); // NOI18N
+        }
+        createdFO = FileUtil.createData(dir, relToDir);
+        return createdFO;
     }
 }
