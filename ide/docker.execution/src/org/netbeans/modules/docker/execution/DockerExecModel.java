@@ -24,6 +24,7 @@ import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
+import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
 import org.netbeans.modules.docker.execution.project.DockerSettings;
 
 /**
@@ -55,4 +56,12 @@ public class DockerExecModel {
     public boolean profileExists(String profile) {
         return getProfiles().contains(profile);
     }
+    
+    //not null
+    public void remove(String profile) {
+        if (DockerConfigManager.isCustomProfile(profile)) {
+            DockerConfigManager.removeConfigFile(profile, project);
+        }
+    }
+ 
 }
