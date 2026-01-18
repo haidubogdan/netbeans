@@ -123,7 +123,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         ConfigOptionCombo = new javax.swing.JComboBox<>();
         configNew = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        configDel = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
         npmNodeDockerEnabled = new javax.swing.JCheckBox();
@@ -167,7 +167,12 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.jButton2.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(configDel, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.configDel.text")); // NOI18N
+        configDel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                configDelActionPerformed(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.jLabel1.text")); // NOI18N
 
@@ -204,7 +209,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(configNew)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2))
+                                .addComponent(configDel))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(dockerInteractive)
@@ -238,7 +243,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ConfigOptionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(configNew)
-                    .addComponent(jButton2)
+                    .addComponent(configDel)
                     .addComponent(LBL_Configuration))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -316,6 +321,12 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         
     }//GEN-LAST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
 
+    private void configDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configDelActionPerformed
+        String currentProfile = (String) comboModel.getSelectedItem();
+        dockerModel.remove(currentProfile);
+        comboModel.removeElement(currentProfile);
+    }//GEN-LAST:event_configDelActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> ConfigOptionCombo;
@@ -324,6 +335,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private javax.swing.JLabel LBL_ContainerName;
     private javax.swing.JLabel LBL_DockerWorkdir;
     private javax.swing.JLabel LBL_User;
+    private javax.swing.JButton configDel;
     private javax.swing.JButton configNew;
     private javax.swing.JTextField dockerBashType;
     private javax.swing.JTextField dockerContainerName;
@@ -331,7 +343,6 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox dockerPseudoTerminal;
     private javax.swing.JTextField dockerUser;
     private javax.swing.JTextField dockerVolumeDir;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JSeparator jSeparator1;

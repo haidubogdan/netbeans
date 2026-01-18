@@ -84,7 +84,7 @@ public class DockerConfigManager {
 
         String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
         
-        if (!profile.equals(DEFAULT_CONFIG_NAME)) {
+        if (isCustomProfile(profile)) {
             FileObject projectDir = project.getProjectDirectory();
             FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
             if (dockerConfigFolder == null || !dockerConfigFolder.isFolder()) {
@@ -94,14 +94,22 @@ public class DockerConfigManager {
                 if (!dir.exists()) {
                     dir.mkdir();
                 }
+                
+                dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
             }
 
-            path = DOCKER_CONFIG_FOLDER + "/" + profile + ".properties";
-            try {
-                createFileObject(projectDir, path);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-                return;
+            String configFileName = profile + ".properties";
+            
+            path = DOCKER_CONFIG_FOLDER + "/" + configFileName;
+            
+            FileObject configFile = dockerConfigFolder.getFileObject(path);
+
+            if (configFile == null) {
+                try {
+                    createFileObject(projectDir, path);
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
         }
 
@@ -123,6 +131,28 @@ public class DockerConfigManager {
         }
     }
     
+    public static void removeConfigFile(String profile, Project project) 
+    {
+        FileObject projectDir = project.getProjectDirectory();
+        FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
+        
+        if (dockerConfigFolder == null || !dockerConfigFolder.isFolder()) {
+            return;
+        }
+        
+        String configFilePath = profile + ".properties";
+        FileObject configFile = dockerConfigFolder.getFileObject(configFilePath);
+        
+        if (configFile != null && !configFile.isFolder()) {
+            try {
+                configFile.delete();
+            } catch (IOException ex) {
+                //LOG this
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+    
     private static FileObject createFileObject(FileObject dir, String relToDir) throws IOException {
         FileObject createdFO = dir.getFileObject(relToDir);
         if (createdFO != null) {
@@ -130,5 +160,9 @@ public class DockerConfigManager {
         }
         createdFO = FileUtil.createData(dir, relToDir);
         return createdFO;
+    }
+    
+    public static boolean isCustomProfile(String profile) {
+        return !(profile.equals(DEFAULT_CONFIG_NAME));
     }
 }
