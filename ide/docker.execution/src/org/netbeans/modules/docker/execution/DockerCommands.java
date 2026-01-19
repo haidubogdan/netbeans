@@ -18,10 +18,6 @@
  */
 package org.netbeans.modules.docker.execution;
 
-/**
- *
- * @author bhaidu
- */
 public final class DockerCommands {
 
     public static final String DOCKER_BASE_COMMAND = "docker"; // NOI18N
