@@ -18,40 +18,31 @@
  */
 package org.netbeans.modules.docker.execution.project.ui;
 
-import java.io.File;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.DockerExecModel;
-import org.netbeans.modules.docker.execution.project.ConfigManager;
-import org.netbeans.modules.docker.execution.project.ConfigManager.Configuration;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
-import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.*;
 import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
-import org.netbeans.modules.docker.execution.project.DockerSettings;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
 
 public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
     private final Project project;
     private final DockerExecModel dockerModel;
-    private final DockerServiceProjectProperties properties;
-    private final DockerConfigComboBoxModel1 comboModel;
-    private final DockerConfigComboBoxModel1 npmComboModel;
+    private final DockerConfigComboBoxModel comboModel;
+    private final DockerConfigComboBoxModel npmComboModel;
 
     public DockerExecutableConfigPanel(Project project) {
-        this.properties = null;
         this.project = project;
         this.dockerModel = new DockerExecModel(project);
         initComponents();
         
         Set<String> profiles = dockerModel.getProfiles();
-        comboModel = DockerConfigComboBoxModel1.build(profiles);
-        npmComboModel = DockerConfigComboBoxModel1.build(profiles);
+        comboModel = DockerConfigComboBoxModel.build(profiles);
+        npmComboModel = DockerConfigComboBoxModel.build(profiles);
         ConfigOptionCombo.setModel(comboModel);
         nodeNpmDockerConfigCombo.setModel(npmComboModel);
 
@@ -85,7 +76,6 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         dockerPseudoTerminal.setSelected(config.getAsTerminal());
         dockerUser.setText(config.getDockerUser());
         dockerVolumeDir.setText(config.getDockerWorkDir());
-        //configDel.setEnabled(!config.isDefault());
     }
     
     private DockerExecConfiguration createConfig() {
@@ -325,6 +315,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         String currentProfile = (String) comboModel.getSelectedItem();
         dockerModel.remove(currentProfile);
         comboModel.removeElement(currentProfile);
+        npmComboModel.removeElement(currentProfile);
     }//GEN-LAST:event_configDelActionPerformed
 
     
