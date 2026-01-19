@@ -23,30 +23,29 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.DefaultComboBoxModel;
-import org.netbeans.modules.docker.execution.project.ConfigManager;
 
 public class DockerConfigComboBoxModel extends DefaultComboBoxModel<String> {
 
-    private final ConfigManager manager;
-
-    public DockerConfigComboBoxModel(ConfigManager manager) {
-        this.manager = manager;
+    public DockerConfigComboBoxModel(String[] items) {
+        super(items);
+    }
+    
+    public static DockerConfigComboBoxModel build(Set<String> profiles) {
         Set<String> alphaConfigs = new TreeSet<>(getComparator());
-        alphaConfigs.addAll(manager.configurationNames());
-        for (String config : manager.configurationNames()) {
-            this.addElement(config);
-        }
+        alphaConfigs.addAll(profiles);
+        
+        String[] items = new String[alphaConfigs.size()];
+        alphaConfigs.toArray(items);
+        return new DockerConfigComboBoxModel(items);
     }
 
-    private Comparator<String> getComparator() {
+    private static Comparator<String> getComparator() {
         return new Comparator<String>() {
             Collator coll = Collator.getInstance();
 
             @Override
             public int compare(String s1, String s2) {
-                String lbl1 = manager.configurationFor(s1).getDisplayName();
-                String lbl2 = manager.configurationFor(s2).getDisplayName();
-                return coll.compare(lbl1, lbl2);
+                return coll.compare(s1, s2);
             }
         };
     }

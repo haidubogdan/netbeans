@@ -94,15 +94,13 @@ public class DockerConfigManager {
                 if (!dir.exists()) {
                     dir.mkdir();
                 }
-                
-                dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
             }
 
             String configFileName = profile + ".properties";
             
             path = DOCKER_CONFIG_FOLDER + "/" + configFileName;
             
-            FileObject configFile = dockerConfigFolder.getFileObject(path);
+            FileObject configFile = projectDir.getFileObject(path);
 
             if (configFile == null) {
                 try {
