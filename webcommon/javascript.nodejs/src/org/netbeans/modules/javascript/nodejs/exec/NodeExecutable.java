@@ -52,7 +52,7 @@ import org.netbeans.api.extexecution.print.ConvertedLine;
 import org.netbeans.api.extexecution.print.LineConvertor;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig;
+import org.netbeans.modules.docker.execution.DockerExecutableBuilder;
 import org.netbeans.modules.javascript.nodejs.api.DebuggerOptions;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
@@ -74,7 +74,6 @@ import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle;
-import org.openide.util.NbPreferences;
 import org.openide.util.Pair;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
@@ -359,6 +358,9 @@ public class NodeExecutable {
 
     private ExternalExecutable getExecutable(String title) {
         assert title != null;
+        
+        ExternalExecutable dockerExec = (new DockerExecutableBuilder(project)).buildExternalExec(getCommand());
+        
         ExternalExecutable exec = new ExternalExecutable(getCommand())
                 .workDir(getWorkDir())
                 .displayName(title)
@@ -367,8 +369,6 @@ public class NodeExecutable {
 
         //todo add docker enabled
         Preferences preferences = NodeJsOptions.getInstance().getDockerConfigPreferences();
-        exec.dockerConfig(DockerExecutableConfig.forProject(project, preferences));
-        exec.skipExecutableValidation();
         return exec;
     }
 

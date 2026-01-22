@@ -33,30 +33,4 @@ public final class DockerCommands {
     public static final String DOCKER_WORKDIR_OPTION = "w"; // NOI18N
     public static final String DOCKER_USER_OPTION = "u"; // NOI18N
 
-    public static List<String> buildExecCommandParams(DockerExecConfiguration config) {
-        List<String> params = new ArrayList<>();
-        params.add(DOCKER_EXEC);
-
-        if (config.getDockerWorkDir() != null && !config.getDockerWorkDir().trim().isEmpty()) {
-            params.add("-" + DOCKER_WORKDIR_OPTION); // NOI18N
-            params.add(config.getDockerWorkDir());
-        }
-
-        if (config.getInteractive()) {
-            params.add("-" + DOCKER_INTERACTIVE_OPTION); // NOI18N
-        }
-
-        if (config.getDockerUser() != null) {
-            params.add("-" + DOCKER_USER_OPTION); // NOI18N
-            params.add(config.getDockerUser());
-        }
-
-        params.add(config.getContainerName());
-
-        if (config.getBashType() != null) {
-            params.add(config.getBashType());
-        }
-
-        return params;
-    }
 }
