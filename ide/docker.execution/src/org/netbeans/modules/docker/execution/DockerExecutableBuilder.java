@@ -18,6 +18,16 @@
  */
 package org.netbeans.modules.docker.execution;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.netbeans.api.project.Project;
+import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_BASE_COMMAND;
+import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_EXEC;
+import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_INTERACTIVE_OPTION;
+import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_USER_OPTION;
+import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_WORKDIR_OPTION;
+import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
+import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
 import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
 
 /**
@@ -25,7 +35,52 @@ import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
  * @author bhaidu
  */
 public class DockerExecutableBuilder {
-    public static ExternalExecutable buildExternalExec() {
-        return null;
+
+    private final DockerExecModel dockerExecModel;
+    
+    public DockerExecutableBuilder(Project project) {
+        this.dockerExecModel = new DockerExecModel(project);
+    }
+    //todo add profile
+    public ExternalExecutable buildExternalExec(String command) {
+        String profile = DEFAULT_CONFIG_NAME;
+        DockerExecConfiguration config = dockerExecModel.getConfiguration(profile);
+        ExternalExecutable exec = new ExternalExecutable("/usr/bin/docker exec");
+
+        exec.additionalParameters(buildExecCommandParams(config));
+
+        List<String> params = new ArrayList<>();
+        //splitter
+        params.add(command);
+        exec.additionalParameters(params);
+        
+        return exec;
+    }
+    
+    public static List<String> buildExecCommandParams(DockerExecConfiguration config) {
+        List<String> params = new ArrayList<>();
+
+        if (config.getDockerWorkDir() != null && !config.getDockerWorkDir().trim().isEmpty()) {
+            params.add("-" + DOCKER_WORKDIR_OPTION); // NOI18N
+            params.add(config.getDockerWorkDir());
+        }
+
+        if (config.getInteractive()) {
+            params.add("-" + DOCKER_INTERACTIVE_OPTION); // NOI18N
+        }
+
+        //as terminal ??
+        if (config.getDockerUser() != null) {
+            params.add("-" + DOCKER_USER_OPTION); // NOI18N
+            params.add(config.getDockerUser());
+        }
+
+        params.add(config.getContainerName());
+
+        if (config.getBashType() != null) {
+            params.add(config.getBashType());
+        }
+
+        return params;
     }
 }
