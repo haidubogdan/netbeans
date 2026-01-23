@@ -100,6 +100,7 @@ public final class ExternalExecutable {
     private boolean noInfo = false;
     private boolean noOutput = false;
 
+    //a merge flag??
 
     /**
      * Parse command which can be just binary or binary with parameters.
@@ -113,6 +114,18 @@ public final class ExternalExecutable {
         this.command = command.trim();
     }
 
+    /**
+     * no need to parse if the command is already prepared
+     * 
+     * @param executable
+     * @param mainParameters 
+     */
+    public ExternalExecutable(String executable, List<String> mainParameters) {
+        this.executable = executable;
+        parameters = mainParameters;
+        this.command = executable + " " + String.join(" ", mainParameters);
+    }
+    
     static Pair<String, List<String>> parseCommand(String command) {
         if (command == null) {
             // avoid NPE
