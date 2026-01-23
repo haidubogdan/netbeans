@@ -45,10 +45,7 @@ public class DockerExecutableBuilder {
     public ExternalExecutable buildExternalExec(String command) {
         String profile = DEFAULT_CONFIG_NAME;
         DockerExecConfiguration config = dockerExecModel.getConfiguration(profile);
-        ExternalExecutable exec = new ExternalExecutable("/usr/bin/docker exec");
-
-        exec.additionalParameters(buildExecCommandParams(config));
-
+        ExternalExecutable exec = new ExternalExecutable("/usr/bin/docker", buildExecCommandParams(config));
         List<String> params = new ArrayList<>();
         //splitter
         params.add(command);
@@ -60,6 +57,8 @@ public class DockerExecutableBuilder {
     public static List<String> buildExecCommandParams(DockerExecConfiguration config) {
         List<String> params = new ArrayList<>();
 
+        params.add(DOCKER_EXEC);
+        
         if (config.getDockerWorkDir() != null && !config.getDockerWorkDir().trim().isEmpty()) {
             params.add("-" + DOCKER_WORKDIR_OPTION); // NOI18N
             params.add(config.getDockerWorkDir());
