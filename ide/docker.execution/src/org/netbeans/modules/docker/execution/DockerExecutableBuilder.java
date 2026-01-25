@@ -46,10 +46,7 @@ public class DockerExecutableBuilder {
         String profile = DEFAULT_CONFIG_NAME;
         DockerExecConfiguration config = dockerExecModel.getConfiguration(profile);
         ExternalExecutable exec = new ExternalExecutable("/usr/bin/docker", buildExecCommandParams(config));
-        List<String> params = new ArrayList<>();
-        //splitter
-        params.add(command);
-        exec.additionalParameters(params);
+        exec.containerExecutable(command);
         
         return exec;
     }
@@ -79,6 +76,8 @@ public class DockerExecutableBuilder {
         if (config.getBashType() != null) {
             params.add(config.getBashType());
         }
+        
+        params.add("-c");
 
         return params;
     }
