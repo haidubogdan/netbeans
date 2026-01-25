@@ -100,6 +100,8 @@ public final class ExternalExecutable {
     private boolean noInfo = false;
     private boolean noOutput = false;
 
+    private String containerExecutable = null;
+
     //a merge flag??
 
     /**
@@ -309,6 +311,17 @@ public final class ExternalExecutable {
     }
 
     /**
+     * workaround of adapting externalExecutable as a docker exec script
+     * 
+     * @param executable
+     * @return 
+     */
+    public ExternalExecutable containerExecutable(String executable) {
+        this.containerExecutable = executable;
+        return this;
+    }
+    
+    /**
      * Run this executable with the {@link #DEFAULT_EXECUTION_DESCRIPTOR default execution descriptor}.
      * @return task representing the actual run, value representing result of the {@link Future} is exit code of the process
      * or {@code null} if the executable cannot be run
@@ -461,9 +474,16 @@ public final class ExternalExecutable {
             fullCommand.add(param);
             arguments.add(param);
         }
-        for (String param : additionalParameters) {
-            fullCommand.add(param);
-            arguments.add(param);
+
+        if (containerExecutable != null) {
+            String containerCommand = containerExecutable + " " + String.join(" ", additionalParameters);
+            fullCommand.add(containerCommand);
+            arguments.add(containerCommand);
+        } else {
+            for (String param : additionalParameters) {
+                fullCommand.add(param);
+                arguments.add(param);
+            }
         }
         processBuilder.setArguments(arguments);
         if (workDir != null) {
