@@ -25,9 +25,11 @@ import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
+import org.netbeans.modules.csl.api.DeclarationFinder;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
+import org.netbeans.modules.javascript2.lexer.api.JsTokenId;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueLexer;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.VueLanguageHierarchy;
@@ -103,6 +105,11 @@ public class VueLanguage extends DefaultLanguageConfig {
                 ;
     }
 
+    @Override
+    public DeclarationFinder getDeclarationFinder() {
+        return new VueJsDeclarationFinder();
+    }
+    
     @Override
     @SuppressWarnings("rawtypes")
     public SemanticAnalyzer<VueParserResult> getSemanticAnalyzer() {
