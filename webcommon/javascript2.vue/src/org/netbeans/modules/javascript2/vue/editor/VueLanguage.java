@@ -33,8 +33,8 @@ import org.netbeans.modules.javascript2.lexer.api.JsTokenId;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueLexer;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId;
 import org.netbeans.modules.javascript2.vue.editor.lexer.VueTokenId.VueLanguageHierarchy;
-import org.netbeans.modules.javascript2.vue.editor.lexer.parser.VueParser;
-import org.netbeans.modules.javascript2.vue.editor.lexer.parser.VueParserResult;
+import org.netbeans.modules.javascript2.vue.editor.parser.VueParser;
+import org.netbeans.modules.javascript2.vue.editor.parser.VueParserResult;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.api.Task;
 import org.netbeans.modules.parsing.spi.ParseException;
@@ -63,7 +63,7 @@ public class VueLanguage extends DefaultLanguageConfig {
             mimeType = MIME_TYPE,
             position = 192
     )
-    @NbBundle.Messages("Source=&Source Vue")
+    @NbBundle.Messages("Source=&Source")
     @MultiViewElement.Registration(displayName = "#Source",
             iconBase = "org/netbeans/modules/javascript2/vue/resources/vue16.png",
             persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,

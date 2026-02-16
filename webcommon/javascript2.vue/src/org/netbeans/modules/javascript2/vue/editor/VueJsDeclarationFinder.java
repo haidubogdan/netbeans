@@ -30,7 +30,7 @@ import org.netbeans.modules.parsing.api.Source;
 /**
  * 
  * TODO 
- * check if necessary
+ * check if registration is necessary
  */
 @DeclarationFinder.Registration(priority = 13)
 public class VueJsDeclarationFinder implements DeclarationFinder {

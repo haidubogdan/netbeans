@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.javascript2.vue.editor.lexer.parser;
+package org.netbeans.modules.javascript2.vue.editor.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,9 +40,19 @@ import org.netbeans.modules.parsing.api.Snapshot;
 public class VueParserResult extends ParserResult {
 
     private volatile boolean finished = false;
-    //offset ranges for coloring highlight
+
+    /**
+     * vue attribute directive locations
+     * 
+     * v-if, @submit ...
+     */
     private final List<OffsetRange> vueDirectiveLocations = new ArrayList<>();
-    private final List<OffsetRange> vueTagsLocations = new ArrayList<>();
+    
+    /**
+     * interpolation locations
+     * {{ }}
+     */
+    private final List<OffsetRange> vueInterpolationLocations = new ArrayList<>();
 
     public VueParserResult(final Snapshot snapshot) {
         super(snapshot);
@@ -97,12 +107,12 @@ public class VueParserResult extends ParserResult {
         public void exitVueInterpolation(VueAntlrParser.VueInterpolationContext ctx) {
             Token vueOpenTag = ctx.open_tag;
             if (vueOpenTag != null) {
-                vueTagsLocations.add(new OffsetRange(vueOpenTag.getStartIndex(), vueOpenTag.getStopIndex() + 1));
+                vueInterpolationLocations.add(new OffsetRange(vueOpenTag.getStartIndex(), vueOpenTag.getStopIndex() + 1));
             }
             
             Token vueCloseTag = ctx.close_tag;
             if (vueCloseTag != null) {
-                vueTagsLocations.add(new OffsetRange(vueCloseTag.getStartIndex(), vueCloseTag.getStopIndex() + 1));
+                vueInterpolationLocations.add(new OffsetRange(vueCloseTag.getStartIndex(), vueCloseTag.getStopIndex() + 1));
             }
         }
     }
@@ -111,7 +121,7 @@ public class VueParserResult extends ParserResult {
         return vueDirectiveLocations;
     }
     
-    public List<OffsetRange> getVueTagsLocations() {
-        return vueTagsLocations;
+    public List<OffsetRange> getVueInterpolationLocations() {
+        return vueInterpolationLocations;
     }
 }

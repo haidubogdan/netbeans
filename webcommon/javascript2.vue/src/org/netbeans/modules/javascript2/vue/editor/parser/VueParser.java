@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.javascript2.vue.editor.lexer.parser;
+package org.netbeans.modules.javascript2.vue.editor.parser;
 
 import javax.swing.event.ChangeListener;
 import org.netbeans.modules.parsing.api.Snapshot;
@@ -39,6 +39,7 @@ public class VueParser extends Parser {
         @Override
         public void parse(Snapshot snapshot, Task task, SourceModificationEvent event) throws ParseException {
             lastResult = new VueParserResult(snapshot).get();
+            
         }
 
         @Override

@@ -18,17 +18,22 @@
  */
 package org.netbeans.modules.javascript2.vue.editor;
 
+import javax.swing.text.Document;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 
 import org.netbeans.api.editor.mimelookup.MimeRegistrations;
+import org.netbeans.modules.csl.api.DeclarationFinder;
+import org.netbeans.modules.csl.api.OffsetRange;
+import org.netbeans.modules.csl.spi.ParserResult;
 import org.netbeans.modules.html.editor.api.gsf.HtmlExtension;
 import org.netbeans.modules.html.editor.api.gsf.HtmlParserResult;
 import org.netbeans.modules.html.editor.lib.api.HtmlSource;
 import org.netbeans.modules.html.editor.lib.api.elements.Attribute;
 import org.netbeans.modules.html.editor.lib.api.elements.Named;
+import static org.netbeans.modules.javascript2.vue.editor.VueLanguage.MIME_TYPE;
 
 @MimeRegistrations({
-    @MimeRegistration(mimeType = "text/x-vue", service = HtmlExtension.class),})
+    @MimeRegistration(mimeType = MIME_TYPE, service = HtmlExtension.class),})
 public class VueHtmlExtension extends HtmlExtension {
 
     @Override
@@ -45,5 +50,15 @@ public class VueHtmlExtension extends HtmlExtension {
     @Override
     public boolean isCustomTag(Named element, HtmlSource source) {
         return false;
+    }
+    
+    @Override
+    public OffsetRange getReferenceSpan(Document doc, int caretOffset) {
+        return OffsetRange.NONE;
+    }
+
+    @Override
+    public DeclarationFinder.DeclarationLocation findDeclaration(ParserResult info, int caretOffset) {
+        return null;
     }
 }

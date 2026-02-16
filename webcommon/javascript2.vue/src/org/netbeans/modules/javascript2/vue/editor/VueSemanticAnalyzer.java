@@ -25,7 +25,7 @@ import java.util.Set;
 import org.netbeans.modules.csl.api.ColoringAttributes;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
-import org.netbeans.modules.javascript2.vue.editor.lexer.parser.VueParserResult;
+import org.netbeans.modules.javascript2.vue.editor.parser.VueParserResult;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
 
@@ -83,7 +83,7 @@ public class VueSemanticAnalyzer extends SemanticAnalyzer<VueParserResult> {
             highlights.put(range, VUE_DIRECTIVE_ATTR);
         }
         
-        for (OffsetRange range : parserResult.getVueTagsLocations()) {
+        for (OffsetRange range : parserResult.getVueInterpolationLocations()) {
             highlights.put(range, VUE_TAG);
         }
         
