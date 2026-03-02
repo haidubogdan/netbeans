@@ -59,7 +59,7 @@ public class CompositionExpression extends Expression {
         super(start, end);
 
         if (right == null || left == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("left or right node must not be null");
         }
 
         this.left = left;

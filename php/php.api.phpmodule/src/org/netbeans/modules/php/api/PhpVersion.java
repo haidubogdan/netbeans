@@ -117,7 +117,7 @@ public enum PhpVersion {
      */
     PHP_84(Bundle.PhpVersion_PHP_84()),
     /**
-     * PHP 8.4.
+     * PHP 8.5
      * @since 2.x
      */
     PHP_85(Bundle.PhpVersion_PHP_85()),

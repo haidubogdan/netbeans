@@ -302,7 +302,6 @@ public class DefaultVisitor implements Visitor {
         scan(node.getIfFalse());
     }
 
-
     @Override
     public void visit(ContinueStatement node) {
         scan(node.getExpression());

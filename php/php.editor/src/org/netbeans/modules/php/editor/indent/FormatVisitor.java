@@ -36,6 +36,7 @@ import org.netbeans.editor.BaseDocument;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.spi.GsfUtilities;
 import org.netbeans.modules.php.editor.CodeUtils;
+import static org.netbeans.modules.php.editor.CodeUtils.PIPE_OPERATOR;
 import org.netbeans.modules.php.editor.indent.FormatToken.AssignmentAnchorToken;
 import org.netbeans.modules.php.editor.indent.TokenFormatter.DocumentOptions;
 import org.netbeans.modules.php.editor.lexer.LexUtilities;
@@ -1091,7 +1092,7 @@ public class FormatVisitor extends DefaultVisitor {
     public void visit(CompositionExpression node) {
         scan(node.getLeft());
         while (ts.moveNext()
-                && !(ts.token().id() == PHPTokenId.PHP_OPERATOR && TokenUtilities.textEquals("|>", ts.token().text())) // NOI18N
+                && !(ts.token().id() == PHPTokenId.PHP_OPERATOR && TokenUtilities.textEquals(PIPE_OPERATOR, ts.token().text())) // NOI18N
                 && lastIndex < ts.index()) {
             addFormatToken(formatTokens);
         }

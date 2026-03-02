@@ -33,6 +33,7 @@ import org.netbeans.api.lexer.TokenUtilities;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.Utilities;
 import org.netbeans.modules.csl.api.OffsetRange;
+import static org.netbeans.modules.php.editor.CodeUtils.PIPE_OPERATOR;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
@@ -47,7 +48,7 @@ import org.openide.util.Exceptions;
  * @author Petr Pisl
  */
 public final class LexUtilities {
-
+    
     private LexUtilities() {
     }
 
@@ -623,7 +624,7 @@ public final class LexUtilities {
                     }
                     break;
                 }
-            } else if (token.id() == PHPTokenId.PHP_OPERATOR && TokenUtilities.textEquals(token.text(), "|>")) { // NOI18N
+            } else if (token.id() == PHPTokenId.PHP_OPERATOR && TokenUtilities.textEquals(token.text(), PIPE_OPERATOR)) { // NOI18N
                 //PHP 8.5 pipe operator
                 start = ts.offset();
                 break;

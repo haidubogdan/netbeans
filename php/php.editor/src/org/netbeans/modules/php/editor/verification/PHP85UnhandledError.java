@@ -127,7 +127,7 @@ public final class PHP85UnhandledError extends UnhandledErrorRule {
         @NbBundle.Messages("PHP85VersionError.description=Detected language features not compatible with PHP version indicated in project settings")
         @Override
         public String getDescription() {
-            return Bundle.PHP83VersionError_description();
+            return Bundle.PHP85VersionError_description();
         }
 
         @Override
