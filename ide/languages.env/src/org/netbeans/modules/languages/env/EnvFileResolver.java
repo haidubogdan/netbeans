@@ -93,6 +93,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = MIMEResolver.class)
 public class EnvFileResolver extends MIMEResolver {
     public static final String ENV_EXT = "env"; //NOI18N
+    public final static String DOT_ENV_EXT = "." + ENV_EXT; // NOI18N
     public static final String MIME_TYPE = "text/x-env"; //NOI18N
 
     public EnvFileResolver() {
@@ -104,16 +105,12 @@ public class EnvFileResolver extends MIMEResolver {
     public String findMIMEType(@NonNull final FileObject fo) {
         final String nameWithExt = fo.getNameExt().toLowerCase();
 
-        if (nameWithExt.endsWith("." + ENV_EXT)) { //NOI18N
-            return MIME_TYPE;
+        //netbeans development testing
+        if (nameWithExt.endsWith("lexer")) { //NOI18N
+            return null; 
         }
 
-        //Some application might use .env.example name format
-        int envPartPosition = 2;
-        String[] nameParts = nameWithExt.split("\\."); //NOI18N
-
-        //check for previous name part
-        if (nameParts.length >= envPartPosition && nameParts[nameParts.length - envPartPosition].equals(ENV_EXT)) {
+        if (nameWithExt.endsWith(DOT_ENV_EXT) || nameWithExt.contains(DOT_ENV_EXT + ".")) { //NOI18N
             return MIME_TYPE;
         }
 

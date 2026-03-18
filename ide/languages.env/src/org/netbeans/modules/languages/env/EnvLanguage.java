@@ -38,9 +38,18 @@ import org.netbeans.modules.languages.env.parser.EnvParserResult;
 import org.netbeans.modules.parsing.spi.Parser;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerRestartInfo;
+import org.openide.filesystems.MIMEResolver;
 import org.openide.util.*;
 import org.openide.windows.TopComponent;
 
+@MIMEResolver.Registration(
+        resource = "resources/mime-resolver.xml",
+        displayName = "#LBL_Env_LOADER",
+        position = 1
+)
+@NbBundle.Messages({
+    "LBL_Env_LOADER=Env files"
+})
 @LanguageRegistration(mimeType = "text/x-env", useMultiview = true)
 public class EnvLanguage extends DefaultLanguageConfig {
 

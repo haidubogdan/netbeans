@@ -44,6 +44,10 @@ public class EnvLexerTest extends EnvTestBase {
     public void testLexer_01() throws Exception {
         checkLexer("testfiles/lexer/env01.env");
     }
+    
+    public void testSingleQuotedValue() throws Exception {
+        checkLexer("testfiles/lexer/single_quoted_value.env");
+    }
 
     private void checkLexer(final String filePath) throws Exception {
         String fileContent = Files.readString(new File(getDataDir(), filePath).toPath(), StandardCharsets.UTF_8);
