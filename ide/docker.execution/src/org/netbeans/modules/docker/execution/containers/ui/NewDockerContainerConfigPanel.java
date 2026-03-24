@@ -43,7 +43,7 @@ public class NewDockerContainerConfigPanel extends javax.swing.JPanel {
     public boolean open() {
         descriptor = new DialogDescriptor(
                 this,
-                "Docker containers",
+                "New docker container",
                 true,
                 NotifyDescriptor.OK_CANCEL_OPTION,
                 NotifyDescriptor.OK_OPTION,

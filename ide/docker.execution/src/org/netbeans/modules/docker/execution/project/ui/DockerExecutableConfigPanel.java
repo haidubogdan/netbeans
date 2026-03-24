@@ -21,7 +21,9 @@ package org.netbeans.modules.docker.execution.project.ui;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.DockerExecModel;
+import org.netbeans.modules.docker.execution.containers.DockerContainerConfig;
 import org.netbeans.modules.docker.execution.containers.DockerContainers;
+import org.netbeans.modules.docker.execution.containers.ui.DockerContainerConfigsPanel;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
@@ -35,17 +37,19 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private final DockerExecModel dockerModel;
     private final DockerConfigComboBoxModel comboModel;
     private final DockerConfigComboBoxModel npmComboModel;
+    private final DockerContainerComboModel dockerContainerListModel = new DockerContainerComboModel();
 
     public DockerExecutableConfigPanel(Project project) {
         this.project = project;
         this.dockerModel = new DockerExecModel(project);
         initComponents();
-        
+
         Set<String> profiles = dockerModel.getProfiles();
         comboModel = DockerConfigComboBoxModel.build(profiles);
         npmComboModel = DockerConfigComboBoxModel.build(profiles);
         ConfigOptionCombo.setModel(comboModel);
         nodeNpmDockerConfigCombo.setModel(npmComboModel);
+        ContainerConfigOption.setModel(dockerContainerListModel);
 
         init();
     }
@@ -59,6 +63,8 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private void init() {
         //validate configProfile
         comboModel.setSelectedItem(dockerModel.getCurrentProfile());
+        ;
+        dockerContainerListModel.setElements(DockerContainers.get().getDockerContainers());
         loadDockerExecSettings();
     }
 
@@ -78,15 +84,15 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         dockerUser.setText(config.getDockerUser());
         dockerVolumeDir.setText(config.getDockerWorkDir());
     }
-    
+
     private DockerExecConfiguration createConfig() {
         return new DockerExecConfiguration(
-            ContainerConfigOption.getSelectedItem().toString(),
-            dockerBashType.getText(),
-            dockerInteractive.isSelected(),
-            dockerPseudoTerminal.isSelected(),
-            dockerUser.getText(),
-            dockerVolumeDir.getText()
+                ContainerConfigOption.getSelectedItem().toString(),
+                dockerBashType.getText(),
+                dockerInteractive.isSelected(),
+                dockerPseudoTerminal.isSelected(),
+                dockerUser.getText(),
+                dockerVolumeDir.getText()
         );
     }
 
@@ -309,13 +315,14 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                 return;
             }
 
-            DockerExecConfiguration config = createConfig();
-            DockerConfigManager.saveConfigProfile(dockerModel, config, configName, project);
+            if (ContainerConfigOption.getSelectedItem() != null)  {
+                DockerExecConfiguration config = createConfig();
+                DockerConfigManager.saveConfigProfile(dockerModel, config, configName, project);
 
-            comboModel.addElement(configName);
-            comboModel.setSelectedItem(configName);
-            npmComboModel.addElement(configName);
-
+                comboModel.addElement(configName);
+                comboModel.setSelectedItem(configName);
+                npmComboModel.addElement(configName);
+            }
             loadDockerExecSettings();
         }
     }//GEN-LAST:event_configNewActionPerformed
@@ -325,7 +332,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_configComboActionPerformed
 
     private void nodeNpmDockerConfigComboconfigComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
-        
+
     }//GEN-LAST:event_nodeNpmDockerConfigComboconfigComboActionPerformed
 
     private void configDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configDelActionPerformed
@@ -344,7 +351,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         containers.openManager();
     }//GEN-LAST:event_openContainerConfigPanelBtnActionPerformed
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> ConfigOptionCombo;
     private javax.swing.JComboBox<String> ContainerConfigOption;

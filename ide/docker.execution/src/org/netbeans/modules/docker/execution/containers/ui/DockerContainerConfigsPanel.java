@@ -39,10 +39,15 @@ import org.openide.util.NbBundle;
 public class DockerContainerConfigsPanel extends javax.swing.JPanel {
 
     private final DockerContainers dockerContainers;
+    private DialogDescriptor descriptor = null;
+    private final DockerContainerListModel dockerContainerListModel = new DockerContainerListModel();
 
     public DockerContainerConfigsPanel(DockerContainers dockerContainers) {
         this.dockerContainers = dockerContainers;
         initComponents();
+
+        dockerContainersConfigList.setModel(dockerContainerListModel);
+
         registerListeners();
     }
 
@@ -55,15 +60,46 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
         });
     }
 
+    public boolean open() {
+        descriptor = new DialogDescriptor(
+                this,
+                "Docker containers",
+                true,
+                NotifyDescriptor.OK_CANCEL_OPTION,
+                NotifyDescriptor.OK_OPTION,
+                null);
+        Dialog dialog = DialogDisplayer.getDefault().createDialog(descriptor);
+
+        try {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            });
+            dialog.setVisible(true);
+        } finally {
+            dialog.dispose();
+        }
+
+        return descriptor.getValue() == NotifyDescriptor.OK_OPTION;
+    }
+
     private void addConfig() {
         NewDockerContainerConfigPanel panel = new NewDockerContainerConfigPanel();
 
         if (panel.open()) {
-            String config = panel.getConfigName();
+            String newConfigName = panel.getConfigName();
             String dockerContainerName = panel.getDockerContainerName();
-            assert config != null;
+            assert newConfigName != null;
             assert dockerContainerName != null;
+            DockerContainerConfig config = new DockerContainerConfig(newConfigName, dockerContainerName);
+            dockerContainers.addNewConfig(config);
         }
+    }
+
+    public void setConfigurations(List<DockerContainerConfig> configs) {
+        dockerContainerListModel.setElements(configs);
     }
 
     private void addDockerContainerConfig() {
@@ -96,6 +132,19 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
 //            fireIntervalAdded(this, idx, idx);
             return true;
         }
+
+        private void setElements(List<DockerContainerConfig> configs) {
+            int size = data.size();
+            data.clear();
+            if (size > 0) {
+                fireIntervalRemoved(this, 0, size - 1);
+            }
+            if (configs.size() > 0) {
+                data.addAll(configs);
+                //data.sort(ConfigManager.getConfigurationComparator());
+                fireIntervalAdded(this, 0, data.size() - 1);
+            }
+        }
     }
 
     /**
@@ -108,7 +157,7 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        dockerContainersConfigList = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
         configName = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
@@ -116,12 +165,7 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         testContainer = new javax.swing.JButton();
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(dockerContainersConfigList);
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.jLabel1.text")); // NOI18N
 
@@ -192,8 +236,8 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JTextField configName;
+    private javax.swing.JList<DockerContainerConfig> dockerContainersConfigList;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton removeButton;

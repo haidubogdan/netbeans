@@ -23,5 +23,26 @@ package org.netbeans.modules.docker.execution.containers;
  * @author bhaidu
  */
 public class DockerContainerConfig {
-    
+
+    private final String name;
+    private final String containerName;
+
+    public DockerContainerConfig(String name, String containerName) {
+        this.name = name;
+        this.containerName = containerName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getContainerName() {
+        return containerName;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+
+    }
 }

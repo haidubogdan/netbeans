@@ -19,40 +19,44 @@
 package org.netbeans.modules.docker.execution.containers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.event.ChangeListener;
 import org.netbeans.modules.docker.execution.containers.ui.DockerContainerConfigsPanel;
 import org.openide.util.ChangeSupport;
+import org.openide.util.Exceptions;
 
 public final class DockerContainers {
 
     private static final DockerContainers INSTANCE = new DockerContainers();
     private final ChangeSupport changeSupport;
+    private final DockerContainersModel dockerContainerModel = new DockerContainersModel();
 
     public static DockerContainers get() {
         return INSTANCE;
     }
-    
+
     private DockerContainers() {
         changeSupport = new ChangeSupport(this);
     }
 
     private DockerContainerConfigsPanel createPanel() {
         DockerContainerConfigsPanel panel = new DockerContainerConfigsPanel(this);
-        //panel.setConfigurations(getConfigurations());
+        panel.setConfigurations(dockerContainerModel.getConfigs());
         return panel;
     }
 
     public boolean openManager() {
         DockerContainerConfigsPanel panel = createPanel();
+        
         // original remote configurations
-        final List<String> remoteConfigurations = getDockerContainers();
 
-        final boolean changed = false;
+        final boolean changed = panel.open();
 
         if (changed) {
-            //saveRemoteConnections(remoteConfigurations);
+            saveDockerContainers();
         }
         // reset & reread config provider & manager (configs are kept in memory)
 //        configProvider.resetConfigs();
@@ -64,18 +68,40 @@ public final class DockerContainers {
 
         return changed;
     }
-    
+
     public List<String> getDockerContainers() {
         List<String> containers = new ArrayList<>();
+        Preferences dockerContainers = DockerContainerPreferences.getDockerContainerPreferences();
+        try {
+            containers.addAll(Arrays.asList(dockerContainers.childrenNames()));
+        } catch (BackingStoreException bse) {
+
+        }
         return containers;
     }
 
-    public void saveDockerContainers() {
-        Preferences preferences = DockerContainerPreferences.getDockerContainerPreferences();
-        
-        Preferences node = preferences.node("test");
+    public void addNewConfig(DockerContainerConfig config) {
+        dockerContainerModel.addConfig(config);
     }
-    
+
+    public void saveDockerContainers() {
+        List<DockerContainerConfig> configs = dockerContainerModel.getConfigs();
+        Preferences preferences = DockerContainerPreferences.getDockerContainerPreferences();
+
+        for (DockerContainerConfig config : configs) {
+            try {
+                String configName = config.getName();
+                if (!preferences.nodeExists(config.getName())) {
+                    Preferences node = preferences.node(configName);
+                    node.put("config_name", configName);
+                    node.put("container_name", config.getContainerName());
+                }
+            } catch (BackingStoreException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+
     public void addChangeListener(ChangeListener listener) {
         changeSupport.addChangeListener(listener);
     }
