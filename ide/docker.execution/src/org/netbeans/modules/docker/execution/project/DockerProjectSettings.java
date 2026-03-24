@@ -34,24 +34,20 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
-/**
- *
- * @author bhaidu
- */
-public class DockerSettings {
+public class DockerProjectSettings {
 
     private final Project project;
     public static final String DOCKER_CONFIG_FOLDER = "nbproject/docker_configs"; // NOI18N
     
-    private DockerProjectPreferences dockerProjectPreferences;
+    private final DockerProjectPreferences dockerProjectPreferences;
     
-    public DockerSettings(Project project) {
+    public DockerProjectSettings(Project project) {
         this.project = project;
         this.dockerProjectPreferences = new DockerProjectPreferences(project, null);
     }
     
-    public static synchronized DockerSettings projectLookup(Project project) {
-        DockerSettings dockerSettings = project.getLookup().lookup(DockerSettings.class);
+    public static synchronized DockerProjectSettings projectLookup(Project project) {
+        DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
         assert dockerSettings != null : "DockerSettings should be found in project " + project.getClass().getName() + " (lookup: " + project.getLookup() + ")";
         return dockerSettings;
     }
@@ -78,12 +74,12 @@ public class DockerSettings {
         return dockerProjectPreferences.getDockerConfigName();
     }
 
-    @ProjectServiceProvider(service = DockerSettings.class,projectTypes = {
+    @ProjectServiceProvider(service = DockerProjectSettings.class,projectTypes = {
         @LookupProvider.Registration.ProjectType(id = NB_PHP_PROJECT_TYPE), // NOI18N
         @LookupProvider.Registration.ProjectType(id = NB_WEB_PROJECT_TYPE), // NOI18N
     }) // NOI18N
-    public static DockerSettings create(Project project) {
-        DockerSettings settings = new DockerSettings(project);
+    public static DockerProjectSettings create(Project project) {
+        DockerProjectSettings settings = new DockerProjectSettings(project);
  
         return settings;
     }

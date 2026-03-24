@@ -39,7 +39,7 @@ public final class DockerContainers {
     }
 
     private DockerContainerConfigsPanel createPanel() {
-        DockerContainerConfigsPanel panel = new DockerContainerConfigsPanel();
+        DockerContainerConfigsPanel panel = new DockerContainerConfigsPanel(this);
         //panel.setConfigurations(getConfigurations());
         return panel;
     }
@@ -47,9 +47,9 @@ public final class DockerContainers {
     public boolean openManager() {
         DockerContainerConfigsPanel panel = createPanel();
         // original remote configurations
-        final List<String> remoteConfigurations = getRemoteContainers();
+        final List<String> remoteConfigurations = getDockerContainers();
 
-        final boolean changed = panel.open();
+        final boolean changed = false;
 
         if (changed) {
             //saveRemoteConnections(remoteConfigurations);
@@ -65,7 +65,7 @@ public final class DockerContainers {
         return changed;
     }
     
-    public List<String> getRemoteContainers() {
+    public List<String> getDockerContainers() {
         List<String> containers = new ArrayList<>();
         return containers;
     }

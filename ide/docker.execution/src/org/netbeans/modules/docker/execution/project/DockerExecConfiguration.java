@@ -26,10 +26,6 @@ import static org.netbeans.modules.docker.execution.project.DockerConfigManager.
 import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_USE_TTY;
 import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_WORKDIR;
 
-/**
- *
- * @author bhaidu
- */
 public class DockerExecConfiguration {
     private final String containerName;
     private final String bashType;

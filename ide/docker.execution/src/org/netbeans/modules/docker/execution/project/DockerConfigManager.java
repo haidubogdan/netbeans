@@ -52,6 +52,8 @@ public class DockerConfigManager {
 
     public static final String DEFAULT_CONFIG_FOLDER = "nbproject";
     public static final String DOCKER_CONFIG_FOLDER = "nbproject/docker_configs";
+    
+    public static final String DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_FOLDER + "/project.properties";
 
     private static final String[] CFG_PROPS = new String[]{
         DOCKER_CONTAINER_NAME,
@@ -62,7 +64,7 @@ public class DockerConfigManager {
         DOCKER_WORKDIR,};
 
     public static DockerExecConfiguration readConfigProfile(String profile, Project project) {
-        String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
+        String path = DEFAULT_CONFIG_FILE;
 
         if (!profile.equals(DEFAULT_CONFIG_NAME)) {
             path = DOCKER_CONFIG_FOLDER + "/" + profile + ".properties";
@@ -82,7 +84,7 @@ public class DockerConfigManager {
     public static void saveConfigProfile(DockerExecModel model,
             DockerExecConfiguration config, String profile, Project project) {
 
-        String path = DEFAULT_CONFIG_FOLDER + "/project.properties";
+        String path = DEFAULT_CONFIG_FILE;
         
         if (isCustomProfile(profile)) {
             FileObject projectDir = project.getProjectDirectory();

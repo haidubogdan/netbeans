@@ -19,7 +19,14 @@
 package org.netbeans.modules.docker.execution.containers.ui;
 
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
+import org.netbeans.modules.docker.execution.containers.DockerContainerConfig;
+import org.netbeans.modules.docker.execution.containers.DockerContainers;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -31,38 +38,64 @@ import org.openide.util.NbBundle;
  */
 public class DockerContainerConfigsPanel extends javax.swing.JPanel {
 
-    private DialogDescriptor descriptor = null;
+    private final DockerContainers dockerContainers;
 
-    /**
-     * Creates new form DockerContainerConfigsPanel
-     */
-    public DockerContainerConfigsPanel() {
+    public DockerContainerConfigsPanel(DockerContainers dockerContainers) {
+        this.dockerContainers = dockerContainers;
         initComponents();
+        registerListeners();
     }
 
-    public boolean open() {
-        descriptor = new DialogDescriptor(
-                this,
-                "Docker containers",
-                true,
-                NotifyDescriptor.OK_CANCEL_OPTION,
-                NotifyDescriptor.OK_OPTION,
-                null);
-        Dialog dialog = DialogDisplayer.getDefault().createDialog(descriptor);
-        
-        try {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    
-                }
-            });
-            dialog.setVisible(true);
-        } finally {
-            dialog.dispose();
+    private void registerListeners() {
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addConfig();
+            }
+        });
+    }
+
+    private void addConfig() {
+        NewDockerContainerConfigPanel panel = new NewDockerContainerConfigPanel();
+
+        if (panel.open()) {
+            String config = panel.getConfigName();
+            String dockerContainerName = panel.getDockerContainerName();
+            assert config != null;
+            assert dockerContainerName != null;
         }
-        
-        return descriptor.getValue() == NotifyDescriptor.OK_OPTION;
+    }
+
+    private void addDockerContainerConfig() {
+
+    }
+
+    public static final class DockerContainerListModel extends AbstractListModel<DockerContainerConfig> {
+
+        private static final long serialVersionUID = -546879865427974L;
+
+        private final List<DockerContainerConfig> data = new ArrayList<>();
+
+        @Override
+        public int getSize() {
+            return data.size();
+        }
+
+        @Override
+        public DockerContainerConfig getElementAt(int index) {
+            return data.get(index);
+        }
+
+        public boolean addElement(DockerContainerConfig configuration) {
+            assert configuration != null;
+            if (!data.add(configuration)) {
+                return false;
+            }
+//            data.sort(ConfigManager.getConfigurationComparator());
+//            int idx = indexOf(configuration);
+//            fireIntervalAdded(this, idx, idx);
+            return true;
+        }
     }
 
     /**
@@ -77,11 +110,11 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        configName = new javax.swing.JTextField();
+        addButton = new javax.swing.JButton();
+        removeButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
+        testContainer = new javax.swing.JButton();
 
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { };
@@ -92,11 +125,11 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.jLabel1.text")); // NOI18N
 
-        jTextField1.setText(org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.jTextField1.text")); // NOI18N
+        configName.setText(org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.configName.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.jButton1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(addButton, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.addButton.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton2, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.jButton2.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(removeButton, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.removeButton.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -109,7 +142,7 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
             .addGap(0, 209, Short.MAX_VALUE)
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(jButton3, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.jButton3.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(testContainer, org.openide.util.NbBundle.getMessage(DockerContainerConfigsPanel.class, "DockerContainerConfigsPanel.testContainer.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -119,9 +152,9 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE))
+                        .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,9 +162,9 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel1)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(configName, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jButton3))
+                    .addComponent(testContainer))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -142,28 +175,28 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(configName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(addButton)
+                    .addComponent(removeButton)
+                    .addComponent(testContainer))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton addButton;
+    private javax.swing.JTextField configName;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton removeButton;
+    private javax.swing.JButton testContainer;
     // End of variables declaration//GEN-END:variables
 }

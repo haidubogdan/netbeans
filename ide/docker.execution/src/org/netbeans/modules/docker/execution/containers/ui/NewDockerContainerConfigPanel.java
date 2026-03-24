@@ -18,11 +18,20 @@
  */
 package org.netbeans.modules.docker.execution.containers.ui;
 
-/**
- *
- * @author bhaidu
- */
+import java.awt.Dialog;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.AbstractListModel;
+import javax.swing.SwingUtilities;
+import org.netbeans.modules.docker.execution.containers.DockerContainerConfig;
+import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
+
 public class NewDockerContainerConfigPanel extends javax.swing.JPanel {
+
+    private DialogDescriptor descriptor = null;
 
     /**
      * Creates new form NewContainerPanel
@@ -31,6 +40,39 @@ public class NewDockerContainerConfigPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    public boolean open() {
+        descriptor = new DialogDescriptor(
+                this,
+                "Docker containers",
+                true,
+                NotifyDescriptor.OK_CANCEL_OPTION,
+                NotifyDescriptor.OK_OPTION,
+                null);
+        Dialog dialog = DialogDisplayer.getDefault().createDialog(descriptor);
+
+        try {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            });
+            dialog.setVisible(true);
+        } finally {
+            dialog.dispose();
+        }
+
+        return descriptor.getValue() == NotifyDescriptor.OK_OPTION;
+    }
+
+    public String getConfigName() {
+        return containerConfigName.getText();
+    }
+    
+    public String getDockerContainerName() {
+        return dockerContainerName.getText();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
