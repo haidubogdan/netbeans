@@ -18,12 +18,8 @@
  */
 package org.netbeans.modules.docker.execution.project.ui;
 
-import java.awt.event.ActionEvent;
 import javax.swing.JComponent;
 import org.netbeans.api.project.Project;
-import java.awt.event.ActionListener;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig.Type;
-import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
@@ -35,7 +31,6 @@ import org.openide.util.NbBundle;
 public class DockerExecutableConfigCustomizer implements ProjectCustomizer.CompositeCategoryProvider {
 
     public static final String DOCKER_EXECUTABLE_CUSTOMIZER = "docker_exec_customizer"; // NOI18N
-    private DockerExecutableConfigPanel component;
 
     @Override
     public ProjectCustomizer.Category createCategory(Lookup context) {
@@ -46,30 +41,10 @@ public class DockerExecutableConfigCustomizer implements ProjectCustomizer.Compo
 
     @Override
     public JComponent createComponent(ProjectCustomizer.Category category, Lookup context) {
-        if (component == null) {
-            Project project = context.lookup(Project.class);
-            assert project != null;
-            //DockerServiceProjectProperties dockerPropeties = DockerServiceProjectProperties.fromProject(project, null);
-            component = new DockerExecutableConfigPanel(project);
-            category.setOkButtonListener(new Listener(component));
-        }
+        Project project = context.lookup(Project.class);
+        assert project != null;
 
-        return component;
-    }
-
-    private class Listener implements ActionListener {
-
-        private final DockerExecutableConfigPanel panel;
-
-        public Listener(DockerExecutableConfigPanel panel) {
-            this.panel = panel;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            panel.saveSettings();
-        }
-
+        return new DockerExecutableConfigPanel(category, project);
     }
 
     @ProjectCustomizer.CompositeCategoryProvider.Registration(

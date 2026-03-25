@@ -18,45 +18,36 @@
  */
 package org.netbeans.modules.docker.execution.project;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
 import static org.netbeans.modules.docker.execution.ProjectUtils.NB_PHP_PROJECT_TYPE;
 import static org.netbeans.modules.docker.execution.ProjectUtils.NB_WEB_PROJECT_TYPE;
 import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
-import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.DOCKER_CONFIG_FOLDER;
 import org.netbeans.spi.project.LookupProvider;
 import org.netbeans.spi.project.ProjectServiceProvider;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
 public class DockerProjectSettings {
 
     private final Project project;
     public static final String DOCKER_CONFIG_FOLDER = "nbproject/docker_configs"; // NOI18N
-    
-    private final DockerProjectPreferences dockerProjectPreferences;
-    
+
     public DockerProjectSettings(Project project) {
         this.project = project;
-        this.dockerProjectPreferences = new DockerProjectPreferences(project, null);
     }
-    
+
     public static synchronized DockerProjectSettings projectLookup(Project project) {
         DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
         assert dockerSettings != null : "DockerSettings should be found in project " + project.getClass().getName() + " (lookup: " + project.getLookup() + ")";
         return dockerSettings;
     }
-    
+
     public Set<String> getProfiles() {
         Set<String> result = new HashSet<>();
         FileObject projectDir = project.getProjectDirectory();
         FileObject dockerConfigFolder = projectDir.getFileObject(DOCKER_CONFIG_FOLDER);
-        
+
         result.add(DEFAULT_CONFIG_NAME);
 
         if (dockerConfigFolder != null && dockerConfigFolder.isFolder()) {
@@ -66,21 +57,17 @@ public class DockerProjectSettings {
                 }
             }
         }
-        
+
         return result;
     }
-    
-    public String getCurrentProfile() {
-        return dockerProjectPreferences.getDockerConfigName();
-    }
 
-    @ProjectServiceProvider(service = DockerProjectSettings.class,projectTypes = {
+    @ProjectServiceProvider(service = DockerProjectSettings.class, projectTypes = {
         @LookupProvider.Registration.ProjectType(id = NB_PHP_PROJECT_TYPE), // NOI18N
         @LookupProvider.Registration.ProjectType(id = NB_WEB_PROJECT_TYPE), // NOI18N
     }) // NOI18N
     public static DockerProjectSettings create(Project project) {
         DockerProjectSettings settings = new DockerProjectSettings(project);
- 
+
         return settings;
     }
 

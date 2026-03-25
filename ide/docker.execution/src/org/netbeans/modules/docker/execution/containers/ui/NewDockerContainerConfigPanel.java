@@ -19,12 +19,7 @@
 package org.netbeans.modules.docker.execution.containers.ui;
 
 import java.awt.Dialog;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
-import org.netbeans.modules.docker.execution.containers.DockerContainerConfig;
-import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -64,10 +59,6 @@ public class NewDockerContainerConfigPanel extends javax.swing.JPanel {
 
         return descriptor.getValue() == NotifyDescriptor.OK_OPTION;
     }
-
-    public String getConfigName() {
-        return containerConfigName.getText();
-    }
     
     public String getDockerContainerName() {
         return dockerContainerName.getText();
@@ -82,14 +73,8 @@ public class NewDockerContainerConfigPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        containerConfigNameL = new javax.swing.JLabel();
-        containerConfigName = new javax.swing.JTextField();
         dockerContainerNameL = new javax.swing.JLabel();
         dockerContainerName = new javax.swing.JTextField();
-
-        org.openide.awt.Mnemonics.setLocalizedText(containerConfigNameL, org.openide.util.NbBundle.getMessage(NewDockerContainerConfigPanel.class, "NewDockerContainerConfigPanel.containerConfigNameL.text")); // NOI18N
-
-        containerConfigName.setText(org.openide.util.NbBundle.getMessage(NewDockerContainerConfigPanel.class, "NewDockerContainerConfigPanel.containerConfigName.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(dockerContainerNameL, org.openide.util.NbBundle.getMessage(NewDockerContainerConfigPanel.class, "NewDockerContainerConfigPanel.dockerContainerNameL.text")); // NOI18N
 
@@ -101,23 +86,15 @@ public class NewDockerContainerConfigPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(containerConfigNameL)
-                    .addComponent(dockerContainerNameL))
+                .addComponent(dockerContainerNameL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dockerContainerName, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(containerConfigName))
+                .addComponent(dockerContainerName, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(containerConfigNameL)
-                    .addComponent(containerConfigName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dockerContainerNameL)
                     .addComponent(dockerContainerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -127,8 +104,6 @@ public class NewDockerContainerConfigPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField containerConfigName;
-    private javax.swing.JLabel containerConfigNameL;
     private javax.swing.JTextField dockerContainerName;
     private javax.swing.JLabel dockerContainerNameL;
     // End of variables declaration//GEN-END:variables

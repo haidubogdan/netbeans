@@ -18,33 +18,39 @@
  */
 package org.netbeans.modules.docker.execution.project.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.DockerExecModel;
-import org.netbeans.modules.docker.execution.containers.DockerContainerConfig;
 import org.netbeans.modules.docker.execution.containers.DockerContainers;
-import org.netbeans.modules.docker.execution.containers.ui.DockerContainerConfigsPanel;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
-import org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties;
+import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.util.NbBundle;
 
 public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
+    private final ProjectCustomizer.Category category;
     private final Project project;
-    private final DockerExecModel dockerModel;
+    private final DockerExecModel dockerExecModel;
     private final DockerConfigComboBoxModel comboModel;
     private final DockerConfigComboBoxModel npmComboModel;
     private final DockerContainerComboModel dockerContainerListModel = new DockerContainerComboModel();
 
-    public DockerExecutableConfigPanel(Project project) {
+    public DockerExecutableConfigPanel(ProjectCustomizer.Category category, Project project) {
+        assert category != null;
+        assert project != null;
+
+        this.category = category;
         this.project = project;
-        this.dockerModel = new DockerExecModel(project);
+
+        this.dockerExecModel = new DockerExecModel(project);
         initComponents();
 
-        Set<String> profiles = dockerModel.getProfiles();
+        Set<String> profiles = dockerExecModel.getProfiles();
         comboModel = DockerConfigComboBoxModel.build(profiles);
         npmComboModel = DockerConfigComboBoxModel.build(profiles);
         ConfigOptionCombo.setModel(comboModel);
@@ -62,27 +68,30 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
     private void init() {
         //validate configProfile
-        comboModel.setSelectedItem(dockerModel.getCurrentProfile());
-        ;
+        comboModel.setSelectedItem(dockerExecModel.getCurrentProfile());
         dockerContainerListModel.setElements(DockerContainers.get().getDockerContainers());
         loadDockerExecSettings();
-    }
 
-    public void saveSettings() {
-        String selectedProfile = (String) ConfigOptionCombo.getSelectedItem();
-        DockerExecConfiguration config = createConfig();
-        DockerConfigManager.saveConfigProfile(dockerModel, config, selectedProfile, project);
+        category.setStoreListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                store();
+            }
+        });
     }
 
     private void loadDockerExecSettings() {
         String currentProfile = (String) comboModel.getSelectedItem();
-        DockerExecConfiguration config = dockerModel.getConfiguration(currentProfile);
+        DockerExecConfiguration config = dockerExecModel.getConfiguration(currentProfile);
         ContainerConfigOption.setSelectedItem(config.getContainerName());
         dockerBashType.setText(config.getBashType());
         dockerInteractive.setSelected(config.getInteractive());
         dockerPseudoTerminal.setSelected(config.getAsTerminal());
         dockerUser.setText(config.getDockerUser());
         dockerVolumeDir.setText(config.getDockerWorkDir());
+        
+        npmNodeDockerEnabled.setSelected(dockerExecModel.getNpmEnabled());
+        nodeNpmDockerConfigCombo.setSelectedItem(dockerExecModel.getDockerNpmContainerName());
     }
 
     private DockerExecConfiguration createConfig() {
@@ -94,6 +103,14 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                 dockerUser.getText(),
                 dockerVolumeDir.getText()
         );
+    }
+
+    private void store() {
+        String selectedProfile = (String) ConfigOptionCombo.getSelectedItem();
+        DockerExecConfiguration config = createConfig();
+        DockerConfigManager.saveConfigProfile(config, selectedProfile, project);
+        dockerExecModel.setNpmEnabled(npmNodeDockerEnabled.isSelected());
+        dockerExecModel.setDockerNpmContainerName((String) nodeNpmDockerConfigCombo.getSelectedItem());
     }
 
     /**
@@ -308,16 +325,16 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
             }
             String configName = name.replaceAll("[^a-zA-Z0-9_.-]", "_"); // NOI18N
 
-            if (dockerModel.profileExists(configName)) {
+            if (dockerExecModel.profileExists(configName)) {
                 DialogDisplayer.getDefault().notify(new NotifyDescriptor.Message(
                         NbBundle.getMessage(DockerExecutableConfigPanel.class, "MSG_ConfigurationExists", configName),
                         NotifyDescriptor.WARNING_MESSAGE));
                 return;
             }
 
-            if (ContainerConfigOption.getSelectedItem() != null)  {
+            if (ContainerConfigOption.getSelectedItem() != null) {
                 DockerExecConfiguration config = createConfig();
-                DockerConfigManager.saveConfigProfile(dockerModel, config, configName, project);
+                DockerConfigManager.saveConfigProfile(config, configName, project);
 
                 comboModel.addElement(configName);
                 comboModel.setSelectedItem(configName);
@@ -337,7 +354,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
     private void configDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configDelActionPerformed
         String currentProfile = (String) comboModel.getSelectedItem();
-        dockerModel.remove(currentProfile);
+        dockerExecModel.remove(currentProfile);
         comboModel.removeElement(currentProfile);
         npmComboModel.removeElement(currentProfile);
     }//GEN-LAST:event_configDelActionPerformed

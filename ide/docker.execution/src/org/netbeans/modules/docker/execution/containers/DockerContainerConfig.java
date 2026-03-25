@@ -24,16 +24,10 @@ package org.netbeans.modules.docker.execution.containers;
  */
 public class DockerContainerConfig {
 
-    private final String name;
     private final String containerName;
 
-    public DockerContainerConfig(String name, String containerName) {
-        this.name = name;
+    public DockerContainerConfig(String containerName) {
         this.containerName = containerName;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getContainerName() {
@@ -42,7 +36,7 @@ public class DockerContainerConfig {
 
     @Override
     public String toString() {
-        return name;
+        return containerName;
 
     }
 }

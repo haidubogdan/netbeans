@@ -22,20 +22,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.prefs.PreferenceChangeListener;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.DockerExecModel;
 import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
-import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.DOCKER_CONFIG_FOLDER;
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 
-/**
- *
- * @author bhaidu
- */
 public class DockerConfigManager {
 
     public static final String DOCKER_CONTAINER_NAME = "docker_container_name"; // NOI18N
@@ -81,8 +75,7 @@ public class DockerConfigManager {
         return new DockerExecConfiguration(configMapping);
     }
 
-    public static void saveConfigProfile(DockerExecModel model,
-            DockerExecConfiguration config, String profile, Project project) {
+    public static void saveConfigProfile(DockerExecConfiguration config, String profile, Project project) {
 
         String path = DEFAULT_CONFIG_FILE;
         

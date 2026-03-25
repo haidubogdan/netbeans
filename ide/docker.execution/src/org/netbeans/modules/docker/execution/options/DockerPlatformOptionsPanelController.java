@@ -26,6 +26,7 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 
+//TODO check if necessary
 @OptionsPanelController.TopLevelRegistration(
         id = "Docker",
         categoryName = "#OptionsCategory_Name_Docker",

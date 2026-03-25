@@ -18,13 +18,11 @@
  */
 package org.netbeans.modules.docker.execution;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
-import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
+import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
 import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
 
 /**
@@ -32,29 +30,50 @@ import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
  * @author bhaidu
  */
 public class DockerExecModel {
-    
+
     private final Project project;
     private final DockerProjectSettings dockerSettings;
-    
-    public DockerExecModel(Project  project) {
+    private final DockerProjectPreferences dockerProjectPreferences;
+
+    public DockerExecModel(Project project) {
         this.project = project;
+        this.dockerProjectPreferences = new DockerProjectPreferences(project, null);
         this.dockerSettings = DockerProjectSettings.projectLookup(project);
     }
-    
+
     public Set<String> getProfiles() {
         return dockerSettings.getProfiles();
     }
-    
+
     public String getCurrentProfile() {
-        return dockerSettings.getCurrentProfile();
+        return dockerProjectPreferences.getDockerConfigName();
     }
-    
+
     public DockerExecConfiguration getConfiguration(String profile) {
         return DockerConfigManager.readConfigProfile(profile, project);
     }
-    
+
     public boolean profileExists(String profile) {
         return getProfiles().contains(profile);
+    }
+
+    //npm context
+    public void setNpmEnabled(boolean status) {
+        dockerProjectPreferences.setDockerNpmEnabled(status);
+    }
+
+    //npm context
+    public boolean getNpmEnabled() {
+        return dockerProjectPreferences.getDockerNpmEnabled();
+    }
+    
+    public void setDockerNpmContainerName(String configName) {
+        dockerProjectPreferences.setDockerNpmConfigName(configName);
+    }
+    
+    //npm context
+    public String getDockerNpmContainerName() {
+        return dockerProjectPreferences.getDockerNpmConfigName();
     }
     
     //not null
@@ -63,5 +82,5 @@ public class DockerExecModel {
             DockerConfigManager.removeConfigFile(profile, project);
         }
     }
- 
+
 }

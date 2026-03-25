@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.project.Project;
 import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_BASE_COMMAND;
+import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_COMMAND_OPTION;
 import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_EXEC;
 import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_INTERACTIVE_OPTION;
 import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_USER_OPTION;
@@ -36,6 +37,7 @@ import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
  */
 public class DockerExecutableBuilder {
 
+    public static final String DOCKER_BIN_PATH = "/usr/bin/docker";  // NOI18N
     private final DockerExecModel dockerExecModel;
     
     public DockerExecutableBuilder(Project project) {
@@ -45,7 +47,7 @@ public class DockerExecutableBuilder {
     public ExternalExecutable buildExternalExec(String command) {
         String profile = DEFAULT_CONFIG_NAME;
         DockerExecConfiguration config = dockerExecModel.getConfiguration(profile);
-        ExternalExecutable exec = new ExternalExecutable("/usr/bin/docker", buildExecCommandParams(config));
+        ExternalExecutable exec = new ExternalExecutable(DOCKER_BIN_PATH, buildExecCommandParams(config));
         exec.containerExecutable(command);
         
         return exec;
@@ -77,7 +79,7 @@ public class DockerExecutableBuilder {
             params.add(config.getBashType());
         }
         
-        params.add("-c");
+        params.add("-" + DOCKER_COMMAND_OPTION); // NOI18N
 
         return params;
     }

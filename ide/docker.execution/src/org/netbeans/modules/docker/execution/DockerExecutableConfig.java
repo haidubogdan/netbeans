@@ -20,15 +20,8 @@ package org.netbeans.modules.docker.execution;
 
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.project.ConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
-import static org.netbeans.modules.docker.execution.project.DockerServiceProjectProperties.*;
-import org.netbeans.modules.docker.execution.project.DockerSupport;
 
-/**
- *
- * @author bhaidu
- */
 public class DockerExecutableConfig {
 
     private final String containerName;
@@ -59,16 +52,6 @@ public class DockerExecutableConfig {
         this.interactive = dockerPreferences.getDockerInteractive();
         this.user = dockerPreferences.getDockerUser();
         this.containerWorkDir = dockerPreferences.getDockerWorkdir();
-    }
-
-    public DockerExecutableConfig(ConfigManager.Configuration configuration) {
-        this.containerName = configuration.getValue(DOCKER_CONTAINER_NAME);
-        this.isValid = containerName != null && !containerName.isEmpty();
-        this.bashType = configuration.getValue(DOCKER_BASH_PATH);
-        this.asTerminal = Boolean.parseBoolean(configuration.getValue(DOCKER_USE_TTY));
-        this.interactive = Boolean.parseBoolean(configuration.getValue(DOCKER_USE_INTERACTIVE));
-        this.user = configuration.getValue(DOCKER_USER);
-        this.containerWorkDir = configuration.getValue(DOCKER_WORKDIR);
     }
 
     public String getDockerContainerName() {

@@ -90,10 +90,9 @@ public final class DockerContainers {
 
         for (DockerContainerConfig config : configs) {
             try {
-                String configName = config.getName();
-                if (!preferences.nodeExists(config.getName())) {
+                String configName = config.getContainerName();
+                if (!preferences.nodeExists(config.getContainerName())) {
                     Preferences node = preferences.node(configName);
-                    node.put("config_name", configName);
                     node.put("container_name", config.getContainerName());
                 }
             } catch (BackingStoreException ex) {

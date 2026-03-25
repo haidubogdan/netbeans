@@ -18,10 +18,6 @@
  */
 package org.netbeans.modules.docker.execution;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
-
 public final class DockerCommands {
 
     public static final String DOCKER_BASE_COMMAND = "docker"; // NOI18N

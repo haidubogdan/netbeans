@@ -25,11 +25,6 @@ public class DockerContainerPreferences {
 
     private static final String DOCKER_CONTAINERS = "DockerContainers"; // NOI18N
 
-    /**
-     * Get preferences themselves.
-     *
-     * @return the preferences themselves
-     */
     public static Preferences getDockerContainerPreferences() {
         return NbPreferences.forModule(DockerContainerPreferences.class).node(DOCKER_CONTAINERS);
     }

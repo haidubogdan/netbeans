@@ -18,10 +18,12 @@
  */
 package org.netbeans.modules.docker.execution.project;
 
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -39,12 +41,14 @@ public class DockerProjectPreferences {
 
     public static final boolean DEFAULT_DOCKER_EXEC_TTY = true;
     public static final boolean DEFAULT_DOCKER_EXEC_INTERACTIVE = true;
-    
-    public static final String DOCKER_NPM_ENABLED = "docker.exec.npm.enabled"; // NOI18N
+
+    public static final String DOCKER_ENABLED = "docker.exec.enabled"; // NOI18N
     public static final String DOCKER_NODE_NPM_NAME = "docker.exec.nodenpm"; // NOI18N
 
     public static final String DEFAULT_CONFIG_NAME = "<default>";
-    
+
+    public static final String PREF_NPM_NODE = "npm"; // NOI18N
+
     private final Project project;
 
     // @GuardedBy("this")
@@ -56,56 +60,28 @@ public class DockerProjectPreferences {
         this.publicPreferences = preferences;
     }
 
-    public void setDockerConfigName(String name) {
-        getPublicPreferences().put(DOCKER_CONFIG_NAME, name);
-    }
-
     public String getDockerConfigName() {
         return getPublicPreferences().get(DOCKER_CONFIG_NAME, DEFAULT_CONFIG_NAME);
-    }
-
-    public void setDockerContainerName(String name) {
-        getPublicPreferences().put(DOCKER_CONTAINER_NAME, name);
     }
 
     public String getDockerContainerName() {
         return getPublicPreferences().get(DOCKER_CONTAINER_NAME, null);
     }
 
-    public void setDockerExecBashPath(String basthType) {
-        getPublicPreferences().put(DOCKER_BASH_PATH, basthType);
-    }
-
     public String getDockerExecBashPath() {
         return getPublicPreferences().get(DOCKER_BASH_PATH, null);
-    }
-
-    public void setDockerUser(String name) {
-        getPublicPreferences().put(DOCKER_USER, name);
     }
 
     public String getDockerUser() {
         return getPublicPreferences().get(DOCKER_USER, null);
     }
 
-    public void setDockerInteractive(boolean status) {
-        getPublicPreferences().putBoolean(DOCKER_EXEC_INTERACTIVE, status);
-    }
-
     public boolean getDockerInteractive() {
         return getPublicPreferences().getBoolean(DOCKER_EXEC_INTERACTIVE, DEFAULT_DOCKER_EXEC_INTERACTIVE);
     }
 
-    public void setDockerPseudoTerminal(boolean status) {
-        getPublicPreferences().putBoolean(DOCKER_EXEC_TTY, status);
-    }
-
     public boolean getDockerPseudoTerminal() {
         return getPublicPreferences().getBoolean(DOCKER_EXEC_TTY, DEFAULT_DOCKER_EXEC_TTY);
-    }
-
-    public void setDockerWorkdir(String directory) {
-        getPublicPreferences().put(DOCKER_WORKDIR, directory);
     }
 
     public String getDockerWorkdir() {
@@ -113,13 +89,37 @@ public class DockerProjectPreferences {
     }
 
     public void setDockerNpmEnabled(boolean npmEnabled) {
-        getPublicPreferences().putBoolean(DOCKER_NPM_ENABLED, npmEnabled);
+        getDockerNpmPreferences().putBoolean(DOCKER_ENABLED, npmEnabled);
+    }
+
+    public void setDockerNpmConfigName(String configName) {
+        getDockerNpmPreferences().put(DOCKER_CONFIG_NAME, configName);
+    }
+
+    public String getDockerNpmConfigName() {
+        if (getDockerNpmPreferences() == null) {
+            return null;
+        }
+        return getDockerNpmPreferences().get(DOCKER_CONFIG_NAME, null);
     }
 
     public boolean getDockerNpmEnabled() {
-        return getPublicPreferences().getBoolean(DOCKER_NPM_ENABLED, false);
+
+        return getPublicPreferences().node(PREF_NPM_NODE).getBoolean(DOCKER_ENABLED, false);
     }
-    
+
+    private Preferences getDockerNpmPreferences() {
+        try {
+            if (getPublicPreferences().nodeExists(PREF_NPM_NODE)) {
+                return getPublicPreferences().node(PREF_NPM_NODE);
+            }
+        } catch (BackingStoreException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        return null;
+    }
+
     private synchronized Preferences getPublicPreferences() {
         if (publicPreferences == null) {
             publicPreferences = ProjectUtils.getPreferences(project, DockerProjectPreferences.class, true);

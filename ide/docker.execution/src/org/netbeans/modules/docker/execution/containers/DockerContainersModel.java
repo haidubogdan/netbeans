@@ -38,7 +38,7 @@ public class DockerContainersModel {
         Preferences dockerContainers = DockerContainerPreferences.getDockerContainerPreferences();
         try {
             for (String name : dockerContainers.childrenNames()) {
-                configs.add(new DockerContainerConfig(name, name));
+                configs.add(new DockerContainerConfig(name));
             }
         } catch (BackingStoreException bse) {
 
