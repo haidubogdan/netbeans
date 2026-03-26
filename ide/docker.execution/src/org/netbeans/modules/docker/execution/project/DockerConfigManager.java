@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.DockerExecModel;
-import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
+import static org.netbeans.modules.docker.execution.project.DockerProjectModulePreferences.DEFAULT_CONFIG_NAME;
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;

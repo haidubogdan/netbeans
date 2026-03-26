@@ -20,7 +20,7 @@ package org.netbeans.modules.docker.execution;
 
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
+import org.netbeans.modules.docker.execution.project.DockerProjectModulePreferences;
 
 public class DockerExecutableConfig {
 
@@ -38,13 +38,13 @@ public class DockerExecutableConfig {
     public static enum Type { NPM_NODE, GENERIC };
 
     public static DockerExecutableConfig forProject(Project project, Preferences preferences) {
-        DockerProjectPreferences dockerPreferences = new DockerProjectPreferences(project, preferences);
+        DockerProjectModulePreferences dockerPreferences = new DockerProjectModulePreferences(project, preferences);
         DockerExecutableConfig dockerConfig = new DockerExecutableConfig(dockerPreferences);
         
         return dockerConfig;
     }
 
-    public DockerExecutableConfig(DockerProjectPreferences dockerPreferences) {
+    public DockerExecutableConfig(DockerProjectModulePreferences dockerPreferences) {
         this.containerName = dockerPreferences.getDockerContainerName();
         this.isValid = containerName != null && !containerName.isEmpty();
         this.bashType = dockerPreferences.getDockerExecBashPath();

@@ -28,7 +28,7 @@ import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_INTERA
 import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_USER_OPTION;
 import static org.netbeans.modules.docker.execution.DockerCommands.DOCKER_WORKDIR_OPTION;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
-import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
+import static org.netbeans.modules.docker.execution.project.DockerProjectModulePreferences.DEFAULT_CONFIG_NAME;
 import org.netbeans.modules.web.common.ui.api.ExternalExecutable;
 
 /**

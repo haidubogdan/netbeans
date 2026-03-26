@@ -29,7 +29,7 @@ import org.openide.util.Exceptions;
  *
  * @author bhaidu
  */
-public class DockerProjectPreferences {
+public class DockerProjectModulePreferences {
 
     private static final String DOCKER_CONFIG_NAME = "docker.exec.configname"; // NOI18N
     public static final String DOCKER_CONTAINER_NAME = "docker.exec.containername"; // NOI18N
@@ -50,39 +50,41 @@ public class DockerProjectPreferences {
     public static final String PREF_NPM_NODE = "npm"; // NOI18N
 
     // @GuardedBy("this")
+    private final Preferences modulePreferences;
     private final Preferences dockerPreferences;
     
-    public DockerProjectPreferences(Project project) {
+    public DockerProjectModulePreferences(Project project, Preferences modulePreferences) {
         assert project != null;
-        this.dockerPreferences = ProjectUtils.getPreferences(project, DockerProjectPreferences.class, true);
+        this.dockerPreferences = ProjectUtils.getPreferences(project, DockerProjectModulePreferences.class, true);
+        this.modulePreferences = modulePreferences;
     }
     
     public String getDockerConfigName() {
-        return getPreferences().get(DOCKER_CONFIG_NAME, DEFAULT_CONFIG_NAME);
+        return getModulePreferences().get(DOCKER_CONFIG_NAME, DEFAULT_CONFIG_NAME);
     }
 
     public String getDockerContainerName() {
-        return getPreferences().get(DOCKER_CONTAINER_NAME, null);
+        return getModulePreferences().get(DOCKER_CONTAINER_NAME, null);
     }
 
     public String getDockerExecBashPath() {
-        return getPreferences().get(DOCKER_BASH_PATH, null);
+        return getModulePreferences().get(DOCKER_BASH_PATH, null);
     }
 
     public String getDockerUser() {
-        return getPreferences().get(DOCKER_USER, null);
+        return getModulePreferences().get(DOCKER_USER, null);
     }
 
     public boolean getDockerInteractive() {
-        return getPreferences().getBoolean(DOCKER_EXEC_INTERACTIVE, DEFAULT_DOCKER_EXEC_INTERACTIVE);
+        return getModulePreferences().getBoolean(DOCKER_EXEC_INTERACTIVE, DEFAULT_DOCKER_EXEC_INTERACTIVE);
     }
 
     public boolean getDockerPseudoTerminal() {
-        return getPreferences().getBoolean(DOCKER_EXEC_TTY, DEFAULT_DOCKER_EXEC_TTY);
+        return getModulePreferences().getBoolean(DOCKER_EXEC_TTY, DEFAULT_DOCKER_EXEC_TTY);
     }
 
     public String getDockerWorkdir() {
-        return getPreferences().get(DOCKER_WORKDIR, null);
+        return getModulePreferences().get(DOCKER_WORKDIR, null);
     }
 
     public void setDockerNpmEnabled(boolean npmEnabled) {
@@ -102,13 +104,13 @@ public class DockerProjectPreferences {
 
     public boolean getDockerNpmEnabled() {
 
-        return getPreferences().node(PREF_NPM_NODE).getBoolean(DOCKER_ENABLED, false);
+        return getModulePreferences().node(PREF_NPM_NODE).getBoolean(DOCKER_ENABLED, false);
     }
 
     private Preferences getDockerNpmPreferences() {
         try {
-            if (getPreferences().nodeExists(PREF_NPM_NODE)) {
-                return getPreferences().node(PREF_NPM_NODE);
+            if (getModulePreferences().nodeExists(PREF_NPM_NODE)) {
+                return getModulePreferences().node(PREF_NPM_NODE);
             }
         } catch (BackingStoreException ex) {
             Exceptions.printStackTrace(ex);
@@ -117,16 +119,16 @@ public class DockerProjectPreferences {
         return null;
     }
 
-    private Preferences getPreferences() {
-        return dockerPreferences;
+    private Preferences getModulePreferences() {
+        return modulePreferences;
     }
 
     public void addPreferenceChangeListener(PreferenceChangeListener listener) {
-        dockerPreferences.addPreferenceChangeListener(listener);
+        modulePreferences.addPreferenceChangeListener(listener);
     }
 
     public void removePreferenceChangeListener(PreferenceChangeListener listener) {
-        dockerPreferences.removePreferenceChangeListener(listener);
+        modulePreferences.removePreferenceChangeListener(listener);
     }
 
 }

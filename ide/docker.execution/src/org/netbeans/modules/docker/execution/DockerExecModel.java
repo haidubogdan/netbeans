@@ -25,10 +25,6 @@ import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
 import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
 
-/**
- *
- * @author bhaidu
- */
 public class DockerExecModel {
 
     private final Project project;
@@ -37,10 +33,16 @@ public class DockerExecModel {
 
     public DockerExecModel(Project project) {
         this.project = project;
-        this.dockerProjectPreferences = new DockerProjectPreferences(project, null);
+        this.dockerProjectPreferences = new DockerProjectPreferences(project);
         this.dockerSettings = DockerProjectSettings.projectLookup(project);
     }
 
+    public DockerExecModel(Project project, DockerProjectSettings dockerSettings) {
+        this.project = project;
+        this.dockerProjectPreferences = new DockerProjectPreferences(project);
+        this.dockerSettings = dockerSettings;
+    }
+    
     public Set<String> getProfiles() {
         return dockerSettings.getProfiles();
     }

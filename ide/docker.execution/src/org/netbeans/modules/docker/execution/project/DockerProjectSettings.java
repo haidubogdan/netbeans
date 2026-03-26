@@ -21,9 +21,10 @@ package org.netbeans.modules.docker.execution.project;
 import java.util.HashSet;
 import java.util.Set;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.execution.DockerExecModel;
 import static org.netbeans.modules.docker.execution.ProjectUtils.NB_PHP_PROJECT_TYPE;
 import static org.netbeans.modules.docker.execution.ProjectUtils.NB_WEB_PROJECT_TYPE;
-import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
+import static org.netbeans.modules.docker.execution.project.DockerProjectModulePreferences.DEFAULT_CONFIG_NAME;
 import org.netbeans.spi.project.LookupProvider;
 import org.netbeans.spi.project.ProjectServiceProvider;
 import org.openide.filesystems.FileObject;
@@ -71,4 +72,11 @@ public class DockerProjectSettings {
         return settings;
     }
 
+    private synchronized DockerExecModel getDockerExecModel() {
+        return new DockerExecModel(project, this);
+    }
+
+    public boolean useDockerForNpm() {
+        return getDockerExecModel().getNpmEnabled();
+    }
 }

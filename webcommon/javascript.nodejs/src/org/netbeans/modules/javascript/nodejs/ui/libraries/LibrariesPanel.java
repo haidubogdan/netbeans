@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
 import org.netbeans.modules.javascript.nodejs.exec.NpmExecutable;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.platform.NodeJsSupport;
@@ -109,9 +110,10 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
         Component currentComponent = getComponent(0);
         layout.replace(currentComponent, component);
     }
-    
-    private void loadDockerConfigInput() {
 
+    private void loadDockerConfigInput() {
+        DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
+        useDockerConfig.setSelected(dockerSettings.useDockerForNpm());
     }
 
     /**
