@@ -44,6 +44,7 @@ import org.netbeans.modules.javascript.nodejs.exec.NpmExecutable;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.platform.NodeJsSupport;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
+import org.netbeans.modules.javascript.nodejs.util.DockerContainerUtils;
 import org.netbeans.modules.web.common.api.UsageLogger;
 import org.netbeans.spi.project.ui.CustomizerProvider;
 import org.openide.DialogDisplayer;
@@ -112,8 +113,7 @@ public class LibrariesPanel extends JPanel implements HelpCtx.Provider {
     }
 
     private void loadDockerConfigInput() {
-        DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
-        useDockerConfig.setSelected(dockerSettings.useDockerForNpm());
+        useDockerConfig.setSelected(DockerContainerUtils.useDockerExecContainer(project));
     }
 
     /**
