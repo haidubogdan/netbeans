@@ -44,6 +44,7 @@ public class DockerProjectSettings {
         return dockerSettings;
     }
 
+    //SHOULD THIS BE DONE ON INIT?
     public Set<String> getProfiles() {
         Set<String> result = new HashSet<>();
         FileObject projectDir = project.getProjectDirectory();
@@ -72,8 +73,8 @@ public class DockerProjectSettings {
         return settings;
     }
 
-    private synchronized DockerExecModel getDockerExecModel() {
-        return new DockerExecModel(project, this);
+    public synchronized DockerExecModel getDockerExecModel() {
+        return new DockerExecModel(project, getProfiles());
     }
 
     public boolean useDockerForNpm() {

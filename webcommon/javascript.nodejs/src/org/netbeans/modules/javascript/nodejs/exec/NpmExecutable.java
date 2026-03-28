@@ -31,7 +31,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -41,8 +40,6 @@ import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecutableBuilder;
-import org.netbeans.modules.docker.execution.DockerExecutableConfig;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptionsValidator;
@@ -211,7 +208,7 @@ public class NpmExecutable {
         try {
             StringBuilderInputProcessorFactory factory = new StringBuilderInputProcessorFactory();
             getExecutable("npm list").additionalParameters(getParams(params)).
-                    redirectErrorStream(true).runAndWait(getSilentDescriptor(), factory, ""); // NOI18N
+                    redirectErrorStream(false).runAndWait(getSilentDescriptor(), factory, ""); // NOI18N
             String result = factory.getResult();
             info = (JSONObject)new JSONParser().parse(result);
         } catch (ExecutionException | ParseException ex) {
@@ -244,20 +241,11 @@ public class NpmExecutable {
 
     private ExternalExecutable getExecutable(String title) {
         assert title != null;
-        ExternalExecutable exec;
-
-        if (1==1 && 1 == 2) {
-            exec = (new DockerExecutableBuilder(project)).buildExternalExec(getCommand());
-        } else {
-            exec = new ExternalExecutable(getCommand());
-        }
-
-        exec.workDir(getWorkDir())
-        .displayName(title)
-        .optionsPath(NodeJsOptionsPanelController.OPTIONS_PATH)
-        .noOutput(false);
-
-        return exec;
+        return new ExternalExecutable(getCommand())
+                .workDir(getWorkDir())
+                .displayName(title)
+                .optionsPath(NodeJsOptionsPanelController.OPTIONS_PATH)
+                .noOutput(false);
     }
 
     private ExecutionDescriptor getDescriptor() {
@@ -394,8 +382,8 @@ public class NpmExecutable {
     }
     
     private static final class DockerNpmExecutable extends NpmExecutable {
+        //TODO use preferences
         private static final String DOCKER_COMMAND = "/usr/bin/docker"; // NOI18N
-
 
         DockerNpmExecutable(String npmPath, Project project) {
             super(npmPath, project);
@@ -408,19 +396,11 @@ public class NpmExecutable {
 
         @Override
         List<String> getParams(List<String> params) {
-            List<String> proxyParams = new ArrayList<>();
             StringBuilder sb = new StringBuilder(200);
-            proxyParams.add("exec");
-            proxyParams.add("-i");
-            proxyParams.add("node_16");
-            proxyParams.add("sh");
-            proxyParams.add("-c");
-            //sb.append(" exec -it node_16 sh ");
-            //sb.append("\""); // NOI18N
+            List<String> proxyParams = DockerContainerUtils.loadExecutableParams(project);
             sb.append(npmPath);
             sb.append(" "); // NOI18N
             sb.append(StringUtils.implode(super.getParams(params), " ")); // NOI18N
-            //sb.append("\""); // NOI18N
             proxyParams.add(sb.toString());
             return proxyParams;
         }

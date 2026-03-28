@@ -92,15 +92,12 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
             assert dockerContainerName != null;
             DockerContainerConfig config = new DockerContainerConfig(dockerContainerName);
             dockerContainers.addNewConfig(config);
+            dockerContainerListModel.addElement(config);
         }
     }
 
     public void setConfigurations(List<DockerContainerConfig> configs) {
         dockerContainerListModel.setElements(configs);
-    }
-
-    private void addDockerContainerConfig() {
-
     }
 
     public static final class DockerContainerListModel extends AbstractListModel<DockerContainerConfig> {
@@ -124,9 +121,6 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
             if (!data.add(configuration)) {
                 return false;
             }
-//            data.sort(ConfigManager.getConfigurationComparator());
-//            int idx = indexOf(configuration);
-//            fireIntervalAdded(this, idx, idx);
             return true;
         }
 
@@ -138,8 +132,7 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
             }
             if (configs.size() > 0) {
                 data.addAll(configs);
-                //data.sort(ConfigManager.getConfigurationComparator());
-                fireIntervalAdded(this, 0, data.size() - 1);
+                 fireIntervalAdded(this, 0, data.size() - 1);
             }
         }
     }

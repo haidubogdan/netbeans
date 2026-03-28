@@ -26,6 +26,7 @@ import org.netbeans.modules.docker.execution.DockerExecModel;
 import org.netbeans.modules.docker.execution.containers.DockerContainers;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
+import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -47,7 +48,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         this.category = category;
         this.project = project;
 
-        this.dockerExecModel = new DockerExecModel(project);
+        this.dockerExecModel = new DockerProjectSettings(project).getDockerExecModel();
         initComponents();
 
         Set<String> profiles = dockerExecModel.getProfiles();

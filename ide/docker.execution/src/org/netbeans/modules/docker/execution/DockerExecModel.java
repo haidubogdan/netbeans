@@ -18,33 +18,27 @@
  */
 package org.netbeans.modules.docker.execution;
 
+import java.util.Collections;
 import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
-import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
 
 public class DockerExecModel {
 
     private final Project project;
-    private final DockerProjectSettings dockerSettings;
     private final DockerProjectPreferences dockerProjectPreferences;
+    private final Set<String> profiles;
 
-    public DockerExecModel(Project project) {
+    public DockerExecModel(Project project, Set<String> profiles) {
         this.project = project;
         this.dockerProjectPreferences = new DockerProjectPreferences(project);
-        this.dockerSettings = DockerProjectSettings.projectLookup(project);
-    }
-
-    public DockerExecModel(Project project, DockerProjectSettings dockerSettings) {
-        this.project = project;
-        this.dockerProjectPreferences = new DockerProjectPreferences(project);
-        this.dockerSettings = dockerSettings;
+        this.profiles = profiles;
     }
     
     public Set<String> getProfiles() {
-        return dockerSettings.getProfiles();
+        return Collections.unmodifiableSet(profiles);
     }
 
     public String getCurrentProfile() {

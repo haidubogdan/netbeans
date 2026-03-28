@@ -58,9 +58,6 @@ public final class DockerContainers {
         if (changed) {
             saveDockerContainers();
         }
-        // reset & reread config provider & manager (configs are kept in memory)
-//        configProvider.resetConfigs();
-//        configManager.reset();
 
         if (changed) {
             changeSupport.fireChange();

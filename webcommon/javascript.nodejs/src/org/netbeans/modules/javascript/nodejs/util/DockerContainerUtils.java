@@ -18,6 +18,8 @@
  */
 package org.netbeans.modules.javascript.nodejs.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
 
@@ -25,11 +27,22 @@ public class DockerContainerUtils {
 
     public static boolean useDockerExecContainer(Project project) {
         DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
-        
+
         if (dockerSettings == null) {
             return false;
         }
-        
+
         return dockerSettings.useDockerForNpm();
+    }
+
+    public static List<String> loadExecutableParams(Project project) {
+        List<String> executableParams = new ArrayList<>();
+        executableParams.add("exec");
+        executableParams.add("-i");
+        executableParams.add("node_16");
+        executableParams.add("sh");
+        executableParams.add("-c");
+        
+        return executableParams;
     }
 }

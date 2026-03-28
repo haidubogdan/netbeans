@@ -47,7 +47,7 @@ public class DockerProjectModulePreferences {
 
     public static final String DEFAULT_CONFIG_NAME = "<default>";
 
-    public static final String PREF_NPM_NODE = "npm"; // NOI18N
+    public static final String PREF_JS_NODE = "javascript"; // NOI18N
 
     // @GuardedBy("this")
     private final Preferences modulePreferences;
@@ -102,15 +102,15 @@ public class DockerProjectModulePreferences {
         return getDockerNpmPreferences().get(DOCKER_CONFIG_NAME, null);
     }
 
-    public boolean getDockerNpmEnabled() {
+    public boolean getDockerJavascriptEnabled() {
 
-        return getModulePreferences().node(PREF_NPM_NODE).getBoolean(DOCKER_ENABLED, false);
+        return getModulePreferences().node(PREF_JS_NODE).getBoolean(DOCKER_ENABLED, false);
     }
 
     private Preferences getDockerNpmPreferences() {
         try {
-            if (getModulePreferences().nodeExists(PREF_NPM_NODE)) {
-                return getModulePreferences().node(PREF_NPM_NODE);
+            if (getModulePreferences().nodeExists(PREF_JS_NODE)) {
+                return getModulePreferences().node(PREF_JS_NODE);
             }
         } catch (BackingStoreException ex) {
             Exceptions.printStackTrace(ex);
