@@ -22,26 +22,18 @@ import java.util.Map;
 import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_BASH_PATH;
 import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_CONTAINER_NAME;
 import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_USER;
-import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_USE_INTERACTIVE;
-import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_USE_TTY;
 import static org.netbeans.modules.docker.execution.project.DockerConfigManager.DOCKER_WORKDIR;
 
 public class DockerExecConfiguration {
     private final String containerName;
     private final String bashType;
-
-    private final boolean interactive;
-    private final boolean asTerminal;
-
     private final String user;
     private final String containerWorkDir;
     
     public DockerExecConfiguration(String containerName, String bashType, 
-            boolean interactive, boolean asTerminal, String user, String containerWorkDir) {
+            String user, String containerWorkDir) {
         this.containerName = containerName;
         this.bashType = bashType;
-        this.interactive = interactive;
-        this.asTerminal = asTerminal;
         this.user = user;
         this.containerWorkDir = containerWorkDir;
     }
@@ -49,8 +41,6 @@ public class DockerExecConfiguration {
     public DockerExecConfiguration(Map<String, String> properties) {
         this.containerName = properties.get(DOCKER_CONTAINER_NAME);
         this.bashType = properties.get(DOCKER_BASH_PATH);
-        this.interactive = Boolean.parseBoolean(properties.get(DOCKER_USE_INTERACTIVE));
-        this.asTerminal = Boolean.parseBoolean(properties.get(DOCKER_USE_TTY));
         this.user = properties.get(DOCKER_USER);
         this.containerWorkDir = properties.get(DOCKER_WORKDIR);
     }
@@ -61,14 +51,6 @@ public class DockerExecConfiguration {
 
     public String getBashType() {
         return bashType;
-    }
-
-    public boolean getAsTerminal() {
-        return asTerminal;
-    }
-
-    public boolean getInteractive() {
-        return interactive;
     }
     
     public String getDockerWorkDir() {

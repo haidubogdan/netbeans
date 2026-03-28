@@ -35,12 +35,7 @@ public class DockerProjectPreferences {
     public static final String DOCKER_CONTAINER_NAME = "docker.exec.containername"; // NOI18N
     public static final String DOCKER_BASH_PATH = "docker.exec.bashpath"; // NOI18N
     public static final String DOCKER_WORKDIR = "docker.exec.workdir"; // NOI18N
-    public static final String DOCKER_EXEC_TTY = "docker.exec.tty"; // NOI18N
     public static final String DOCKER_USER = "docker.exec.user"; // NOI18N
-    public static final String DOCKER_EXEC_INTERACTIVE = "docker.exec.interactive"; // NOI18N
-
-    public static final boolean DEFAULT_DOCKER_EXEC_TTY = true;
-    public static final boolean DEFAULT_DOCKER_EXEC_INTERACTIVE = true;
 
     public static final String DOCKER_ENABLED = "docker.exec.enabled"; // NOI18N
     public static final String DOCKER_NODE_NPM_NAME = "docker.exec.nodenpm"; // NOI18N
@@ -71,14 +66,6 @@ public class DockerProjectPreferences {
 
     public String getDockerUser() {
         return getPreferences().get(DOCKER_USER, null);
-    }
-
-    public boolean getDockerInteractive() {
-        return getPreferences().getBoolean(DOCKER_EXEC_INTERACTIVE, DEFAULT_DOCKER_EXEC_INTERACTIVE);
-    }
-
-    public boolean getDockerPseudoTerminal() {
-        return getPreferences().getBoolean(DOCKER_EXEC_TTY, DEFAULT_DOCKER_EXEC_TTY);
     }
 
     public String getDockerWorkdir() {

@@ -20,7 +20,9 @@ package org.netbeans.modules.docker.execution.containers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.event.ChangeListener;
@@ -57,6 +59,8 @@ public final class DockerContainers {
 
         if (changed) {
             saveDockerContainers();
+        } else {
+            dockerContainerModel.reloadConfigs();
         }
 
         if (changed) {
@@ -81,20 +85,40 @@ public final class DockerContainers {
         dockerContainerModel.addConfig(config);
     }
 
+    public void removeConfig(DockerContainerConfig config) {
+        dockerContainerModel.removeConfig(config);
+    }
+    
     public void saveDockerContainers() {
         List<DockerContainerConfig> configs = dockerContainerModel.getConfigs();
-        Preferences preferences = DockerContainerPreferences.getDockerContainerPreferences();
+        Preferences dockerContainers = DockerContainerPreferences.getDockerContainerPreferences();
+
+        Set<String> existingConfigNames = new HashSet<>();
 
         for (DockerContainerConfig config : configs) {
             try {
-                String configName = config.getContainerName();
-                if (!preferences.nodeExists(config.getContainerName())) {
-                    Preferences node = preferences.node(configName);
+                String containerName = config.getContainerName();
+                existingConfigNames.add(containerName);
+                if (!dockerContainers.nodeExists(config.getContainerName())) {
+                    Preferences node = dockerContainers.node(containerName);
                     node.put("container_name", config.getContainerName());
                 }
             } catch (BackingStoreException ex) {
                 Exceptions.printStackTrace(ex);
             }
+        }
+        
+        try {
+            if (existingConfigNames.size() != dockerContainers.childrenNames().length) {
+                //sync deletion
+                for (String prefContainerName : dockerContainers.childrenNames()) {
+                    if (!existingConfigNames.contains(prefContainerName)) {
+                        dockerContainers.node(prefContainerName).removeNode();
+                    }
+                }
+            }
+        } catch (BackingStoreException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 

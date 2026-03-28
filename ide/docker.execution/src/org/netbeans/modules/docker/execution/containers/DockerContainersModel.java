@@ -20,9 +20,7 @@ package org.netbeans.modules.docker.execution.containers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -45,8 +43,17 @@ public class DockerContainersModel {
         }
     }
 
+    public void reloadConfigs() {
+        configs.clear();
+        loadConfigs();
+    }
+
     public void addConfig(DockerContainerConfig config) {
         configs.add(config);
+    }
+
+    public void removeConfig(DockerContainerConfig config) {
+        configs.remove(config);
     }
 
     public List<DockerContainerConfig> getConfigs() {

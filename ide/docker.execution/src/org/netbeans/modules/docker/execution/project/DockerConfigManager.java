@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecModel;
 import static org.netbeans.modules.docker.execution.project.DockerProjectModulePreferences.DEFAULT_CONFIG_NAME;
 import org.netbeans.spi.project.support.ant.EditableProperties;
 import org.openide.filesystems.FileObject;
@@ -35,14 +34,8 @@ public class DockerConfigManager {
     public static final String DOCKER_CONTAINER_NAME = "docker_container_name"; // NOI18N
     public static final String DOCKER_BASH_PATH = "docker_bash_path"; // NOI18N
 
-    public static final String DOCKER_USE_TTY = "docker_use_tty"; // NOI18N
-    public static final String DOCKER_USE_INTERACTIVE = "docker_use_interactive"; // NOI18N
-
     public static final String DOCKER_USER = "docker_user"; // NOI18N
     public static final String DOCKER_WORKDIR = "docker_workdir"; // NOI18N
-
-    public static final boolean DEFAULT_DOCKER_TTY = true;
-    public static final boolean DEFAULT_DOCKER_INTERACTIVE = true;
 
     public static final String DEFAULT_CONFIG_FOLDER = "nbproject";
     public static final String DOCKER_CONFIG_FOLDER = "nbproject/docker_configs";
@@ -52,8 +45,6 @@ public class DockerConfigManager {
     private static final String[] CFG_PROPS = new String[]{
         DOCKER_CONTAINER_NAME,
         DOCKER_BASH_PATH,
-        DOCKER_USE_INTERACTIVE,
-        DOCKER_USE_TTY,
         DOCKER_USER,
         DOCKER_WORKDIR,};
 
@@ -112,8 +103,6 @@ public class DockerConfigManager {
         EditableProperties ep = ProjectHelper.getProperties(project, path);
         ep.put(DOCKER_CONTAINER_NAME, config.getContainerName());
         ep.put(DOCKER_BASH_PATH, config.getBashType());
-        ep.put(DOCKER_USE_INTERACTIVE, Boolean.toString(config.getInteractive()));
-        ep.put(DOCKER_USE_TTY, Boolean.toString(config.getAsTerminal()));
         ep.put(DOCKER_USER, config.getDockerUser());
         ep.put(DOCKER_WORKDIR, config.getDockerWorkDir());
      
@@ -133,7 +122,7 @@ public class DockerConfigManager {
             return;
         }
         
-        String configFilePath = profile + ".properties";
+        String configFilePath = profile + ".properties"; // NOI18N
         FileObject configFile = dockerConfigFolder.getFileObject(configFilePath);
         
         if (configFile != null && !configFile.isFolder()) {

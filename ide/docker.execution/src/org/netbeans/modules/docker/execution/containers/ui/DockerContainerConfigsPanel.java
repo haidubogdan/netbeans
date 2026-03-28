@@ -57,6 +57,22 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
                 addConfig();
             }
         });
+
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeConfig();
+            }
+        });
+    }
+
+    private void removeConfig() {
+        DockerContainerConfig selectedConfig = dockerContainersConfigList.getSelectedValue();
+
+        if (selectedConfig != null) {
+            dockerContainers.removeConfig(selectedConfig);
+            dockerContainerListModel.removeElement(selectedConfig);
+        }
     }
 
     public boolean open() {
@@ -70,12 +86,6 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
         Dialog dialog = DialogDisplayer.getDefault().createDialog(descriptor);
 
         try {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            });
             dialog.setVisible(true);
         } finally {
             dialog.dispose();
@@ -118,9 +128,17 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
 
         public boolean addElement(DockerContainerConfig configuration) {
             assert configuration != null;
-            if (!data.add(configuration)) {
+            return data.add(configuration);
+        }
+
+        public boolean removeElement(DockerContainerConfig configuration) {
+            int idx = data.indexOf(configuration);
+            if (idx == -1) {
                 return false;
             }
+            boolean result = data.remove(configuration);
+            assert result;
+            fireIntervalRemoved(this, idx, idx);
             return true;
         }
 
@@ -132,7 +150,7 @@ public class DockerContainerConfigsPanel extends javax.swing.JPanel {
             }
             if (configs.size() > 0) {
                 data.addAll(configs);
-                 fireIntervalAdded(this, 0, data.size() - 1);
+                fireIntervalAdded(this, 0, data.size() - 1);
             }
         }
     }
