@@ -92,7 +92,11 @@ public class NpmExecutable {
         
         if (DockerContainerUtils.useDockerExecContainer(project)) {
             //TODO validate
-            return new DockerNpmExecutable(NPM_NAME, project);
+            List<String> executableParams = DockerContainerUtils.generateExecutableParams(project);
+            if (!executableParams.isEmpty()) {
+                 return new DockerNpmExecutable(NPM_NAME, project, executableParams);
+            }
+            //TODO log
         }
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNpm()
@@ -381,12 +385,13 @@ public class NpmExecutable {
     }
     
     private static final class DockerNpmExecutable extends NpmExecutable {
-        //TODO use preferences
         private final String docker;
+            private final List<String> executableParams;
 
-        DockerNpmExecutable(String npmPath, Project project) {
+        DockerNpmExecutable(String npmPath, Project project, List<String> executableParams) {
             super(npmPath, project);
             docker = DockerContainerUtils.getDockerExecutablePath();
+            this.executableParams = executableParams;
         }
 
         @Override
@@ -397,12 +402,11 @@ public class NpmExecutable {
         @Override
         List<String> getParams(List<String> params) {
             StringBuilder sb = new StringBuilder(200);
-            List<String> proxyParams = DockerContainerUtils.loadExecutableParams(project);
             sb.append(npmPath);
             sb.append(" "); // NOI18N
             sb.append(StringUtils.implode(super.getParams(params), " ")); // NOI18N
-            proxyParams.add(sb.toString());
-            return proxyParams;
+            executableParams.add(sb.toString());
+            return Collections.unmodifiableList(executableParams);
         }
     }
 

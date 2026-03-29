@@ -21,7 +21,7 @@ package org.netbeans.modules.docker.execution.project;
 import java.util.HashSet;
 import java.util.Set;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecModel;
+import org.netbeans.modules.docker.execution.DockerCommandModel;
 import static org.netbeans.modules.docker.execution.ProjectUtils.NB_PHP_PROJECT_TYPE;
 import static org.netbeans.modules.docker.execution.ProjectUtils.NB_WEB_PROJECT_TYPE;
 import static org.netbeans.modules.docker.execution.project.DockerProjectPreferences.DEFAULT_CONFIG_NAME;
@@ -73,8 +73,8 @@ public class DockerProjectSettings {
         return settings;
     }
 
-    public synchronized DockerExecModel getDockerExecModel() {
-        return new DockerExecModel(project, getProfiles());
+    public synchronized DockerCommandModel getDockerExecModel() {
+        return new DockerCommandModel(project, getProfiles());
     }
 
     public DockerExecConfiguration loadExecConfig(String profile) {

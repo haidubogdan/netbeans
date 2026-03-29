@@ -16,35 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.javascript.nodejs.util;
+package org.netbeans.modules.docker.execution.configurations;
 
-import java.util.List;
-import org.netbeans.api.annotations.common.NullAllowed;
+import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecuteCommand;
+import static org.netbeans.modules.docker.execution.DockerExecuteCommand.JS_DOCKER_PATH;
+import org.netbeans.modules.docker.execution.api.DockerExecuteCommandProvider;
+import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import org.netbeans.modules.docker.execution.project.DockerProjectSettings;
 
-public class DockerContainerUtils {
+@org.openide.util.lookup.ServiceProvider(service = org.netbeans.modules.docker.execution.api.DockerExecuteCommandProvider.class, path = JS_DOCKER_PATH)
+public class JSDockerExecuteCommandProvider extends DockerExecuteCommandProvider {
 
-    public static boolean useDockerExecContainer(@NullAllowed Project project) {
-        if (project == null) {
-            return false;
-        }
-        DockerExecuteCommand.findJSDockerCommandConfiguration(project);
+    @Override
+    public DockerExecConfiguration findProjectConfiguration(@NonNull Project project) {
         DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
+        String currentJsProfile = dockerSettings.getJSDockerContainerProfile();
 
-        if (dockerSettings == null) {
-            return false;
+        if (currentJsProfile == null) {
+            return null;
         }
 
-        return dockerSettings.useDockerForJSCommands();
+        return dockerSettings.loadExecConfig(currentJsProfile);
     }
 
-    public static List<String> generateExecutableParams(Project project) {
-        return DockerExecuteCommand.generateExecutableParams(project, DockerExecuteCommand.AppType.JAVASCRIPT);
-    }
-
-    public static String getDockerExecutablePath() {
-        return DockerExecuteCommand.getDockerExecutablePath(); // NOI18N
-    }
 }

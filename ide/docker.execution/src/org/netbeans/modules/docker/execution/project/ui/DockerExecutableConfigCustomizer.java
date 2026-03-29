@@ -26,10 +26,6 @@ import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 
-/**
- *
- * @author bhaidu
- */
 public class DockerExecutableConfigCustomizer implements ProjectCustomizer.CompositeCategoryProvider {
 
     public static final String DOCKER_EXECUTABLE_CUSTOMIZER = "docker_exec_customizer"; // NOI18N

@@ -25,10 +25,6 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.openide.util.Exceptions;
 
-/**
- *
- * @author bhaidu
- */
 public class DockerProjectPreferences {
 
     private static final String DOCKER_CONFIG_NAME = "docker.exec.configname"; // NOI18N

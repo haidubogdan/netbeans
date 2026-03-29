@@ -22,10 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 
-/**
- *
- * @author bhaidu
- */
 public class DockerContainerComboModel extends DefaultComboBoxModel<String> {
 
     private static final long serialVersionUID = -546879865427974L;

@@ -22,7 +22,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.execution.DockerExecModel;
+import org.netbeans.modules.docker.execution.DockerCommandModel;
+import org.netbeans.modules.docker.execution.DockerExecuteCommand;
 import org.netbeans.modules.docker.execution.containers.DockerContainers;
 import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
@@ -36,7 +37,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
     private final ProjectCustomizer.Category category;
     private final Project project;
-    private final DockerExecModel dockerExecModel;
+    private final DockerCommandModel dockerExecModel;
     private final DockerConfigComboBoxModel comboModel;
     private final DockerConfigComboBoxModel javascriptComboModel;
     private final DockerContainerComboModel dockerContainerListModel = new DockerContainerComboModel();
@@ -60,15 +61,11 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
 
         init();
     }
-//
-//    @Override
-//    public void addNotify() {
-//        super.addNotify();
-//        ConfigOptionCombo.setSelectedItem(manager.currentConfiguration().getName());
-//    }
 
     private void init() {
-        //validate configProfile
+        //TODO validate configProfile
+        dockerExecPath.setText(DockerExecuteCommand.getDockerExecutablePath());
+        dockerExecPath.setEditable(false);
         String currentProfile = dockerExecModel.getCurrentProfile();
         comboModel.setSelectedItem(currentProfile);
         dockerContainerListModel.setElements(DockerContainers.get().getDockerContainers());
@@ -144,6 +141,10 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         openContainerConfigPanelBtn = new javax.swing.JButton();
         ContainerConfigOption = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
+        dockerExecPath = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(LBL_ContainerName, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.LBL_ContainerName.text")); // NOI18N
 
@@ -207,6 +208,12 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Cantarell", 1, 15)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.jLabel2.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.jLabel3.text")); // NOI18N
+
+        dockerExecPath.setText(org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.dockerExecPath.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(DockerExecutableConfigPanel.class, "DockerExecutableConfigPanel.jButton1.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -219,8 +226,8 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(LBL_ConfigName)
-                                .addGap(43, 43, 43)
-                                .addComponent(ConfigOptionCombo, 0, 328, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ConfigOptionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(configNew)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -246,19 +253,28 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                                     .addComponent(dockerUser)))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
+                        .addComponent(jSeparator2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addGap(24, 24, 24)
+                        .addComponent(jsCommandsDockerEnabled)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jsCommandsDockerConfigCombo, 0, 291, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator3)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jsCommandsDockerEnabled)
+                                .addComponent(jLabel2)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jsCommandsDockerConfigCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jSeparator2))))
+                                .addComponent(dockerExecPath)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,6 +282,13 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(dockerExecPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ConfigOptionCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(configNew)
@@ -297,7 +320,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(jsCommandsDockerEnabled)
                     .addComponent(jsCommandsDockerConfigCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(132, Short.MAX_VALUE))
+                .addContainerGap(90, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -371,12 +394,16 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     private javax.swing.JButton configDel;
     private javax.swing.JButton configNew;
     private javax.swing.JTextField dockerBashType;
+    private javax.swing.JTextField dockerExecPath;
     private javax.swing.JTextField dockerUser;
     private javax.swing.JTextField dockerVolumeDir;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JComboBox<String> jsCommandsDockerConfigCombo;
     private javax.swing.JCheckBox jsCommandsDockerEnabled;
     private javax.swing.JButton openContainerConfigPanelBtn;

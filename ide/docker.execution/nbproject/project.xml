@@ -26,6 +26,15 @@
             <code-name-base>org.netbeans.modules.docker.execution</code-name-base>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>org.netbeans.api.annotations.common</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.60</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.project.ant</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -137,6 +146,8 @@
                 <friend>org.netbeans.modules.javascript.nodejs</friend>
                 <friend>org.netbeans.modules.web.common.ui</friend>
                 <package>org.netbeans.modules.docker.execution</package>
+                <package>org.netbeans.modules.docker.execution.api</package>
+                <package>org.netbeans.modules.docker.execution.configurations</package>
                 <package>org.netbeans.modules.docker.execution.project</package>
             </friend-packages>
         </data>

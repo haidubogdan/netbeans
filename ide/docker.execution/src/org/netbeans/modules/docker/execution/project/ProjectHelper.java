@@ -28,10 +28,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Mutex;
 import org.openide.util.MutexException;
 
-/**
- *
- * @author bhaidu
- */
 public class ProjectHelper {
 
     public static EditableProperties getProperties(Project project, String propertiesPath) {

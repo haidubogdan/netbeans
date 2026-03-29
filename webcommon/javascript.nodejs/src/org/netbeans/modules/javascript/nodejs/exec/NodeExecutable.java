@@ -122,7 +122,11 @@ public class NodeExecutable {
     public static NodeExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
         if (DockerContainerUtils.useDockerExecContainer(project)) {
             //TODO validate
-            return new DockerNodeExecutable("node", project); // NOI18N
+            List<String> executableParams = DockerContainerUtils.generateExecutableParams(project);
+            if (!executableParams.isEmpty()) {
+                return new DockerNodeExecutable("node", project, executableParams); // NOI18N
+            }
+            //TODO log
         }
         ValidationResult result = new NodeJsOptionsValidator()
                 .validateNode(false)
@@ -719,12 +723,13 @@ public class NodeExecutable {
     }
 
     private static final class DockerNodeExecutable extends NodeExecutable {
-        //TODO use preferences
         private final String docker;
+        private final List<String> executableParams;
 
-        DockerNodeExecutable(String nodePath, Project project) {
+        DockerNodeExecutable(String nodePath, Project project, List<String> executableParams) {
             super(nodePath, project);
             docker = DockerContainerUtils.getDockerExecutablePath();
+            this.executableParams = executableParams;
         }
 
         @Override
@@ -735,12 +740,11 @@ public class NodeExecutable {
         @Override
         List<String> getParams(List<String> params) {
             StringBuilder sb = new StringBuilder(200);
-            List<String> proxyParams = DockerContainerUtils.loadExecutableParams(project);
             sb.append(nodePath);
             sb.append(" "); // NOI18N
             sb.append(StringUtils.implode(super.getParams(params), " ")); // NOI18N
-            proxyParams.add(sb.toString());
-            return proxyParams;
+            executableParams.add(sb.toString());
+            return Collections.unmodifiableList(executableParams);
         }
     }
     

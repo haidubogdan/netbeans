@@ -25,13 +25,13 @@ import org.netbeans.modules.docker.execution.project.DockerConfigManager;
 import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 import org.netbeans.modules.docker.execution.project.DockerProjectPreferences;
 
-public class DockerExecModel {
+public class DockerCommandModel {
 
     private final Project project;
     private final DockerProjectPreferences dockerProjectPreferences;
     private final Set<String> profiles;
 
-    public DockerExecModel(Project project, Set<String> profiles) {
+    public DockerCommandModel(Project project, Set<String> profiles) {
         this.project = project;
         this.dockerProjectPreferences = new DockerProjectPreferences(project);
         this.profiles = profiles;

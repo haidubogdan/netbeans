@@ -16,17 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.docker.execution;
+package org.netbeans.modules.docker.execution.api;
 
-public final class DockerCommands {
+import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.execution.project.DockerExecConfiguration;
 
-    public static final String DOCKER_BASE_COMMAND = "docker"; // NOI18N
-    public static final String DOCKER_EXEC = "exec"; // NOI18N
+public abstract class DockerExecuteCommandProvider {
 
-    public static final String DOCKER_COMMAND_OPTION = "-c"; // NOI18N
-    public static final String DOCKER_INTERACTIVE_OPTION = "-i"; // NOI18N
-    public static final String DOCKER_TTY_OPTION = "-t"; // NOI18N
-    public static final String DOCKER_WORKDIR_OPTION = "-w"; // NOI18N
-    public static final String DOCKER_USER_OPTION = "-u"; // NOI18N
-
+    public abstract DockerExecConfiguration findProjectConfiguration(Project project);
 }

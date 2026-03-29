@@ -18,10 +18,6 @@
  */
 package org.netbeans.modules.docker.execution;
 
-/**
- *
- * @author bhaidu
- */
 public class ProjectUtils {
     public static final String NB_WEB_PROJECT_TYPE = "org-netbeans-modules-web-clientproject"; // NOI18N 
     public static final String NB_PHP_PROJECT_TYPE = "org-netbeans-modules-php-project"; // NOI18N 
