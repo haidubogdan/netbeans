@@ -18,6 +18,55 @@
  */
 package org.netbeans.modules.languages.bash.lexer;
 
-public class BashLexer {
-    
+import org.netbeans.api.lexer.Token;
+import org.netbeans.modules.languages.bash.grammar.antlr4.coloring.BashAntlrColoringLexer;
+import static org.netbeans.modules.languages.bash.grammar.antlr4.coloring.BashAntlrColoringLexer.*;
+import org.netbeans.spi.lexer.LexerRestartInfo;
+import org.netbeans.spi.lexer.antlr4.AbstractAntlrLexerBridge;
+
+public class BashLexer extends AbstractAntlrLexerBridge<BashAntlrColoringLexer, BashTokenId> {
+    public BashLexer(LexerRestartInfo<BashTokenId> info) {
+        super(info, BashAntlrColoringLexer::new);
+    }
+
+    @Override
+    public Object state() {
+        return new State(lexer);
+    }
+
+    @Override
+    protected Token<BashTokenId> mapToken(org.antlr.v4.runtime.Token antlrToken) {
+        return switch (antlrToken.getType()) {
+            case COMMENT -> groupToken(BashTokenId.COMMENT, COMMENT); 
+            case BASH_KEYWORD -> groupToken(BashTokenId.KEYWORD, BASH_KEYWORD);
+            case COMMAND_OPTION->token(BashTokenId.COMMAND_OPTION); 
+            case IDENTIFIER -> groupToken(BashTokenId.IDENTIFIER, IDENTIFIER);
+            case STRING -> token(BashTokenId.STRING);
+            case NUMBER -> token(BashTokenId.NUMBER);
+            case ASSIGN_OPERATOR -> token(BashTokenId.ASSIGN_OPERATOR);     
+            case OPERATOR -> token(BashTokenId.OPERATOR);  
+            case DELIMITER -> token(BashTokenId.DELIMITER);      
+            case SEPARATOR -> token(BashTokenId.SEPARATOR);  
+            case SEMICOLON -> token(BashTokenId.SEMICOLON);
+            case DOLLAR -> token(BashTokenId.DOLLAR);    
+            case WS -> groupToken(BashTokenId.WS, WS);    
+            case NL -> groupToken(BashTokenId.WS, NL);
+            default -> groupToken(BashTokenId.ERROR, ERROR);
+        };
+    }
+
+    private static class State extends AbstractAntlrLexerBridge.LexerState<BashAntlrColoringLexer> {
+        final boolean interpolationKeyAdded;
+
+        public State(BashAntlrColoringLexer lexer) {
+            super(lexer);
+            this.interpolationKeyAdded = lexer.keyTokenAdded();
+        }
+
+        @Override
+        public void restore(BashAntlrColoringLexer lexer) {
+            super.restore(lexer);
+            lexer.setInterpolationKeyAddedState(interpolationKeyAdded);
+        }
+    }
 }
