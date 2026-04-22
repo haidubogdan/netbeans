@@ -48,6 +48,7 @@ tokens {
     KEYWORD,
     IDENTIFIER,
     NUMBER,
+    DELIMITER,
     OPERATOR,
     SEPARATOR,
     ASSIGN_OPERATOR,
@@ -95,28 +96,57 @@ fragment VarName
     : [a-zA-Z_][a-zA-Z0-9_]*
 ;
 
-fragment LinuxKeywords
-    : 'chown' | 'sudo' | 'mkdir' | 'exec'
-    ;
-
 fragment AppKeywords
-    : 'npm' | 'php'
+    : 'npm' | 'php' | 'mysql' | 'python'
     ;
 
 fragment BashKeyword
-    : 'fi' | 'if' | 'for' | 'then' | 'do' | 'while' | 'read' | 'echo'
-    | 'in' | 'done' | 'exit' |
-    | 'sleep'
+    : 'if' | 'elif' | 'else' | 'fi'
+    | 'for' | 'then' | 'do' | 'while'
+    | 'in' | 'done'
     ;
 
-BASH_KEYWORD : BashKeyword;
+fragment BashCommands
+    : 'sleep' | 'exit' | 'read' | 'echo'
+    | 'mkdir' | 'touch'
+    | 'cp' | 'mv' | 'rm'
+    | 'cd' | 'ls' | 'pwd'
+    | 'grep' | 'awk' | 'sed'
+    | 'cat' | 'tail' | 'head'
+    | 'ps' | 'top' | 'kill'
+    | 'df' | 'du'
+    | 'curl' | 'wget'
+    | 'ssh'
+    | 'rsync'
+    | 'zip' | 'unzip'
+    | 'chmod' | 'chown' | 'chgrp'
+    | 'cron'
+    ;
+
+fragment Delimiter
+    : '(' | ')' | '[' | ']' | '{' | '}'
+    ;
+
+fragment Operator
+    : ('+' | '-' | '*' | '/' | '%' | '<' | '>' | '&&' | '||' | '!')
+    ;
+
+fragment Separator
+    : (',')
+    ;
+
+fragment Number
+    : '-'? [0-9]+
+    ;
+
+BASH_KEYWORD : AppKeywords | BashKeyword | BashCommands;
 
 COMMAND_OPTION
     : '-' VarName
     ;
 
 NUMBER
-    : '-'? [0-9]+
+    : Number
     ;
 
 STRING
@@ -139,11 +169,11 @@ SG_STRING_OPEN
     ;
 
 IDENTIFIER 
-    : Identifier
+    : Identifier | '$' VarName
     ;
 
 DELIMITER
-    : '(' | ')' | '[' | ']' | '{' | '}'
+    : Delimiter
     ;
 
 ASSIGN_OPERATOR
@@ -151,11 +181,11 @@ ASSIGN_OPERATOR
     ;
 
 OPERATOR
-    : ('+' | '-')
+    : Operator
     ;
 
 SEPARATOR
-    : (',' | '/')
+    : Separator
     ;
 
 SEMICOLON
@@ -187,24 +217,26 @@ VAR_SG_STRING_OPEN
 EXIT_COMMENT 
     : (' ')+ NewLineComment->type(COMMENT), popMode
     ;
+
+DELIMITER_VAR
+    : Delimiter->type(DELIMITER)
+    ;
+
 SEPARATOR_VAR
-    : (',' | '|' | ':') ->type(SEPARATOR)
+    : Separator ->type(SEPARATOR)
     ;
-KEYWORD_VAR
-    : (
-    'true' | 'false' | 'null' | 'on' | '?'+
-    | 'prod' | 'production' | 'live'
-    | 'development' | 'local' | 'test'
-    ) {this._input.LA(1) == '\n'}?->type(KEYWORD)
+
+NUMBER_VAR
+    : Number->type(NUMBER)
     ;
+
 INTERPOLATED_VAR 
-    : '$' '{'?
+    : '$' {this._input.LA(1) == '{'}?
     ->type(DOLLAR),pushMode(StringInterpolation)
 ;
 
-//greedy identifier matching
 IDENTIFIER_VAR
-    : Identifier {this._input.LA(1) == '\n'}? 
+    : '$' VarName
     ->type(IDENTIFIER)
     ;
 EXIT_VAR_ASSING : NewLine->type(NL), popMode;
@@ -214,10 +246,17 @@ ANY_VALUE : . ->type(IDENTIFIER);
 mode DbQuoteString;
 
 DBQ_TEXT : (Esc [btnfr"'\\] | ~ [$"\r\n\\])+->type(STRING);
+
 DBQ_INTERPOLATED_VAR 
-    : '$' '{'?
+    : '$' {this._input.LA(1) == '{'}?
     ->type(DOLLAR),pushMode(StringInterpolation)
 ;
+
+DBQ_IDENTIFIER
+    : '$' VarName
+    ->type(IDENTIFIER)
+    ;
+
 DBQ_STRING_CLOSE : DQuote ->type(STRING),popMode;
 ANY_DBQ_TEXT : . ->type(STRING);
 
