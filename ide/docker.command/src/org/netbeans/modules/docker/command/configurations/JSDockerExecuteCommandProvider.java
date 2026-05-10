@@ -29,7 +29,7 @@ public class JSDockerExecuteCommandProvider extends DockerExecuteCommandProvider
 
     @Override
     public DockerExecConfiguration findProjectConfiguration(@NonNull Project project) {
-        DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
+        DockerProjectSettings dockerSettings = new DockerProjectSettings(project);
         String currentJsProfile = dockerSettings.getJSDockerContainerProfile();
 
         if (currentJsProfile == null) {
