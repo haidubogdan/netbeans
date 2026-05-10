@@ -21,8 +21,11 @@ package org.netbeans.modules.javascript.nodejs.util;
 import java.util.List;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.command.DockerExecutablePreference;
+import org.netbeans.modules.docker.command.DockerExecutable;
 import org.netbeans.modules.docker.command.DockerExecuteCommand;
+import org.netbeans.modules.docker.command.api.DockerExecuteCommandProvider;
+import static org.netbeans.modules.docker.command.api.DockerExecuteCommandProvider.JS_DOCKER_PATH;
+import org.netbeans.modules.docker.command.configurations.DockerExecConfiguration;
 import org.netbeans.modules.docker.command.project.DockerProjectSettings;
 
 public class DockerContainerUtils {
@@ -32,20 +35,17 @@ public class DockerContainerUtils {
             return false;
         }
 
-        DockerProjectSettings dockerSettings = project.getLookup().lookup(DockerProjectSettings.class);
-
-        if (dockerSettings == null) {
-            return false;
-        }
+        DockerProjectSettings dockerSettings = new DockerProjectSettings(project);
 
         return dockerSettings.useDockerForJSCommands();
     }
 
     public static List<String> generateExecutableParams(Project project) {
-        return DockerExecuteCommand.generateExecutableParams(project, DockerExecuteCommand.AppType.JAVASCRIPT);
+        DockerExecConfiguration config = DockerExecuteCommandProvider.findDockerExecuteCommandConfiguration(project, JS_DOCKER_PATH);
+        return DockerExecuteCommand.generateExecutableParams(config);
     }
 
     public static String getDockerExecutablePath() {
-        return DockerExecutablePreference.getDockerExecutablePath();
+        return DockerExecutable.getDockerExecutablePath();
     }
 }

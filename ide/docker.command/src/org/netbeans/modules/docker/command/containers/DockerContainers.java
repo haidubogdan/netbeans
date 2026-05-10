@@ -52,7 +52,7 @@ public final class DockerContainers {
 
     public boolean openManager() {
         DockerContainerConfigsPanel panel = createPanel();
-        
+
         final boolean changed = panel.open();
 
         if (changed) {
@@ -86,7 +86,7 @@ public final class DockerContainers {
     public void removeConfig(DockerContainerConfig config) {
         dockerContainerModel.removeConfig(config);
     }
-    
+
     public void saveDockerContainers() {
         List<DockerContainerConfig> configs = dockerContainerModel.getConfigs();
         Preferences dockerContainers = DockerContainerPreferences.getDockerContainerPreferences();
@@ -105,7 +105,7 @@ public final class DockerContainers {
                 Exceptions.printStackTrace(ex);
             }
         }
-        
+
         try {
             if (existingConfigNames.size() != dockerContainers.childrenNames().length) {
                 //sync deletion
@@ -127,4 +127,23 @@ public final class DockerContainers {
     public void removeChangeListener(ChangeListener listener) {
         changeSupport.removeChangeListener(listener);
     }
+
+    public static class DockerContainerConfig {
+
+        private final String containerName;
+
+        public DockerContainerConfig(String containerName) {
+            this.containerName = containerName;
+        }
+
+        public String getContainerName() {
+            return containerName;
+        }
+
+        @Override
+        public String toString() {
+            return containerName;
+        }
+    }
+
 }

@@ -22,7 +22,8 @@ package org.netbeans.modules.docker.command;
 import org.openide.util.NbPreferences;
 import org.openide.util.Utilities;
 
-public class DockerExecutablePreference {
+//just config
+public class DockerExecutable {
 
     public static final String DOCKER_PREF_PATH = "docker_path"; // NOI18N
 

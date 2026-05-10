@@ -20,8 +20,8 @@ package org.netbeans.modules.docker.command.configurations;
 
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.project.Project;
-import static org.netbeans.modules.docker.command.DockerExecuteCommand.JS_DOCKER_PATH;
 import org.netbeans.modules.docker.command.api.DockerExecuteCommandProvider;
+import static org.netbeans.modules.docker.command.api.DockerExecuteCommandProvider.JS_DOCKER_PATH;
 import org.netbeans.modules.docker.command.project.DockerProjectSettings;
 
 @org.openide.util.lookup.ServiceProvider(service = org.netbeans.modules.docker.command.api.DockerExecuteCommandProvider.class, path = JS_DOCKER_PATH)
