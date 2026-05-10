@@ -20,10 +20,7 @@ package org.netbeans.modules.docker.command;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.command.api.DockerExecuteCommandProvider;
 import org.netbeans.modules.docker.command.configurations.DockerExecConfiguration;
-import org.openide.util.lookup.Lookups;
 
 public class DockerExecuteCommand {
 
@@ -37,27 +34,8 @@ public class DockerExecuteCommand {
     
     public static final String SH_COMMAND = "sh"; // NOI18N
 
-    public static enum AppType {
-        JAVASCRIPT,
-        PHP
-    };
-    public static final String JS_DOCKER_PATH = "docker_exec/commands/javascript"; // NOI18N
-
-    //TODO move to DockerProject settings
-    public static DockerExecConfiguration findJSDockerExecuteCommandConfiguration(Project project) {
-        DockerExecuteCommandProvider execCommandProvider = Lookups.forPath(JS_DOCKER_PATH).lookup(DockerExecuteCommandProvider.class);
-        return execCommandProvider.findProjectConfiguration(project);
-    }
-
-    public static List<String> generateExecutableParams(Project project, AppType type) {
+    public static List<String> generateExecutableParams(DockerExecConfiguration config) {
         List<String> executableParams = new ArrayList<>();
-
-        DockerExecConfiguration config = switch (type) {
-            case JAVASCRIPT ->
-                findJSDockerExecuteCommandConfiguration(project);
-            default ->
-                null;
-        };
 
         if (config == null) {
             return executableParams;

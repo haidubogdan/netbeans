@@ -20,8 +20,16 @@ package org.netbeans.modules.docker.command.api;
 
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.command.configurations.DockerExecConfiguration;
+import org.openide.util.lookup.Lookups;
 
 public abstract class DockerExecuteCommandProvider {
 
+    public static final String JS_DOCKER_PATH = "docker_exec/commands/javascript"; // NOI18N
+
     public abstract DockerExecConfiguration findProjectConfiguration(Project project);
+
+    public static DockerExecConfiguration findDockerExecuteCommandConfiguration(Project project, String path) {
+        DockerExecuteCommandProvider execCommandProvider = Lookups.forPath(path).lookup(DockerExecuteCommandProvider.class);
+        return execCommandProvider.findProjectConfiguration(project);
+    }
 }
