@@ -34,6 +34,8 @@ public class DockerExecuteCommand {
     public static final String DOCKER_TTY_OPTION = "-t"; // NOI18N
     public static final String DOCKER_WORKDIR_OPTION = "-w"; // NOI18N
     public static final String DOCKER_USER_OPTION = "-u"; // NOI18N
+    
+    public static final String SH_COMMAND = "sh"; // NOI18N
 
     public static enum AppType {
         JAVASCRIPT,

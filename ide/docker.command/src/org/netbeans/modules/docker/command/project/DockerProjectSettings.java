@@ -18,44 +18,129 @@
  */
 package org.netbeans.modules.docker.command.project;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import org.netbeans.modules.docker.command.configurations.DockerExecConfiguration;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.command.DockerCommandModel;
-import static org.netbeans.modules.docker.command.project.ProjectUtils.NB_PHP_PROJECT_TYPE;
-import static org.netbeans.modules.docker.command.project.ProjectUtils.NB_WEB_PROJECT_TYPE;
-import org.netbeans.spi.project.LookupProvider;
-import org.netbeans.spi.project.ProjectServiceProvider;
+import static org.netbeans.modules.docker.command.DockerExecuteCommand.SH_COMMAND;
+import static org.netbeans.modules.docker.command.project.DockerCommandPreferences.DEFAULT_CONFIG_NAME;
+import static org.netbeans.modules.docker.command.project.DockerCommandPreferences.DOCKER_BASH_PATH;
+import static org.netbeans.modules.docker.command.project.DockerCommandPreferences.DOCKER_CONTAINER_NAME;
+import static org.netbeans.modules.docker.command.project.DockerCommandPreferences.DOCKER_USER;
+import static org.netbeans.modules.docker.command.project.DockerCommandPreferences.DOCKER_WORKDIR;
 
 public class DockerProjectSettings {
 
-    private final Project project;
+    static final Logger LOGGER = Logger.getLogger(DockerProjectSettings.class.getName());
+
+    private final DockerCommandPreferences dockerCommandPreferences;
+    private final Set<String> profiles;
 
     public DockerProjectSettings(Project project) {
-        this.project = project;
+        this.dockerCommandPreferences = new DockerCommandPreferences(project);
+        this.profiles = loadProfiles();
     }
 
-    @ProjectServiceProvider(service = DockerProjectSettings.class, projectTypes = {
-        @LookupProvider.Registration.ProjectType(id = NB_PHP_PROJECT_TYPE),
-        @LookupProvider.Registration.ProjectType(id = NB_WEB_PROJECT_TYPE),
-    })
-    public static DockerProjectSettings create(Project project) {
-        DockerProjectSettings settings = new DockerProjectSettings(project);
-        return settings;
+    private Set<String> loadProfiles() {
+        Preferences dockerCommandConfigs = getDockerCommandConfigPreferences();
+
+        Set<String> loadedProfiles = new HashSet<>();
+
+        try {
+            loadedProfiles.add(DEFAULT_CONFIG_NAME);//always have the default option
+            loadedProfiles.addAll(Arrays.asList(dockerCommandConfigs.childrenNames()));
+        } catch (BackingStoreException bse) {
+            LOGGER.log(Level.INFO, "Error while loading docker command preferences configs", bse);  // NOI18N
+        }
+
+        return loadedProfiles;
     }
 
-    public synchronized DockerCommandModel getDockerCommandModel() {
-        return new DockerCommandModel(project);
+    public void setCurrentProfile(String profile) {
+        getDockerCommandPreferences().setDockerCommandConfigName(profile);
+    }
+
+    public String getCurrentProfile() {
+        return getDockerCommandPreferences().getDockerCommandConfigName();
+    }
+
+    public Set<String> getProfiles() {
+        return Collections.unmodifiableSet(profiles);
+    }
+
+    public boolean profileExists(String configName) {
+        return getProfiles().contains(configName);
+    }
+
+    private Preferences getDockerCommandConfigPreferences() {
+        return getDockerCommandPreferences().getDockerCommandConfigs();
+    }
+
+    private DockerCommandPreferences getDockerCommandPreferences() {
+        return dockerCommandPreferences;
     }
 
     public DockerExecConfiguration loadExecConfig(String profile) {
-        return getDockerCommandModel().getProfileConfiguration(profile);
+        return getProfileConfiguration(profile);
     }
-    
+
     public boolean useDockerForJSCommands() {
-        return getDockerCommandModel().getUseDockerForJSCommands();
+        return getDockerCommandPreferences().getUseDockerForJSCommands();
     }
-    
+
     public String getJSDockerContainerProfile() {
-        return getDockerCommandModel().getJSDockerContainerProfile();
+        return getDockerCommandPreferences().getJSDockerConfigName();
+    }
+
+    public void setJSDockerConfig(String configName) {
+        getDockerCommandPreferences().setJSDockerConfig(configName);
+    }
+
+    public void setUseDockerForJSCommands(boolean status) {
+        getDockerCommandPreferences().setUseDockerForJSCommands(status);
+    }
+
+    public DockerExecConfiguration getProfileConfiguration(String profile) {
+        Preferences dockerCommandConfigs = getDockerCommandConfigPreferences();
+        Preferences profileConfig = dockerCommandConfigs.node(profile);
+
+        String containeName = profileConfig.get(DOCKER_CONTAINER_NAME, null);
+
+        if (containeName == null) {
+            LOGGER.log(Level.INFO, "Config {0} container name is not set", profile);  // NOI18N
+            return null;
+        }
+
+        return new DockerExecConfiguration(
+                containeName,
+                profileConfig.get(DOCKER_BASH_PATH, SH_COMMAND), // NOI18N
+                profileConfig.get(DOCKER_USER, null),
+                profileConfig.get(DOCKER_WORKDIR, null)
+        );
+    }
+
+    public void saveConfig(DockerExecConfiguration config, String profile) {
+        Preferences configPref = getDockerCommandPreferences().getDockerCommandConfigs().node(profile);
+        configPref.put(DOCKER_CONTAINER_NAME, config.getContainerName());
+        configPref.put(DOCKER_BASH_PATH, config.getBashType());
+        configPref.put(DOCKER_USER, config.getDockerUser());
+        configPref.put(DOCKER_WORKDIR, config.getDockerWorkDir());
+    }
+
+    public void removeProfileConfig(String profile) {
+        if (profile.equals(DEFAULT_CONFIG_NAME)) {
+            return;
+        }
+        try {
+            dockerCommandPreferences.getDockerCommandConfigs().node(profile).removeNode();
+        } catch (BackingStoreException bse) {
+            LOGGER.log(Level.INFO, "Error while removing unused docker command profile: " + profile, bse);  // NOI18N
+        }
     }
 }
