@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import org.netbeans.modules.docker.command.containers.DockerContainers.DockerContainerConfig;
 
 public class DockerContainersModel {
 

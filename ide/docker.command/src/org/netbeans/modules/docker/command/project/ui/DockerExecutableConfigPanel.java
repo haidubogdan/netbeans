@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.command.DockerExecutablePreference;
+import org.netbeans.modules.docker.command.DockerExecutable;
 import org.netbeans.modules.docker.command.containers.DockerContainers;
 import org.netbeans.modules.docker.command.configurations.DockerExecConfiguration;
 import static org.netbeans.modules.docker.command.project.DockerCommandPreferences.DEFAULT_CONFIG_NAME;
@@ -70,7 +70,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        dockerExecPath.setText(DockerExecutablePreference.getDockerExecutablePath());
+        dockerExecPath.setText(DockerExecutable.getDockerExecutablePath());
         dockerExecPath.setEditable(false);
         String currentProfile = projectSettings.getCurrentProfile();
         comboModel.setSelectedItem(currentProfile);
@@ -484,7 +484,7 @@ public class DockerExecutableConfigPanel extends javax.swing.JPanel {
         EditDockerExecutablePathPanel editPanel = new EditDockerExecutablePathPanel();
         if (editPanel.open()) {
             String executablePath = editPanel.getDockerExecutablePath();
-            DockerExecutablePreference.setDockerExecutablePath(executablePath);
+            DockerExecutable.setDockerExecutablePath(executablePath);
             dockerExecPath.setText(executablePath);
         }
     }//GEN-LAST:event_editDockerExecutablePathButtonActionPerformed

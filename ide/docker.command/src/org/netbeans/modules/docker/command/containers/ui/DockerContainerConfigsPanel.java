@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractListModel;
-import org.netbeans.modules.docker.command.containers.DockerContainerConfig;
+import org.netbeans.modules.docker.command.containers.DockerContainers.DockerContainerConfig;
 import org.netbeans.modules.docker.command.containers.DockerContainers;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
