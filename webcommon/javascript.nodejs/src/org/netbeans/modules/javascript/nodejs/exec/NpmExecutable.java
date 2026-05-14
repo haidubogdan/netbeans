@@ -40,12 +40,11 @@ import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.base.input.InputProcessor;
 import org.netbeans.api.options.OptionsDisplayer;
 import org.netbeans.api.project.Project;
-import static org.netbeans.modules.javascript.nodejs.exec.NodeExecutable.LOGGER;
 import org.netbeans.modules.javascript.nodejs.file.PackageJson;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptions;
 import org.netbeans.modules.javascript.nodejs.options.NodeJsOptionsValidator;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
-import org.netbeans.modules.javascript.nodejs.util.DockerContainerUtils;
+import org.netbeans.modules.javascript.nodejs.util.DockerCliConfig;
 import org.netbeans.modules.javascript.nodejs.util.FileUtils;
 import org.netbeans.modules.javascript.nodejs.util.NodeJsUtils;
 import org.netbeans.modules.javascript.nodejs.util.StringUtils;
@@ -91,8 +90,8 @@ public class NpmExecutable {
     @CheckForNull
     public static NpmExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
         
-        if (DockerContainerUtils.useDockerExecContainer(project)) {
-            List<String> executableParams = DockerContainerUtils.generateExecutableParams(project);
+        if (DockerCliConfig.getInstance().useCliConfig(project)) {
+            List<String> executableParams = DockerCliConfig.getInstance().generateExecutableParams(project);
             if (!executableParams.isEmpty()) {
                  return new DockerNpmExecutable("npm", project, executableParams); // NOI18N
             }
@@ -390,7 +389,7 @@ public class NpmExecutable {
 
         DockerNpmExecutable(String npmPath, Project project, List<String> executableParams) {
             super(npmPath, project);
-            docker = DockerContainerUtils.getDockerExecutablePath();
+            docker = DockerCliConfig.getDockerExecutablePath();
             this.executableParams = executableParams;
         }
 

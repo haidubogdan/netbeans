@@ -70,7 +70,7 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
-                    <code-name-base>org.netbeans.modules.docker.command</code-name-base>
+                    <code-name-base>org.netbeans.modules.docker.cli.config</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
