@@ -62,7 +62,7 @@ import org.netbeans.modules.javascript.nodejs.spi.DebuggerStartModifier;
 import org.netbeans.modules.javascript.nodejs.spi.DebuggerStartModifierFactory;
 import org.netbeans.modules.javascript.nodejs.ui.customizer.NodeJsCustomizerProvider;
 import org.netbeans.modules.javascript.nodejs.ui.options.NodeJsOptionsPanelController;
-import org.netbeans.modules.javascript.nodejs.util.DockerContainerUtils;
+import org.netbeans.modules.javascript.nodejs.util.DockerCliConfig;
 import org.netbeans.modules.javascript.nodejs.util.FileUtils;
 import org.netbeans.modules.javascript.nodejs.util.NodeJsUtils;
 import org.netbeans.modules.javascript.nodejs.util.StringUtils;
@@ -120,8 +120,8 @@ public class NodeExecutable {
 
     @CheckForNull
     public static NodeExecutable getDefault(@NullAllowed Project project, boolean showOptions) {
-        if (DockerContainerUtils.useDockerExecContainer(project)) {
-            List<String> executableParams = DockerContainerUtils.generateExecutableParams(project);
+        if (DockerCliConfig.getInstance().useCliConfig(project)) {
+            List<String> executableParams = DockerCliConfig.getInstance().generateExecutableParams(project);
             if (!executableParams.isEmpty()) {
                 return new DockerNodeExecutable("node", project, executableParams); // NOI18N
             }
@@ -727,7 +727,7 @@ public class NodeExecutable {
 
         DockerNodeExecutable(String nodePath, Project project, List<String> executableParams) {
             super(nodePath, project);
-            docker = DockerContainerUtils.getDockerExecutablePath();
+            docker = DockerCliConfig.getDockerExecutablePath();
             this.executableParams = executableParams;
         }
 
