@@ -27,28 +27,30 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.cli.config.DockerExecConfiguration;
-import static org.netbeans.modules.docker.cli.config.DockerExecuteParams.SH_COMMAND;
+import org.netbeans.modules.docker.cli.config.DockerExecParamsConfig;
+import static org.netbeans.modules.docker.cli.config.DockerExecCommandParams.SH_COMMAND;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DEFAULT_CONFIG_NAME;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DOCKER_BASH_PATH;
+import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DOCKER_CLI_CONFIG_NAME;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DOCKER_CONTAINER_NAME;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DOCKER_USER;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DOCKER_WORKDIR;
+import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.PREF_JS_NODE;
 
-public class DockerProjectSettings {
+public class DockerCliProjectSettings {
 
-    static final Logger LOGGER = Logger.getLogger(DockerProjectSettings.class.getName());
+    static final Logger LOGGER = Logger.getLogger(DockerCliProjectSettings.class.getName());
 
-    private final DockerCliConfigPreferences dockerCommandPreferences;
+    private final DockerCliConfigPreferences dockerCliConfigPreferences;
     private final Set<String> profiles;
 
-    public DockerProjectSettings(Project project) {
-        this.dockerCommandPreferences = new DockerCliConfigPreferences(project);
+    public DockerCliProjectSettings(Project project) {
+        this.dockerCliConfigPreferences = new DockerCliConfigPreferences(project);
         this.profiles = loadProfiles();
     }
 
     private Set<String> loadProfiles() {
-        Preferences dockerCommandConfigs = getDockerCommandConfigPreferences();
+        Preferences dockerCommandConfigs = getDockerCliConfigPreferences();
 
         Set<String> loadedProfiles = new HashSet<>();
 
@@ -67,7 +69,7 @@ public class DockerProjectSettings {
     }
 
     public String getCurrentProfile() {
-        return getDockerCommandPreferences().getDockerCommandConfigName();
+        return getDockerCommandPreferences().getDockerCliConfigName();
     }
 
     public Set<String> getProfiles() {
@@ -78,24 +80,34 @@ public class DockerProjectSettings {
         return getProfiles().contains(configName);
     }
 
-    private Preferences getDockerCommandConfigPreferences() {
+    private Preferences getDockerCliConfigPreferences() {
         return getDockerCommandPreferences().getDockerCommandConfigs();
     }
 
     private DockerCliConfigPreferences getDockerCommandPreferences() {
-        return dockerCommandPreferences;
+        return dockerCliConfigPreferences;
     }
 
-    public DockerExecConfiguration loadExecConfig(String profile) {
+    public Preferences getDockerCommandNodePreferences(String node) {
+        return dockerCliConfigPreferences.getDockerNodePreferences(node);
+    }
+
+    public String getDefaultNodeTypeConfigName(String node) {
+        Preferences jsPreferences = getDockerCommandNodePreferences(PREF_JS_NODE);
+        if (jsPreferences == null) {
+            return null;
+        }
+        
+        return jsPreferences.get(DOCKER_CLI_CONFIG_NAME, null);
+    }
+
+    
+    public DockerExecParamsConfig loadExecConfig(String profile) {
         return getProfileConfiguration(profile);
     }
 
     public boolean useDockerForJSCommands() {
         return getDockerCommandPreferences().getUseDockerForJSCommands();
-    }
-
-    public String getJSDockerContainerProfile() {
-        return getDockerCommandPreferences().getJSDockerConfigName();
     }
 
     public void setJSDockerConfig(String configName) {
@@ -106,8 +118,8 @@ public class DockerProjectSettings {
         getDockerCommandPreferences().setUseDockerForJSCommands(status);
     }
 
-    public DockerExecConfiguration getProfileConfiguration(String profile) {
-        Preferences dockerCommandConfigs = getDockerCommandConfigPreferences();
+    public DockerExecParamsConfig getProfileConfiguration(String profile) {
+        Preferences dockerCommandConfigs = getDockerCliConfigPreferences();
         Preferences profileConfig = dockerCommandConfigs.node(profile);
 
         String containeName = profileConfig.get(DOCKER_CONTAINER_NAME, null);
@@ -117,7 +129,7 @@ public class DockerProjectSettings {
             return null;
         }
 
-        return new DockerExecConfiguration(
+        return new DockerExecParamsConfig(
                 containeName,
                 profileConfig.get(DOCKER_BASH_PATH, SH_COMMAND), // NOI18N
                 profileConfig.get(DOCKER_USER, null),
@@ -125,7 +137,7 @@ public class DockerProjectSettings {
         );
     }
 
-    public void saveConfig(DockerExecConfiguration config, String profile) {
+    public void saveConfig(DockerExecParamsConfig config, String profile) {
         Preferences configPref = getDockerCommandPreferences().getDockerCommandConfigs().node(profile);
         configPref.put(DOCKER_CONTAINER_NAME, config.getContainerName());
         configPref.put(DOCKER_BASH_PATH, config.getBashType());
@@ -138,7 +150,7 @@ public class DockerProjectSettings {
             return;
         }
         try {
-            dockerCommandPreferences.getDockerCommandConfigs().node(profile).removeNode();
+            dockerCliConfigPreferences.getDockerCommandConfigs().node(profile).removeNode();
         } catch (BackingStoreException bse) {
             LOGGER.log(Level.INFO, "Error while removing unused docker command profile: " + profile, bse);  // NOI18N
         }

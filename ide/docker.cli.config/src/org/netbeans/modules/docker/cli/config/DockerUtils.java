@@ -18,33 +18,26 @@
  */
 package org.netbeans.modules.docker.cli.config;
 
-public class DockerExecConfiguration {
-    private final String containerName;
-    private final String bashType;
-    private final String user;
-    private final String containerWorkDir;
-    
-    public DockerExecConfiguration(String containerName, String bashType, 
-            String user, String containerWorkDir) {
-        this.containerName = containerName;
-        this.bashType = bashType;
-        this.user = user;
-        this.containerWorkDir = containerWorkDir;
+import org.openide.util.NbPreferences;
+import org.openide.util.Utilities;
+
+public class DockerUtils {
+
+    public static final String DOCKER_EXEC_FILE_PATH = "docker_path"; // NOI18N
+
+    public static final String DOCKER_BASE_UNIX_COMMAND = "/usr/bin/docker"; // NOI18N
+    public static final String DOCKER_BASE_WIN_COMMAND = "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe"; // NOI18N
+
+    private DockerUtils() {
+
     }
 
-    public String getContainerName() {
-        return containerName;
+    public static String getDockerExecutablePath() {
+        String basePath = Utilities.isWindows() ? DOCKER_BASE_WIN_COMMAND : DOCKER_BASE_UNIX_COMMAND;
+        return NbPreferences.forModule(DockerExecCommandParams.class).get(DOCKER_EXEC_FILE_PATH, basePath);
     }
 
-    public String getBashType() {
-        return bashType;
-    }
-    
-    public String getDockerWorkDir() {
-        return containerWorkDir;
-    }
-    
-    public String getDockerUser() {
-        return user;
+    public static void setDockerExecutablePath(String path) {
+        NbPreferences.forModule(DockerExecCommandParams.class).put(DOCKER_EXEC_FILE_PATH, path);
     }
 }
