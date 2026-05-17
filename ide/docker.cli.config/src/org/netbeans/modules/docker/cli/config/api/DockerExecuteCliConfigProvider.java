@@ -20,9 +20,9 @@ package org.netbeans.modules.docker.cli.config.api;
 
 import java.util.List;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.cli.config.DockerExecConfiguration;
-import org.netbeans.modules.docker.cli.config.DockerExecuteParams;
-import org.netbeans.modules.docker.cli.config.DockerSettings;
+import org.netbeans.modules.docker.cli.config.DockerExecParamsConfig;
+import org.netbeans.modules.docker.cli.config.DockerExecCommandParams;
+import org.netbeans.modules.docker.cli.config.DockerUtils;
 import org.openide.util.lookup.Lookups;
 
 public abstract class DockerExecuteCliConfigProvider {
@@ -33,19 +33,19 @@ public abstract class DockerExecuteCliConfigProvider {
         return Lookups.forPath(path).lookup(DockerExecuteCliConfigProvider.class);
     }
 
-    public DockerExecConfiguration findDockerExecuteCommandConfiguration(Project project) {
+    public DockerExecParamsConfig findDockerExecuteCommandConfiguration(Project project) {
         return findProjectConfiguration(project);
     }
 
     public List<String> generateExecutableParams(Project project) {
-        DockerExecConfiguration dockerExecConfig = findDockerExecuteCommandConfiguration(project);
-        return DockerExecuteParams.generateExecutableParams(dockerExecConfig);
+        DockerExecParamsConfig dockerExecConfig = findDockerExecuteCommandConfiguration(project);
+        return DockerExecCommandParams.generateExecutableParams(dockerExecConfig);
     }
 
     public static String getDockerExecutablePath() {
-        return DockerSettings.getDockerExecutablePath();
+        return DockerUtils.getDockerExecutablePath();
     }
     
     public abstract boolean isEnabled(Project project);
-    public abstract DockerExecConfiguration findProjectConfiguration(Project project);
+    public abstract DockerExecParamsConfig findProjectConfiguration(Project project);
 }

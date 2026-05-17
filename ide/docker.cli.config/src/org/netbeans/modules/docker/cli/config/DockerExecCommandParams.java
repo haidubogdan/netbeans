@@ -21,7 +21,7 @@ package org.netbeans.modules.docker.cli.config;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DockerExecuteParams {
+public class DockerExecCommandParams {
 
     public static final String DOCKER_EXEC = "exec"; // NOI18N
 
@@ -33,7 +33,7 @@ public class DockerExecuteParams {
     
     public static final String SH_COMMAND = "sh"; // NOI18N
 
-    public static List<String> generateExecutableParams(DockerExecConfiguration config) {
+    public static List<String> generateExecutableParams(DockerExecParamsConfig config) {
         List<String> executableParams = new ArrayList<>();
 
         if (config == null) {

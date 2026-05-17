@@ -22,21 +22,23 @@ import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider;
 import static org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.JS_DOCKER_PATH;
-import org.netbeans.modules.docker.cli.config.project.DockerProjectSettings;
+import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.PREF_JS_NODE;
+import org.netbeans.modules.docker.cli.config.project.DockerCliProjectSettings;
 
 @org.openide.util.lookup.ServiceProvider(service = org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.class, path = JS_DOCKER_PATH)
 public class JSDockerExecuteCommandProvider extends DockerExecuteCliConfigProvider {
 
     @Override
     public boolean isEnabled(Project project) {
-        DockerProjectSettings dockerSettings = new DockerProjectSettings(project);
+        DockerCliProjectSettings dockerSettings = new DockerCliProjectSettings(project);
         return dockerSettings.useDockerForJSCommands();
     }
 
     @Override
-    public DockerExecConfiguration findProjectConfiguration(@NonNull Project project) {
-        DockerProjectSettings dockerSettings = new DockerProjectSettings(project);
-        String currentJsProfile = dockerSettings.getJSDockerContainerProfile();
+    public DockerExecParamsConfig findProjectConfiguration(@NonNull Project project) {
+        DockerCliProjectSettings dockerSettings = new DockerCliProjectSettings(project);
+
+        String currentJsProfile = dockerSettings.getDefaultNodeTypeConfigName(PREF_JS_NODE);
 
         if (currentJsProfile == null) {
             return null;

@@ -29,11 +29,12 @@ import java.util.logging.Logger;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.netbeans.api.project.Project;
-import org.netbeans.modules.docker.cli.config.DockerExecConfiguration;
-import org.netbeans.modules.docker.cli.config.DockerSettings;
+import org.netbeans.modules.docker.cli.config.DockerExecParamsConfig;
+import org.netbeans.modules.docker.cli.config.DockerUtils;
 import org.netbeans.modules.docker.cli.config.containers.DockerContainers;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DEFAULT_CONFIG_NAME;
-import org.netbeans.modules.docker.cli.config.project.DockerProjectSettings;
+import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.PREF_JS_NODE;
+import org.netbeans.modules.docker.cli.config.project.DockerCliProjectSettings;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -44,7 +45,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
     private static final Logger LOGGER = Logger.getLogger(DockerExecCliConfigPanel.class.getName());
     private final ProjectCustomizer.Category category;
     private final Project project;
-    private final DockerProjectSettings projectSettings;
+    private final DockerCliProjectSettings projectSettings;
     private final DockerConfigComboBoxModel comboModel;
     private final DockerConfigComboBoxModel javascriptComboModel;
     private final DockerContainerComboModel dockerContainerListModel = new DockerContainerComboModel();
@@ -56,7 +57,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
         this.category = category;
         this.project = project;
 
-        this.projectSettings = new DockerProjectSettings(project);
+        this.projectSettings = new DockerCliProjectSettings(project);
         initComponents();
 
         Set<String> configs = projectSettings.getProfiles();
@@ -70,7 +71,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        dockerExecPath.setText(DockerSettings.getDockerExecutablePath());
+        dockerExecPath.setText(DockerUtils.getDockerExecutablePath());
         dockerExecPath.setEditable(false);
         String currentProfile = projectSettings.getCurrentProfile();
         comboModel.setSelectedItem(currentProfile);
@@ -94,7 +95,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
 
     private void loadDockerExecSettings() {
         String currentProfile = (String) comboModel.getSelectedItem();
-        DockerExecConfiguration config = projectSettings.getProfileConfiguration(currentProfile);
+        DockerExecParamsConfig config = projectSettings.getProfileConfiguration(currentProfile);
 
         if (config != null) {
             dockerContainersComboBox.setSelectedItem(config.getContainerName());
@@ -106,11 +107,11 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
         }
 
         jsCommandsDockerEnabled.setSelected(projectSettings.useDockerForJSCommands());
-        jsCommandsDockerConfigCombo.setSelectedItem(projectSettings.getJSDockerContainerProfile());
+        jsCommandsDockerConfigCombo.setSelectedItem(projectSettings.getDefaultNodeTypeConfigName(PREF_JS_NODE));
     }
 
-    private DockerExecConfiguration buildConfig() {
-        return new DockerExecConfiguration(
+    private DockerExecParamsConfig buildConfig() {
+        return new DockerExecParamsConfig(
                 dockerContainersComboBox.getSelectedItem().toString(),
                 dockerBashType.getText(),
                 dockerUser.getText(),
@@ -122,7 +123,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
         String selectedConfig = (String) ConfigOptionCombo.getSelectedItem();
         
         if (dockerContainersComboBox.getSelectedItem() != null) {
-            DockerExecConfiguration config = buildConfig();
+            DockerExecParamsConfig config = buildConfig();
             projectSettings.saveConfig(config, selectedConfig);
         }
         projectSettings.setCurrentProfile(selectedConfig);
@@ -428,7 +429,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
             }
             
             if (dockerContainersComboBox.getSelectedItem() != null) {
-                DockerExecConfiguration config = buildConfig();
+                DockerExecParamsConfig config = buildConfig();
                 projectSettings.saveConfig(config, configName);
 
                 comboModel.addElement(configName);
@@ -484,7 +485,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
         EditDockerExecutablePathPanel editPanel = new EditDockerExecutablePathPanel();
         if (editPanel.open()) {
             String executablePath = editPanel.getDockerExecutablePath();
-            DockerSettings.setDockerExecutablePath(executablePath);
+            DockerUtils.setDockerExecutablePath(executablePath);
             dockerExecPath.setText(executablePath);
         }
     }//GEN-LAST:event_editDockerExecutablePathButtonActionPerformed

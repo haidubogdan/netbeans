@@ -27,7 +27,7 @@ import org.openide.util.Exceptions;
 
 public class DockerCliConfigPreferences {
 
-    private static final String DOCKER_CLI_CONFIG_NAME = "docker.exec.command.configname"; // NOI18N
+    public static final String DOCKER_CLI_CONFIG_NAME = "docker.exec.command.configname"; // NOI18N
     public static final String DOCKER_CONTAINER_NAME = "docker.exec.command.containername"; // NOI18N
     public static final String DOCKER_BASH_PATH = "docker.exec.command.bashpath"; // NOI18N
     public static final String DOCKER_WORKDIR = "docker.exec.command.workdir"; // NOI18N
@@ -51,7 +51,7 @@ public class DockerCliConfigPreferences {
         getPreferences().put(DOCKER_CLI_CONFIG_NAME, profile);
     }
 
-    public String getDockerCommandConfigName() {
+    public String getDockerCliConfigName() {
         return getPreferences().get(DOCKER_CLI_CONFIG_NAME, DEFAULT_CONFIG_NAME);
     }
 
@@ -102,6 +102,18 @@ public class DockerCliConfigPreferences {
         return getJSDockerPreferences().getBoolean(DOCKER_ENABLED, false);
     }
 
+    public Preferences getDockerNodePreferences(String node) {
+        try {
+            if (getPreferences().nodeExists(node)) {
+                return getPreferences().node(node);
+            }
+        } catch (BackingStoreException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        return null;
+    }
+    
     private Preferences getJSDockerPreferences() {
         try {
             if (getPreferences().nodeExists(PREF_JS_NODE)) {

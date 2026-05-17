@@ -19,7 +19,7 @@
 package org.netbeans.modules.docker.cli.config.project.ui;
 
 import java.awt.Dialog;
-import org.netbeans.modules.docker.cli.config.DockerSettings;
+import org.netbeans.modules.docker.cli.config.DockerUtils;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -34,7 +34,7 @@ public class EditDockerExecutablePathPanel extends javax.swing.JPanel {
     }
     
     private void init() {
-        dockerExecutablePath.setText(DockerSettings.getDockerExecutablePath());
+        dockerExecutablePath.setText(DockerUtils.getDockerExecutablePath());
     }
 
     public boolean open() {
