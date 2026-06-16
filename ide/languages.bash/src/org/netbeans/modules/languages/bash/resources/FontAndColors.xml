@@ -23,4 +23,5 @@
 <fontscolors>
     <fontcolor name="command_option" foreColor="6c3d03"/>
     <fontcolor name="number" default="number" foreColor="ff00ff" />
+    <fontcolor name="variable" foreColor="6d3206" />
 </fontscolors>

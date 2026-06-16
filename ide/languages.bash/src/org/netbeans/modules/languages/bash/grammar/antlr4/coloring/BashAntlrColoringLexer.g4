@@ -58,7 +58,6 @@ tokens {
 
 options { 
     superClass = LexerAdaptor;
-    caseInsensitive = true; 
 }    
 
 fragment Esc
@@ -90,7 +89,7 @@ fragment NewLineComment
     ;
 
 fragment Identifier 
-    : [a-z_\u0080-\ufffe][a-z0-9_.\u0080-\ufffe-]*;
+    : [a-zA-Z_\u0080-\ufffe][a-zA-Z0-9_.\u0080-\ufffe-]*;
 
 fragment VarName
     : [a-zA-Z_][a-zA-Z0-9_]*
@@ -120,7 +119,7 @@ fragment BashCommands
     | 'rsync'
     | 'zip' | 'unzip'
     | 'chmod' | 'chown' | 'chgrp'
-    | 'cron'
+    | 'cron' | 'exec' | 'ln'
     ;
 
 fragment Delimiter
@@ -142,7 +141,7 @@ fragment Number
 BASH_KEYWORD : AppKeywords | BashKeyword | BashCommands;
 
 COMMAND_OPTION
-    : '-' VarName
+    : '-' ('-')? VarName
     ;
 
 NUMBER
@@ -169,7 +168,11 @@ SG_STRING_OPEN
     ;
 
 IDENTIFIER 
-    : Identifier | '$' VarName
+    : '.'? Identifier
+    ;
+
+VARIABLE
+    : '$' VarName
     ;
 
 DELIMITER
@@ -186,6 +189,10 @@ OPERATOR
 
 SEPARATOR
     : Separator
+    ;
+
+BREAK :
+    '\\'
     ;
 
 SEMICOLON

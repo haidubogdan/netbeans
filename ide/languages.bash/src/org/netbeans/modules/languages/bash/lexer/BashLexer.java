@@ -48,6 +48,7 @@ public class BashLexer extends AbstractAntlrLexerBridge<BashAntlrColoringLexer, 
             case DELIMITER -> token(BashTokenId.DELIMITER);      
             case SEPARATOR -> token(BashTokenId.SEPARATOR);  
             case SEMICOLON -> token(BashTokenId.SEMICOLON);
+            case VARIABLE -> token(BashTokenId.VARIABLE);
             case DOLLAR -> token(BashTokenId.DOLLAR);    
             case WS -> groupToken(BashTokenId.WS, WS);    
             case NL -> groupToken(BashTokenId.WS, NL);

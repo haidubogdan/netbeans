@@ -41,7 +41,7 @@
     <folder name="OptionsDialog">
         <folder name="PreviewExamples">
             <folder name="application">
-                <file name="x-sh" url="coloring.flex"/>
+                <file name="x-sh" url="coloring.sh"/>
             </folder>
         </folder>
     </folder>

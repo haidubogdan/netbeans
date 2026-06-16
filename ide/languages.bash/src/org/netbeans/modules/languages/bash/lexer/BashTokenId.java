@@ -40,6 +40,7 @@ public enum BashTokenId implements TokenId {
     SEPARATOR("separator"),
     SEMICOLON("separator"),
     DOLLAR("dollar"),
+    VARIABLE("variable"),
     WS("whitespace"),
     ERROR("error");
     private final String primaryCategory;
