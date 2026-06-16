@@ -18,12 +18,14 @@
  */
 package org.netbeans.modules.languages.bash.grammar.antlr4.coloring;
 
+import java.util.Objects;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 
 public abstract class LexerAdaptor extends Lexer {
 
     private boolean interpolationKeyAdded = false;
+    private String heredocDelimiter;
 
     public LexerAdaptor(CharStream input) {
         super(input);
@@ -32,7 +34,7 @@ public abstract class LexerAdaptor extends Lexer {
     public void setInterpolationKeyAddedState(boolean state) {
         interpolationKeyAdded = state;
     }
-    
+
     public void consumeKeyToken() {
         interpolationKeyAdded = true;
     }
@@ -43,5 +45,30 @@ public abstract class LexerAdaptor extends Lexer {
 
     public boolean keyTokenAdded() {
         return interpolationKeyAdded;
+    }
+
+    public void setHeredocDelimiter() {
+        String consumedText = getText();
+        if (consumedText == null) {
+            return;
+        }
+        
+        heredocDelimiter = consumedText.substring(3);
+    }
+
+    public String getHeredocDelimiter() {
+        return heredocDelimiter;
+    }
+
+    public boolean validateHeredocDelimiter() {
+        String consumedText = getText();
+        String delimiter = consumedText.substring(1);
+
+        if (Objects.equals(delimiter, heredocDelimiter)) {
+            heredocDelimiter = null;
+            return true;
+        }
+        
+        return false;
     }
 }

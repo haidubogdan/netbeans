@@ -85,6 +85,10 @@ fragment NewLine
     : [\r\n]
     ;
 
+fragment WhiteSpace
+    : [ \t]
+    ;
+
 fragment NewLineComment
     : '#' ~ [\r\n]* (NL | EOF)
     ;
@@ -172,6 +176,11 @@ IDENTIFIER
     : '.'? Identifier
     ;
 
+HEREDOC_OPEN : '<<' ('-' | WhiteSpace) 
+    (Identifier | SQuote Identifier SQuote) {setHeredocDelimiter();} 
+    ->pushMode(HereDoc)
+    ;
+
 VARIABLE
     : '$' VarName
     ;
@@ -204,12 +213,14 @@ NL
     : NewLine+
     ;
 WS
-    : [ \t]+ ->skip
+    : WhiteSpace+ ->skip
     ;
 
 ERROR
     : .
     ;
+
+
 mode VarAssign;
 VAR_DB_STRING_OPEN
     : DQuote ->type(STRING),pushMode(DbQuoteString)
@@ -304,4 +315,14 @@ INTERPOLATION_OPERATOR
 
 VALUE_INTERPOLATION
     : . ->type(IDENTIFIER)
+    ;
+
+mode HereDoc;
+
+HEREDOC_CLOSE : NewLine Identifier {validateHeredocDelimiter()}? ->popMode;
+
+HEREDOC_IDENTIFIER : Identifier->type(STRING);
+
+OTHER_HEREDOC 
+    : . ->type(STRING)
     ;
