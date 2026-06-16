@@ -47,6 +47,7 @@ tokens {
     STRING,
     KEYWORD,
     IDENTIFIER,
+    VARIABLE,
     NUMBER,
     DELIMITER,
     OPERATOR,
@@ -127,7 +128,7 @@ fragment Delimiter
     ;
 
 fragment Operator
-    : ('+' | '-' | '*' | '/' | '%' | '<' | '>' | '&&' | '||' | '!')
+    : ('+' | '-' | '*' | '/' | '%' | '<' | '>' | '&&' | '||' | '!' | '$#')
     ;
 
 fragment Separator
@@ -261,7 +262,7 @@ DBQ_INTERPOLATED_VAR
 
 DBQ_IDENTIFIER
     : '$' VarName
-    ->type(IDENTIFIER)
+    ->type(VARIABLE)
     ;
 
 DBQ_STRING_CLOSE : DQuote ->type(STRING),popMode;
@@ -298,7 +299,7 @@ ${VAR:+alternate} -> value of alternate if VAR is set and non-empty, otherwise e
 ${VAR+alternate} -> value of alternate if VAR is set and non-empty, otherwise empty ''
 */
 INTERPOLATION_OPERATOR
-    : (':' ('+' | '-')? | '?' | '+' | '-')
+    : (':' ('+' | '-')? | '?' | '+' | '-')->type(OPERATOR)
     ;
 
 VALUE_INTERPOLATION
