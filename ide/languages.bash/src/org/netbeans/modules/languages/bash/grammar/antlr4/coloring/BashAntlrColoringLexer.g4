@@ -107,17 +107,43 @@ fragment AppKeywords
 fragment BashKeyword
     : 'if' | 'elif' | 'else' | 'fi'
     | 'for' | 'then' | 'do' | 'while'
-    | 'in' | 'done'
+    | 'in' | 'done' | 'case'  | 'esac' 
+    | 'until' | 'function' | 'select' | 'time' | 'coproc'
     ;
+
+fragment BuiltinKeywords
+    : './' | 'source' | 'break' | 'continue' | 'eval' | 'exit' | 'export' | 'readonly'
+    | 'return' | 'times' | 'trap'
+    ;
+
+fragment DataKeywords
+    : 'set' | 'shift' | 'unset' | 'getopts' | 'readarray'
+    ;
+
+fragment JobControlKeywords
+    : 'jobs' | 'fg' | 'bg' | 'disown' | 'kill' | 'wait' | 'suspend'
+    ;
+
+fragment ShellBehaviorKeywords
+    : 'shopt' | 'alias' | 'unalias' | 'umask' | 'ulimit' | 'hash' | 'enable'
+    | 'type' | 'command' | 'builtin' | 'help' | 'caller'
+    | 'bind' | 'complete' | 'compgen' | 'compopt'
+    | 'dirs' | 'pushd' | 'popd'
+    ;
+
+fragment NavigationKeywords
+    : 'cd' | 'history' | 'fc' | 'logout'
+    ;
+
 
 fragment BashCommands
     : 'sleep' | 'exit' | 'read' | 'echo'
     | 'mkdir' | 'touch'
     | 'cp' | 'mv' | 'rm'
-    | 'cd' | 'ls' | 'pwd'
+    | 'ls' | 'pwd'
     | 'grep' | 'awk' | 'sed'
     | 'cat' | 'tail' | 'head'
-    | 'ps' | 'top' | 'kill'
+    | 'ps' | 'top'
     | 'df' | 'du'
     | 'curl' | 'wget'
     | 'ssh'
@@ -143,7 +169,11 @@ fragment Number
     : '-'? [0-9]+
     ;
 
-BASH_KEYWORD : AppKeywords | BashKeyword | BashCommands;
+fragment PathKeyword
+    : '..'
+    ;
+
+BASH_KEYWORD : AppKeywords | BashKeyword | BashCommands | BuiltinKeywords | DataKeywords | JobControlKeywords | ShellBehaviorKeywords | NavigationKeywords;
 
 COMMAND_OPTION
     : '-' ('-')? VarName
@@ -176,7 +206,7 @@ IDENTIFIER
     : '.'? Identifier
     ;
 
-HEREDOC_OPEN : '<<' ('-' | WhiteSpace) 
+HEREDOC_START : '<<' ('-' | WhiteSpace) 
     (Identifier | SQuote Identifier SQuote) {setHeredocDelimiter();} 
     ->pushMode(HereDoc)
     ;
@@ -194,7 +224,7 @@ ASSIGN_OPERATOR
     ;
 
 OPERATOR
-    : Operator
+    : Operator | PathKeyword
     ;
 
 SEPARATOR
@@ -319,7 +349,7 @@ VALUE_INTERPOLATION
 
 mode HereDoc;
 
-HEREDOC_CLOSE : NewLine Identifier {validateHeredocDelimiter()}? ->popMode;
+HEREDOC_END : NewLine Identifier {validateHeredocDelimiter()}? ->popMode;
 
 HEREDOC_IDENTIFIER : Identifier->type(STRING);
 
