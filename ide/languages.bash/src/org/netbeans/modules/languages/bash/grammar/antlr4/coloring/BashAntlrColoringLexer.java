@@ -39,8 +39,8 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 	public static final int
 		NL=1, WS=2, COMMENT=3, STRING=4, KEYWORD=5, IDENTIFIER=6, VARIABLE=7, 
 		NUMBER=8, DELIMITER=9, OPERATOR=10, SEPARATOR=11, ASSIGN_OPERATOR=12, 
-		DOLLAR=13, BASH_KEYWORD=14, COMMAND_OPTION=15, HEREDOC_OPEN=16, BREAK=17, 
-		SEMICOLON=18, ERROR=19, INLINE_WS=20, HEREDOC_CLOSE=21, CURLY_CLOSE=22;
+		DOLLAR=13, BASH_KEYWORD=14, COMMAND_OPTION=15, HEREDOC_START=16, BREAK=17, 
+		SEMICOLON=18, ERROR=19, INLINE_WS=20, HEREDOC_END=21, CURLY_CLOSE=22;
 	public static final int
 		VarAssign=1, DbQuoteString=2, BackQuotedString=3, StringInterpolation=4, 
 		HereDoc=5;
@@ -59,7 +59,7 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 			"WhiteSpace", "NewLineComment", "Identifier", "VarName", "AppKeywords", 
 			"BashKeyword", "BashCommands", "Delimiter", "Operator", "Separator", 
 			"Number", "BASH_KEYWORD", "COMMAND_OPTION", "NUMBER", "STRING", "COMMENT", 
-			"DB_STRING_OPEN", "B_STRING_OPEN", "SG_STRING_OPEN", "IDENTIFIER", "HEREDOC_OPEN", 
+			"DB_STRING_OPEN", "B_STRING_OPEN", "SG_STRING_OPEN", "IDENTIFIER", "HEREDOC_START", 
 			"VARIABLE", "DELIMITER", "ASSIGN_OPERATOR", "OPERATOR", "SEPARATOR", 
 			"BREAK", "SEMICOLON", "NL", "WS", "ERROR", "VAR_DB_STRING_OPEN", "VAR_B_STRING_OPEN", 
 			"VAR_SG_STRING_OPEN", "EXIT_COMMENT", "DELIMITER_VAR", "SEPARATOR_VAR", 
@@ -67,7 +67,7 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 			"INLINE_WS", "ANY_VALUE", "DBQ_TEXT", "DBQ_INTERPOLATED_VAR", "DBQ_IDENTIFIER", 
 			"DBQ_STRING_CLOSE", "ANY_DBQ_TEXT", "BQ_TEXT", "BQ_INTERPOLATED_VAR", 
 			"BQ_STRING_CLOSE", "ANY_BQ_TEXT", "CURLY_OPEN", "CURLY_CLOSE", "INTERPOLATION_VAR", 
-			"INTERPOLATION_OPERATOR", "VALUE_INTERPOLATION", "HEREDOC_CLOSE", "HEREDOC_IDENTIFIER", 
+			"INTERPOLATION_OPERATOR", "VALUE_INTERPOLATION", "HEREDOC_END", "HEREDOC_IDENTIFIER", 
 			"OTHER_HEREDOC"
 		};
 	}
@@ -84,8 +84,8 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 		return new String[] {
 			null, "NL", "WS", "COMMENT", "STRING", "KEYWORD", "IDENTIFIER", "VARIABLE", 
 			"NUMBER", "DELIMITER", "OPERATOR", "SEPARATOR", "ASSIGN_OPERATOR", "DOLLAR", 
-			"BASH_KEYWORD", "COMMAND_OPTION", "HEREDOC_OPEN", "BREAK", "SEMICOLON", 
-			"ERROR", "INLINE_WS", "HEREDOC_CLOSE", "CURLY_CLOSE"
+			"BASH_KEYWORD", "COMMAND_OPTION", "HEREDOC_START", "BREAK", "SEMICOLON", 
+			"ERROR", "INLINE_WS", "HEREDOC_END", "CURLY_CLOSE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -150,7 +150,7 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
 		switch (ruleIndex) {
 		case 26:
-			HEREDOC_OPEN_action((RuleContext)_localctx, actionIndex);
+			HEREDOC_START_action((RuleContext)_localctx, actionIndex);
 			break;
 		case 58:
 			CURLY_OPEN_action((RuleContext)_localctx, actionIndex);
@@ -160,7 +160,7 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 			break;
 		}
 	}
-	private void HEREDOC_OPEN_action(RuleContext _localctx, int actionIndex) {
+	private void HEREDOC_START_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 0:
 			setHeredocDelimiter();
@@ -191,7 +191,7 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 		case 60:
 			return INTERPOLATION_VAR_sempred((RuleContext)_localctx, predIndex);
 		case 63:
-			return HEREDOC_CLOSE_sempred((RuleContext)_localctx, predIndex);
+			return HEREDOC_END_sempred((RuleContext)_localctx, predIndex);
 		}
 		return true;
 	}
@@ -216,7 +216,7 @@ public class BashAntlrColoringLexer extends LexerAdaptor {
 		}
 		return true;
 	}
-	private boolean HEREDOC_CLOSE_sempred(RuleContext _localctx, int predIndex) {
+	private boolean HEREDOC_END_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 3:
 			return validateHeredocDelimiter();

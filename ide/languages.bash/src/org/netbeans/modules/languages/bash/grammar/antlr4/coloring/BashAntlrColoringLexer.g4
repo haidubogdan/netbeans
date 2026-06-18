@@ -176,7 +176,7 @@ IDENTIFIER
     : '.'? Identifier
     ;
 
-HEREDOC_OPEN : '<<' ('-' | WhiteSpace) 
+HEREDOC_START : '<<' ('-' | WhiteSpace) 
     (Identifier | SQuote Identifier SQuote) {setHeredocDelimiter();} 
     ->pushMode(HereDoc)
     ;
@@ -319,7 +319,7 @@ VALUE_INTERPOLATION
 
 mode HereDoc;
 
-HEREDOC_CLOSE : NewLine Identifier {validateHeredocDelimiter()}? ->popMode;
+HEREDOC_END : NewLine Identifier {validateHeredocDelimiter()}? ->popMode;
 
 HEREDOC_IDENTIFIER : Identifier->type(STRING);
 

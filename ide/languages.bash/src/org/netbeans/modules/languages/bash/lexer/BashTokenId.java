@@ -41,6 +41,8 @@ public enum BashTokenId implements TokenId {
     SEMICOLON("separator"),
     DOLLAR("dollar"),
     VARIABLE("variable"),
+    HEREDOC_START("heredoc-guard"),
+    HEREDOC_END("heredoc-guard"),
     WS("whitespace"),
     ERROR("error");
     private final String primaryCategory;

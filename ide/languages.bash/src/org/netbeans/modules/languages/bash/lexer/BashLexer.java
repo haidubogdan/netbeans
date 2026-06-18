@@ -42,6 +42,8 @@ public class BashLexer extends AbstractAntlrLexerBridge<BashAntlrColoringLexer, 
             case COMMAND_OPTION->token(BashTokenId.COMMAND_OPTION); 
             case IDENTIFIER -> groupToken(BashTokenId.IDENTIFIER, IDENTIFIER);
             case STRING -> token(BashTokenId.STRING);
+            case HEREDOC_START -> token(BashTokenId.HEREDOC_START);
+            case HEREDOC_END -> token(BashTokenId.HEREDOC_END);
             case NUMBER -> token(BashTokenId.NUMBER);
             case ASSIGN_OPERATOR -> token(BashTokenId.ASSIGN_OPERATOR);     
             case OPERATOR -> token(BashTokenId.OPERATOR);  
