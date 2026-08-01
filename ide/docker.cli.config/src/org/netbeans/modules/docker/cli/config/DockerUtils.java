@@ -26,6 +26,7 @@ public class DockerUtils {
     public static final String DOCKER_EXEC_FILE_PATH = "docker_path"; // NOI18N
 
     public static final String DOCKER_BASE_UNIX_COMMAND = "/usr/bin/docker"; // NOI18N
+    public static final String DOCKER_BASE_MACOS_COMMAND = "/usr/local/bin/docker"; // NOI18N
     public static final String DOCKER_BASE_WIN_COMMAND = "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe"; // NOI18N
 
     private DockerUtils() {
@@ -33,7 +34,7 @@ public class DockerUtils {
     }
 
     public static String getDockerExecutablePath() {
-        String basePath = Utilities.isWindows() ? DOCKER_BASE_WIN_COMMAND : DOCKER_BASE_UNIX_COMMAND;
+        String basePath = Utilities.isWindows() ? DOCKER_BASE_WIN_COMMAND : ( Utilities.isMac()? DOCKER_BASE_MACOS_COMMAND : DOCKER_BASE_UNIX_COMMAND);
         return NbPreferences.forModule(DockerExecCommandParams.class).get(DOCKER_EXEC_FILE_PATH, basePath);
     }
 

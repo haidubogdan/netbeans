@@ -39,6 +39,7 @@ public class DockerCliConfigPreferences {
 
     public static final String DOCKER_COMMAND_CONFIG_NODE = "docker_command_configs";
     public static final String PREF_JS_NODE = "javascript"; // NOI18N
+    public static final String PREF_PHP_NODE = "php"; // NOI18N
 
     private final Preferences dockerPreferences;
 

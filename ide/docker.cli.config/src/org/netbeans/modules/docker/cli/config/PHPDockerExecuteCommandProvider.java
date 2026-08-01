@@ -1,0 +1,50 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.netbeans.modules.docker.cli.config;
+
+import org.netbeans.api.annotations.common.NonNull;
+import org.netbeans.api.project.Project;
+import org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider;
+import static org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.JS_DOCKER_PATH;
+import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.PREF_PHP_NODE;
+import org.netbeans.modules.docker.cli.config.project.DockerCliProjectSettings;
+
+@org.openide.util.lookup.ServiceProvider(service = org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.class, path = JS_DOCKER_PATH)
+public class PHPDockerExecuteCommandProvider extends DockerExecuteCliConfigProvider {
+
+    @Override
+    public boolean isEnabled(Project project) {
+        DockerCliProjectSettings dockerSettings = new DockerCliProjectSettings(project);
+        return dockerSettings.useDockerForJSCommands();
+    }
+
+    @Override
+    public DockerExecParamsConfig findProjectConfiguration(@NonNull Project project) {
+        DockerCliProjectSettings dockerSettings = new DockerCliProjectSettings(project);
+
+        String currentJsProfile = dockerSettings.getDefaultNodeTypeConfigName(PREF_PHP_NODE);
+
+        if (currentJsProfile == null) {
+            return null;
+        }
+
+        return dockerSettings.loadExecConfig(currentJsProfile);
+    }
+
+}
