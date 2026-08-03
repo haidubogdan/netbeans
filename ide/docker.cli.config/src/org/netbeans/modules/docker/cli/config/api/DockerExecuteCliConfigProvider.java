@@ -28,6 +28,7 @@ import org.openide.util.lookup.Lookups;
 public abstract class DockerExecuteCliConfigProvider {
 
     public static final String JS_DOCKER_PATH = "docker_exec/commands/javascript"; // NOI18N
+    public static final String PHP_DOCKER_PATH = "docker_exec/commands/php"; // NOI18N
 
     public static DockerExecuteCliConfigProvider getProvider(String path) {
         return Lookups.forPath(path).lookup(DockerExecuteCliConfigProvider.class);

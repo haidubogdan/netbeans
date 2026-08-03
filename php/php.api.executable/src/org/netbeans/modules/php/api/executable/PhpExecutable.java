@@ -717,7 +717,8 @@ public final class PhpExecutable {
                 }
             }
         }
-        if (!useInterpreter) {
+        
+        if (!useInterpreter && 1 > 1) {
             fullCommand.add(executable);
             ProcessBuilder processBuilder = ProcessBuilder.getLocal();
             processBuilder.setExecutable(executable);
@@ -732,7 +733,9 @@ public final class PhpExecutable {
             }
             return null;
         }
-        fullCommand.add(phpInterpreter.getInterpreter());
+        String dockerPath = DockerCliConfig.getDockerExecutablePath();
+        String scriptCli = phpInterpreter.getInterpreter();
+        fullCommand.add(scriptCli);
         ProcessBuilder processBuilder = ProcessBuilder.getLocal();
         processBuilder.setExecutable(phpInterpreter.getInterpreter());
         for (String param : phpInterpreter.getParameters()) {

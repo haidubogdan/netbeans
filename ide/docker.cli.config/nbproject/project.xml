@@ -113,6 +113,7 @@
             <test-dependencies/>
             <friend-packages>
                 <friend>org.netbeans.modules.javascript.nodejs</friend>
+                <friend>org.netbeans.modules.php.api.executable</friend>
                 <package>org.netbeans.modules.docker.cli.config</package>
                 <package>org.netbeans.modules.docker.cli.config.api</package>
                 <package>org.netbeans.modules.docker.cli.config.project</package>
