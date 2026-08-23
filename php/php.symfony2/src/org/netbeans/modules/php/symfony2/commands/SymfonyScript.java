@@ -36,6 +36,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
+import org.netbeans.api.project.Project;
+import org.netbeans.modules.php.api.executable.DockerCliConfig;
 import org.netbeans.modules.php.api.executable.PhpExecutable;
 import org.netbeans.modules.php.api.executable.PhpExecutableValidator;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -181,9 +183,18 @@ public final class SymfonyScript {
     private PhpExecutable createExecutable(PhpModule phpModule) {
         return new PhpExecutable(symfony2Path)
                 .environmentVariables(Collections.singletonMap(SHELL_INTERACTIVE, "true")) // NOI18N
-                .workDir(FileUtil.toFile(phpModule.getSourceDirectory()));
+                .workDir(FileUtil.toFile(phpModule.getSourceDirectory()))
+                .dockerParams(dockerParams(phpModule))
+                ;
     }
 
+    private List<String> dockerParams(PhpModule phpModule) {
+        Project project = phpModule.getLookup().lookup(Project.class);
+        return DockerCliConfig.getInstance().useCliConfig(project) ? 
+                        DockerCliConfig.getInstance().generateExecutableParams(project)
+                        : Collections.emptyList();
+    }
+    
     @NbBundle.Messages({
         "# {0} - symfony version",
         "# {1} - project name",

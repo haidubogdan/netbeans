@@ -129,6 +129,7 @@ public final class PhpExecutable {
     private File workDir = null;
     private boolean warnUser = true;
     private List<String> additionalParameters = Collections.<String>emptyList();
+    private List<String> dockerParams;
     private Map<String, String> environmentVariables = Collections.<String, String>emptyMap();
     private PhpExecutableValidator.ValidationHandler validationHandler = null;
     private File fileOutput = null;
@@ -378,6 +379,11 @@ public final class PhpExecutable {
         return this;
     }
 
+    public PhpExecutable dockerParams(List<String> dockerParams) {
+        this.dockerParams = dockerParams;
+        return this;
+    }
+    
     /**
      * Run this executable with the {@link #DEFAULT_EXECUTION_DESCRIPTOR default execution descriptor}.
      * @return task representing the actual run, value representing result of the {@link Future} is exit code of the process
