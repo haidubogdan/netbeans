@@ -21,30 +21,30 @@ package org.netbeans.modules.docker.cli.config;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider;
-import static org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.JS_DOCKER_PATH;
+import static org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.PHP_DOCKER_PATH;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.PREF_PHP_NODE;
 import org.netbeans.modules.docker.cli.config.project.DockerCliProjectSettings;
 
-@org.openide.util.lookup.ServiceProvider(service = org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.class, path = JS_DOCKER_PATH)
+@org.openide.util.lookup.ServiceProvider(service = org.netbeans.modules.docker.cli.config.api.DockerExecuteCliConfigProvider.class, path = PHP_DOCKER_PATH)
 public class PHPDockerExecuteCommandProvider extends DockerExecuteCliConfigProvider {
 
     @Override
     public boolean isEnabled(Project project) {
         DockerCliProjectSettings dockerSettings = new DockerCliProjectSettings(project);
-        return dockerSettings.useDockerForJSCommands();
+        return dockerSettings.useDockerForPHPCommands();
     }
 
     @Override
     public DockerExecParamsConfig findProjectConfiguration(@NonNull Project project) {
         DockerCliProjectSettings dockerSettings = new DockerCliProjectSettings(project);
 
-        String currentJsProfile = dockerSettings.getDefaultNodeTypeConfigName(PREF_PHP_NODE);
+        String currentPhpProfile = dockerSettings.getDefaultNodeTypeConfigName(PREF_PHP_NODE);
 
-        if (currentJsProfile == null) {
+        if (currentPhpProfile == null) {
             return null;
         }
 
-        return dockerSettings.loadExecConfig(currentJsProfile);
+        return dockerSettings.loadExecConfig(currentPhpProfile);
     }
 
 }

@@ -131,7 +131,7 @@ public class DockerCliConfigPreferences {
         if (getPHPDockerPreferences() == null) {
             return false;
         }
-        return getPHPDockerPreferences().getBoolean(DOCKER_ENABLED, false);
+        return getPHPDockerPreferences().getBoolean(DOCKER_ENABLED, true);//to modify
     }
 
     public Preferences getDockerNodePreferences(String node) {

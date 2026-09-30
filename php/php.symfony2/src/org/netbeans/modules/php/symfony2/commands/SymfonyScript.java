@@ -38,6 +38,7 @@ import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.php.api.executable.DockerCliConfig;
+import org.netbeans.modules.php.api.executable.PhpDockerExecutable;
 import org.netbeans.modules.php.api.executable.PhpExecutable;
 import org.netbeans.modules.php.api.executable.PhpExecutableValidator;
 import org.netbeans.modules.php.api.phpmodule.PhpModule;
@@ -181,10 +182,9 @@ public final class SymfonyScript {
     }
 
     private PhpExecutable createExecutable(PhpModule phpModule) {
-        return new PhpExecutable(symfony2Path)
+        return new PhpDockerExecutable("bin/console", dockerParams(phpModule))
                 .environmentVariables(Collections.singletonMap(SHELL_INTERACTIVE, "true")) // NOI18N
                 .workDir(FileUtil.toFile(phpModule.getSourceDirectory()))
-                .dockerParams(dockerParams(phpModule))
                 ;
     }
 

@@ -77,7 +77,7 @@ import org.openide.windows.InputOutput;
 /**
  * Class usable for running any PHP executable (program or script).
  */
-public final class PhpExecutable {
+public class PhpExecutable {
 
     private static final Logger LOGGER = Logger.getLogger(PhpExecutable.class.getName());
 
@@ -115,9 +115,9 @@ public final class PhpExecutable {
             .inputVisible(true)
             .showProgress(true);
 
-    private final String executable;
-    private final List<String> parameters;
-    private final String command;
+    protected final String executable;
+    protected final List<String> parameters;
+    protected final String command;
     final List<String> fullCommand = new CopyOnWriteArrayList<>();
 
     private String executableName = null;
@@ -125,12 +125,12 @@ public final class PhpExecutable {
     private String optionsSubcategory = null;
     private boolean viaPhpInterpreter = false;
     private boolean viaAutodetection = true;
-    private boolean redirectErrorStream = false;
+    protected boolean redirectErrorStream = false;
     private File workDir = null;
     private boolean warnUser = true;
-    private List<String> additionalParameters = Collections.<String>emptyList();
-    private List<String> dockerParams;
-    private Map<String, String> environmentVariables = Collections.<String, String>emptyMap();
+    protected List<String> additionalParameters = Collections.<String>emptyList();
+
+    protected Map<String, String> environmentVariables = Collections.<String, String>emptyMap();
     private PhpExecutableValidator.ValidationHandler validationHandler = null;
     private File fileOutput = null;
     private Charset outputCharset = null;
@@ -376,11 +376,6 @@ public final class PhpExecutable {
      */
     public PhpExecutable noDebugConfig(boolean noDebugConfig) {
         this.noDebugConfig = noDebugConfig;
-        return this;
-    }
-
-    public PhpExecutable dockerParams(List<String> dockerParams) {
-        this.dockerParams = dockerParams;
         return this;
     }
     
@@ -643,7 +638,7 @@ public final class PhpExecutable {
     }
 
     @CheckForNull
-    private Future<Integer> runInternal(ExecutionDescriptor executionDescriptor, ExecutionDescriptor.InputProcessorFactory2 outProcessorFactory, boolean debug) {
+    protected Future<Integer> runInternal(ExecutionDescriptor executionDescriptor, ExecutionDescriptor.InputProcessorFactory2 outProcessorFactory, boolean debug) {
         Parameters.notNull("executionDescriptor", executionDescriptor); // NOI18N
         String error;
         if (validationHandler == null) {
@@ -667,7 +662,7 @@ public final class PhpExecutable {
     }
 
     @CheckForNull
-    private ProcessBuilder getProcessBuilder(boolean debug) {
+    protected ProcessBuilder getProcessBuilder(boolean debug) {
         Pair<ProcessBuilder, List<String>> processBuilderInfo = createProcessBuilder();
         if (processBuilderInfo == null) {
             return null;
@@ -722,9 +717,9 @@ public final class PhpExecutable {
                     }
                 }
             }
-        }
+        } 
         
-        if (!useInterpreter && 1 > 1) {
+        if (!useInterpreter) {
             fullCommand.add(executable);
             ProcessBuilder processBuilder = ProcessBuilder.getLocal();
             processBuilder.setExecutable(executable);
@@ -739,28 +734,7 @@ public final class PhpExecutable {
             }
             return null;
         }
-        String dockerPath = DockerCliConfig.getDockerExecutablePath();
-        
-        if (dockerPath != null) {
-            StringBuilder sb = new StringBuilder();
- 
-            
-            fullCommand.add(dockerPath);
-            fullCommand.addAll(dockerParams);
-            arguments.addAll(dockerParams);
-            
-            sb.append(executable);
-            sb.append(" ");
-            sb.append(StringUtils.implode(parameters, " ")); // NOI18N
-            
-            fullCommand.add(sb.toString());
-            arguments.add(sb.toString());
-            
-            ProcessBuilder processBuilder = ProcessBuilder.getLocal();
-            processBuilder.setExecutable(dockerPath);
-            
-            return Pair.of(processBuilder, arguments);
-        }
+
         
         String scriptCli = phpInterpreter.getInterpreter();
         fullCommand.add(scriptCli);
@@ -775,7 +749,7 @@ public final class PhpExecutable {
         return Pair.of(processBuilder, arguments);
     }
 
-    private String getDisplayName() {
+    protected String getDisplayName() {
         if (displayName != null) {
             return displayName;
         }
@@ -814,7 +788,7 @@ public final class PhpExecutable {
         return null;
     }
 
-    private ExecutionDescriptor getExecutionDescriptor(ExecutionDescriptor executionDescriptor, ExecutionDescriptor.InputProcessorFactory2 outProcessorFactory) {
+    protected ExecutionDescriptor getExecutionDescriptor(ExecutionDescriptor executionDescriptor, ExecutionDescriptor.InputProcessorFactory2 outProcessorFactory) {
         final List<ExecutionDescriptor.InputProcessorFactory2> inputProcessors = new CopyOnWriteArrayList<>();
         // colors
         ExecutionDescriptor.InputProcessorFactory2 infoOutProcessorFactory = getInfoOutputProcessorFactory();
