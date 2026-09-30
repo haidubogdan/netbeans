@@ -103,6 +103,37 @@ public class DockerCliConfigPreferences {
         return getJSDockerPreferences().getBoolean(DOCKER_ENABLED, false);
     }
 
+    public void setUseDockerForPHPCommands(boolean status) {
+        if (getPHPDockerPreferences() == null) {
+            //create empty JsNode
+            getPreferences().node(PREF_PHP_NODE);
+        }
+        getPHPDockerPreferences().putBoolean(DOCKER_ENABLED, status);
+    }
+
+    public void setPHPDockerConfig(String configName) {
+        if (getPHPDockerPreferences() == null) {
+            //create empty JsNode
+            getPreferences().node(PREF_PHP_NODE);
+        }
+        getPHPDockerPreferences().put(DOCKER_CLI_CONFIG_NAME, configName);
+    }
+
+    public String getPHPDockerConfigName() {
+        if (getPHPDockerPreferences() == null) {
+            return null;
+        }
+        return getPHPDockerPreferences().get(DOCKER_CLI_CONFIG_NAME, null);
+    }
+
+    public boolean getUseDockerForPHPCommands() {
+
+        if (getPHPDockerPreferences() == null) {
+            return false;
+        }
+        return getPHPDockerPreferences().getBoolean(DOCKER_ENABLED, false);
+    }
+
     public Preferences getDockerNodePreferences(String node) {
         try {
             if (getPreferences().nodeExists(node)) {
@@ -114,7 +145,7 @@ public class DockerCliConfigPreferences {
 
         return null;
     }
-    
+
     private Preferences getJSDockerPreferences() {
         try {
             if (getPreferences().nodeExists(PREF_JS_NODE)) {
@@ -127,10 +158,22 @@ public class DockerCliConfigPreferences {
         return null;
     }
 
+    private Preferences getPHPDockerPreferences() {
+        try {
+            if (getPreferences().nodeExists(PREF_PHP_NODE)) {
+                return getPreferences().node(PREF_PHP_NODE);
+            }
+        } catch (BackingStoreException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        return null;
+    }
+
     public Preferences getDockerCommandConfigs() {
         return getPreferences().node(DOCKER_COMMAND_CONFIG_NODE);
     }
-    
+
     private Preferences getPreferences() {
         return dockerPreferences;
     }

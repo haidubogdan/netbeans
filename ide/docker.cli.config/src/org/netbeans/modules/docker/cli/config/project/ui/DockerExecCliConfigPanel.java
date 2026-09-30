@@ -34,6 +34,7 @@ import org.netbeans.modules.docker.cli.config.DockerUtils;
 import org.netbeans.modules.docker.cli.config.containers.DockerContainers;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.DEFAULT_CONFIG_NAME;
 import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.PREF_JS_NODE;
+import static org.netbeans.modules.docker.cli.config.project.DockerCliConfigPreferences.PREF_PHP_NODE;
 import org.netbeans.modules.docker.cli.config.project.DockerCliProjectSettings;
 import org.netbeans.spi.project.ui.support.ProjectCustomizer;
 import org.openide.DialogDisplayer;
@@ -47,7 +48,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
     private final Project project;
     private final DockerCliProjectSettings projectSettings;
     private final DockerConfigComboBoxModel comboModel;
-    private final DockerConfigComboBoxModel javascriptComboModel;
+    private final DockerConfigComboBoxModel dockerContainers;
     private final DockerContainerComboModel dockerContainerListModel = new DockerContainerComboModel();
 
     public DockerExecCliConfigPanel(ProjectCustomizer.Category category, Project project) {
@@ -62,9 +63,10 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
 
         Set<String> configs = projectSettings.getProfiles();
         comboModel = DockerConfigComboBoxModel.build(configs);
-        javascriptComboModel = DockerConfigComboBoxModel.build(configs);
+        dockerContainers = DockerConfigComboBoxModel.build(configs);
         ConfigOptionCombo.setModel(comboModel);
-        jsCommandsDockerConfigCombo.setModel(javascriptComboModel);
+        jsCommandsDockerConfigCombo.setModel(dockerContainers);
+        phpCommandsDockerConfigCombo.setModel(dockerContainers);
         dockerContainersComboBox.setModel(dockerContainerListModel);
 
         init();
@@ -108,6 +110,9 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
 
         jsCommandsDockerEnabled.setSelected(projectSettings.useDockerForJSCommands());
         jsCommandsDockerConfigCombo.setSelectedItem(projectSettings.getDefaultNodeTypeConfigName(PREF_JS_NODE));
+        
+        phpCommandsEnabled.setSelected(projectSettings.useDockerForPHPCommands());
+        phpCommandsDockerConfigCombo.setSelectedItem(projectSettings.getDefaultNodeTypeConfigName(PREF_PHP_NODE));
     }
 
     private DockerExecParamsConfig buildConfig() {
@@ -132,6 +137,12 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
 
         if (selectedJsDockerConfig != null) {
             projectSettings.setJSDockerConfig((String) selectedJsDockerConfig);
+        }
+        
+        Object selectedPhpDockerConfig = phpCommandsDockerConfigCombo.getSelectedItem();
+
+        if (selectedPhpDockerConfig != null) {
+            projectSettings.setPHPDockerConfig((String) selectedPhpDockerConfig);
         }
     }
 
@@ -210,7 +221,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
         dockerContainerExecDocLink = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jsCommandsDockerEnabled1 = new javax.swing.JCheckBox();
+        phpCommandsEnabled = new javax.swing.JCheckBox();
         phpCommandsDockerConfigCombo = new javax.swing.JComboBox<>();
 
         org.openide.awt.Mnemonics.setLocalizedText(LBL_ContainerName, org.openide.util.NbBundle.getMessage(DockerExecCliConfigPanel.class, "DockerExecCliConfigPanel.LBL_ContainerName.text")); // NOI18N
@@ -289,7 +300,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(DockerExecCliConfigPanel.class, "DockerExecCliConfigPanel.jLabel5.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jsCommandsDockerEnabled1, org.openide.util.NbBundle.getMessage(DockerExecCliConfigPanel.class, "DockerExecCliConfigPanel.jsCommandsDockerEnabled1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(phpCommandsEnabled, org.openide.util.NbBundle.getMessage(DockerExecCliConfigPanel.class, "DockerExecCliConfigPanel.phpCommandsEnabled.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -351,7 +362,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jsCommandsDockerEnabled1))
+                                .addComponent(phpCommandsEnabled))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -413,7 +424,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jsCommandsDockerEnabled1)
+                    .addComponent(phpCommandsEnabled)
                     .addComponent(phpCommandsDockerConfigCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
@@ -454,7 +465,7 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
 
                 comboModel.addElement(configName);
                 comboModel.setSelectedItem(configName);
-                javascriptComboModel.addElement(configName);
+                dockerContainers.addElement(configName);
             }
             loadDockerExecSettings();
         }
@@ -466,18 +477,18 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
 
     private void configDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configDelActionPerformed
         String selectedConfig = (String) comboModel.getSelectedItem();
-        String slectedJsConfig = (String) javascriptComboModel.getSelectedItem();
+        String slectedJsConfig = (String) dockerContainers.getSelectedItem();
         projectSettings.removeProfileConfig(selectedConfig);
         
         //remove config from JcomboBox
         comboModel.removeElement(selectedConfig);
         if (slectedJsConfig.equals(slectedJsConfig)) {
-            javascriptComboModel.removeElement(selectedConfig);
+            dockerContainers.removeElement(selectedConfig);
         }
 
         //reset
         projectSettings.setCurrentProfile(DEFAULT_CONFIG_NAME);
-        javascriptComboModel.setSelectedItem(DEFAULT_CONFIG_NAME);
+        dockerContainers.setSelectedItem(DEFAULT_CONFIG_NAME);
     }//GEN-LAST:event_configDelActionPerformed
 
     private void openContainerConfigPanelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openContainerConfigPanelBtnActionPerformed
@@ -537,8 +548,8 @@ public class DockerExecCliConfigPanel extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JComboBox<String> jsCommandsDockerConfigCombo;
     private javax.swing.JCheckBox jsCommandsDockerEnabled;
-    private javax.swing.JCheckBox jsCommandsDockerEnabled1;
     private javax.swing.JButton openContainerConfigPanelBtn;
     private javax.swing.JComboBox<String> phpCommandsDockerConfigCombo;
+    private javax.swing.JCheckBox phpCommandsEnabled;
     // End of variables declaration//GEN-END:variables
 }

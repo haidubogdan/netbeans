@@ -118,6 +118,18 @@ public class DockerCliProjectSettings {
         getDockerCommandPreferences().setUseDockerForJSCommands(status);
     }
 
+    public boolean useDockerForPHPCommands() {
+        return getDockerCommandPreferences().getUseDockerForPHPCommands();
+    }
+
+    public void setPHPDockerConfig(String configName) {
+        getDockerCommandPreferences().setPHPDockerConfig(configName);
+    }
+
+    public void setUseDockerForPHPCommands(boolean status) {
+        getDockerCommandPreferences().setUseDockerForPHPCommands(status);
+    }
+    
     public DockerExecParamsConfig getProfileConfiguration(String profile) {
         Preferences dockerCommandConfigs = getDockerCliConfigPreferences();
         Preferences profileConfig = dockerCommandConfigs.node(profile);

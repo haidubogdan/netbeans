@@ -740,6 +740,28 @@ public final class PhpExecutable {
             return null;
         }
         String dockerPath = DockerCliConfig.getDockerExecutablePath();
+        
+        if (dockerPath != null) {
+            StringBuilder sb = new StringBuilder();
+ 
+            
+            fullCommand.add(dockerPath);
+            fullCommand.addAll(dockerParams);
+            arguments.addAll(dockerParams);
+            
+            sb.append(executable);
+            sb.append(" ");
+            sb.append(StringUtils.implode(parameters, " ")); // NOI18N
+            
+            fullCommand.add(sb.toString());
+            arguments.add(sb.toString());
+            
+            ProcessBuilder processBuilder = ProcessBuilder.getLocal();
+            processBuilder.setExecutable(dockerPath);
+            
+            return Pair.of(processBuilder, arguments);
+        }
+        
         String scriptCli = phpInterpreter.getInterpreter();
         fullCommand.add(scriptCli);
         ProcessBuilder processBuilder = ProcessBuilder.getLocal();
